@@ -11,6 +11,10 @@ Reactivity will be triggered by a mutation, something that happens in the app.
 This enables ability to fine-tune the level of reactivity and we can even disable it, if we want to make updates in large-batches,
 like migrations or something that does not require reactivity.
 
+Other mutations outside the app can still trigger reactivity as long as they communicate with Redis. Will offer documentation and support for that.
+
+This will also give you the ability to make any database, data-source reactive, by applying similar principles.
+
 ## Data Flow:
 
 - Insert/Update/Remova => publish to Redis "collectionName::*"
