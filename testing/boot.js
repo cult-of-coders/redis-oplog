@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import enableReactivity from '../lib/enableReactivity'
+import enableReactivity from '../lib/collection.extension'
 import createPublication from '../lib/publication';
 
 const RedisCollection = new Mongo.Collection('test_redis_collection');

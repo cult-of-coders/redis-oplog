@@ -13,7 +13,8 @@ Package.describe({
 Npm.depends({
   'sift': '3.2.6',
   // 'ioredis': '2.4.0',
-  'redis': '2.6.2'
+  'redis': '2.6.2',
+  'dot-object': '1.5.4'
 });
 
 Package.onUse(function(api) {

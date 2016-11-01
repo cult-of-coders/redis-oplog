@@ -23,6 +23,22 @@ This will also give you the ability to make any database, data-source reactive, 
 - Additional support for reactivity namespacing, that can enable creating a chat app in Meteor like:
 
 ```
+Message.insert(doc, cb, {
+    namespace: 'thread-id'
+})
+
+```
+
+## Resources:
+- 
+- https://github.com/matb33/meteor-collection-hooks/blob/master/collection-hooks.js#L198
+
+## Merging scenarios:
+
+https://docs.google.com/document/d/1Cx-J7xwP9IlbEa54RiT_34GK4o8M6XpPieRvNPI_aUE/edit?usp=sharing
+
+
+```
 // inserting data
 Messages.insert(message, {namespace: ['thread-${threadId']}
 
