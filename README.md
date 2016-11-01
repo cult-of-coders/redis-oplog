@@ -35,7 +35,6 @@ Meteor.publishRedis('chat', function (threadId) {
 
 ## Some scraps, pls ignore.
 
-
 TODO:
 
 - Handle limit + sort

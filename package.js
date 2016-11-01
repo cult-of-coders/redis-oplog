@@ -22,6 +22,7 @@ Package.onUse(function(api) {
     'underscore',
     'matb33:collection-hooks@0.8.4',
     'tmeasday:check-npm-versions@0.3.1',
+    'dburles:mongo-collection-instances@0.3.5',
     'mongo'
   ]);
 
