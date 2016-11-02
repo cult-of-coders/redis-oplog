@@ -5,6 +5,8 @@
 
 Thanks for understanding!
 
+## LICENSE: MIT
+
 ## Install
 (Temporary like this until it will be published to atmosphere)
 
