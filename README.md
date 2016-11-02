@@ -8,8 +8,8 @@ Thanks for understanding!
 ## Install
 (Temporary like this until it will be published to atmosphere)
 
-// in meteor root
 ```
+// Inside your meteor root
 mkdir -p packages
 cd packages
 git clone https://github.com/cult-of-coders/redis-oplog
