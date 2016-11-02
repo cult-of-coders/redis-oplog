@@ -29,6 +29,10 @@ Messages.update(_id, message, {pushToRedis: false})
 Messages.remove(_id, {pushToRedis: false})
 
 // inserting data in a certain namespace(s)
+Meteor.publishWithRedis('name', function (args) {
+    return Collection.find(selector, options);
+}, {namespace}) // will only listen for changes in that namespace.
+
 Messages.insert(message, {namespace: ['xxx']})
 Messages.update(_id, message, {namespace: 'xxx'})
 Messages.remove(_id, {namespace: ['xxx', 'yyy']})
