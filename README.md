@@ -1,23 +1,38 @@
-**Work in progress. Not working. Not on atmosphere yet.**
+## Work in progress. 
+## Not working.
+## Not ready for testing
+## Not on atmosphere yet
+
+Thanks for understanding!
 
 ## Usage
 
 
 ```
 Meteor.publishWithRedis('name', function (args) {
-    return Collection.find();
+    return Collection.find(selector, options);
 })
 ```
 
 ```
-// inserting data
-Messages.insert(message, {namespace: ['thread-${threadId']}
+// inserting data the same way you are used to
+Messages.insert(message)
+Messages.update(_id, message)
+Messages.remove(_id)
 
-Meteor.publishRedis('chat', function (threadId) {
-    return Messages.find({threadId}, {}, {namespace: 'thread-${threadId}'});
-})
+// Does not offer support for upsert yet. You can do upsert, but it will not trigger reactivity with Redis.
+// Not hard to implement, but not the main focus right now
+
+// inserting data without reactivity
+Messages.insert(message, {pushToRedis: false})
+Messages.update(_id, message, {pushToRedis: false})
+Messages.remove(_id, {pushToRedis: false})
+
+// inserting data in a certain namespace(s)
+Messages.insert(message, {namespace: ['xxx']})
+Messages.update(_id, message, {namespace: 'xxx'})
+Messages.remove(_id, {namespace: ['xxx', 'yyy']})
 ```
-
 
 ## What ?
 
