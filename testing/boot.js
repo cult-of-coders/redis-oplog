@@ -1,14 +1,10 @@
 import { Mongo } from 'meteor/mongo';
-import enableReactivity from '../lib/collection.extension'
-import createPublication from '../lib/publication';
 
 const RedisCollection = new Mongo.Collection('test_redis_collection');
 
 export { RedisCollection };
 
 if (Meteor.isServer) {
-    enableReactivity(RedisCollection);
-
     RedisCollection.remove({});
 
     RedisCollection.insert({
@@ -35,8 +31,8 @@ if (Meteor.isServer) {
         game: 'chess'
     });
 
-    Meteor.publish('redis_collection', function (filters, options) {
-        createPublication(RedisCollection.find(filters, options))(this);
+    Meteor.publishWithRedis('redis_collection', function (filters, options) {
+        return RedisCollection.find(filters, options);
     });
 
     Meteor.methods({

@@ -5,8 +5,23 @@
 
 Thanks for understanding!
 
-## Usage
+## Install
+(Temporary like this until it will be published to atmosphere)
 
+// in meteor root
+```
+mkdir -p packages
+cd packages
+git clone https://github.com/cult-of-coders/redis-oplog
+meteor add cultofcoders:redis-oplog
+
+// Run tests
+meteor test-packages --driver-package practicalmeteor:mocha packages/redis-oplog
+
+// Current tests unreliable, they only work the first time, because of database fixtures
+```
+
+## Usage
 
 ```
 Meteor.publishWithRedis('name', function (args) {
