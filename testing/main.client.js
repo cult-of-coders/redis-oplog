@@ -91,7 +91,7 @@ describe('It should update data reactively', function () {
 
             Meteor.call('update', {_id: data[0]._id}, {
                $set: {
-                  score: 200
+                  score: Math.random()
                }
             });
          }
