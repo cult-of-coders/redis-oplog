@@ -1,7 +1,5 @@
 ## Work in progress. 
-## Not working.
-## Not ready for testing
-## Not on atmosphere yet
+## Not on atmosphere yet.
 
 Thanks for understanding!
 
@@ -26,7 +24,26 @@ meteor test-packages --driver-package practicalmeteor:mocha packages/redis-oplog
 ## Usage
 
 ```
+// in startup server file (ex: /imports/startup/server/redis.js
+import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
+
+// simple usage
+RedisOplog.init() // will work with 127.0.0.1:6379, the default
+
+// sets up the configuration parameters 
+// https://github.com/luin/ioredis#connect-to-redis
+// you can use Meteor.settings here as well.
+RedisOplog.init({
+    redis: {
+        port: 6379,          // Redis port
+        host: '127.0.0.1',   // Redis host
+    }
+});
+```
+
+```
 Meteor.publishWithRedis('name', function (args) {
+    // does not currently work with array of cursors.
     return Collection.find(selector, options);
 })
 ```
@@ -53,6 +70,15 @@ Meteor.publishWithRedis('name', function (args) {
 Messages.insert(message, {namespace: ['xxx']})
 Messages.update(_id, message, {namespace: 'xxx'})
 Messages.remove(_id, {namespace: ['xxx', 'yyy']})
+```
+
+```
+// By default, the namespace for:
+const Messages = new Mongo.Collection('messages');
+// is 'messages'
+
+// Updates & Removes make 2 publishes for each namespace.
+messages & messages::{updatedOrRemovedId}
 ```
 
 ## What ?
