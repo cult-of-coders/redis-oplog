@@ -105,7 +105,7 @@ By doing this you have a very specific layer of reactivity.
 
 The channel to which redis will push is: `thread.$threadId`
 
-Note: Even if you use channel, making a change to an _id will still push to `messages:$id`
+Note: Even if you use channel, making a change to an _id will still push to `messages::$id`
 
 ### Namespacing
 
@@ -138,7 +138,16 @@ Channel represents something unique. Namespace is something more broad.
 
 The channel to which redis will push is: `$companyId::messages`. Because messages is the name of the collection.
 
-Note: Even if you use namespace, making a change to an _id will still push to `messages:$id`
+Note: Even if you use namespace, making a change to an _id will still push to `messages::$id`
+
+### Advanced
+
+Multiple namespaces and channels and cursors.
+
+You can use multiple namespaces and channels when you do insert, and even when you return a publication, 
+and this even works with multiple cursors!
+
+Instead of namespace, use namespaces and provide array of strings. Same applies to channel, on insert and on publication return.
 
 ## What ?
 
@@ -165,7 +174,6 @@ This will also give you the ability to make any database, data-source reactive, 
 Message.insert(doc, cb, {
     namespace: 'thread-id'
 })
-
 ```
 
 ## Resources:
