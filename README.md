@@ -62,24 +62,83 @@ Messages.insert(message, {pushToRedis: false})
 Messages.update(_id, message, {pushToRedis: false})
 Messages.remove(_id, {pushToRedis: false})
 
+// remove & update. this will send an additional message to redis channel "messages::${id}"
+
 // inserting data in a certain namespace(s)
 Meteor.publishWithRedis('name', function (args) {
     return Collection.find(selector, options);
-}, {namespace}) // will only listen for changes in that namespace.
-
-Messages.insert(message, {namespace: ['xxx']})
-Messages.update(_id, message, {namespace: 'xxx'})
-Messages.remove(_id, {namespace: ['xxx', 'yyy']})
+}) // will only listen for changes in that namespace.
 ```
 
-```
-// By default, the namespace for:
-const Messages = new Mongo.Collection('messages');
-// is 'messages'
+## Fine-Tuning
 
-// Updates & Removes make 2 publishes for each namespace.
-messages & messages::{updatedOrRemovedId}
+We introduce several concepts when it comes to making live-data truly scalable.
+
+### Direct Processing
+
+First concept is direct listening. If you return a cursor, or an array of cursors,
+that have as filters `_id` or `_id: {$in: ids}` then it overrides everything and will only
+listen to changes for those separate channels only. This is the most performant you can get.
+
+### Custom Channels
+
+You can create publications that listen to a certain channel or channels:
 ```
+Meteor.publishWithRedis('messages_by_thread', function (threadId) {
+    // perform additional security checks here
+    
+    return {
+        cursor: Messages.find(selector, options),
+        channel: `thread.${threadId}`
+    }
+})
+```
+
+Now if you insert into Messages like you are used to, you will not see any changes, however you need to do:
+```
+Messages.insert(data, {
+    channel: `thread.` + threadId
+})
+```
+
+By doing this you have a very specific layer of reactivity.
+
+The channel to which redis will push is: `thread.$threadId`
+
+Note: Even if you use channel, making a change to an _id will still push to `messages:$id`
+
+### Namespacing
+
+Did I lose you yet ?
+
+Namespacing is a concept a bit different from channels. Because it will be collection aware. And it's purpose is to enable
+multi-tenant systems. Let's dive into an example:
+
+```
+Meteor.publishWithRedis('users', function () {
+    // get the company for this.userId
+    
+    return {
+        cursor: Users.findByCompany(companyId),
+        namespace: companyId
+    }
+})
+```
+
+You would still have to be careful when you do inserts:
+```
+Messages.insert(data, {
+    namespace: companyId
+})
+```
+
+How is it different than channels ? And why did we separate these concepts ?
+
+Channel represents something unique. Namespace is something more broad.
+
+The channel to which redis will push is: `$companyId::messages`. Because messages is the name of the collection.
+
+Note: Even if you use namespace, making a change to an _id will still push to `messages:$id`
 
 ## What ?
 
