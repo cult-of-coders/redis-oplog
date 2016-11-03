@@ -43,8 +43,8 @@ RedisOplog.init({
 
 ```
 Meteor.publishWithRedis('name', function (args) {
-    // does not currently work with array of cursors.
     return Collection.find(selector, options);
+    // you can also return an array of cursors
 })
 ```
 
