@@ -14,9 +14,10 @@ describe('It should update data reactively', function () {
       cursor.observeChanges({
          added(docId, doc) {
             if (doc.title === 'E') {
-               Meteor.call('remove', {_id: docId});
                handle.stop();
-               done();
+               Meteor.call('remove', {_id: docId}, function () {
+                  done();
+               });
             }
          }
       });
@@ -24,7 +25,6 @@ describe('It should update data reactively', function () {
       Tracker.autorun((c) => {
          if (handle.ready()) {
             c.stop();
-
             let data = cursor.fetch();
 
             assert.lengthOf(data, 3);
@@ -36,7 +36,6 @@ describe('It should update data reactively', function () {
          }
       });
    });
-
 
    it('Should detect a removal', function (done) {
       let handle = Meteor.subscribe('redis_collection', {
@@ -55,14 +54,17 @@ describe('It should update data reactively', function () {
          }
       });
 
-      Tracker.autorun((c) => {
-         if (handle.ready()) {
-            c.stop();
+      Meteor.call('create', {
+         game: 'chess',
+         title: 'E'
+      }, (err, _id) => {
+         Tracker.autorun((c) => {
+            if (handle.ready()) {
+               c.stop();
 
-            let data = cursor.fetch();
-
-            Meteor.call('remove', {_id: data[0]._id});
-         }
+               Meteor.call('remove', {_id});
+            }
+         });
       });
    });
 
@@ -86,7 +88,6 @@ describe('It should update data reactively', function () {
       Tracker.autorun((c) => {
          if (handle.ready()) {
             c.stop();
-
             let data = cursor.fetch();
 
             Meteor.call('update', {_id: data[0]._id}, {

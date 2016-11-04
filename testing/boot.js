@@ -21,7 +21,7 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         'create'(item) {
-            RedisCollection.insert(item);
+            return RedisCollection.insert(item);
         },
         'update'(selectors, modifier) {
             RedisCollection.update(selectors, modifier);
