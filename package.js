@@ -36,6 +36,7 @@ Package.onTest(function (api) {
 
     api.use('ecmascript');
     api.use('tracker');
+    api.use('mongo');
 
     api.use('practicalmeteor:mocha');
     api.use('practicalmeteor:chai');

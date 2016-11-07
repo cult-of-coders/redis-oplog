@@ -118,7 +118,6 @@ describe('It should update data reactively', function () {
 
          cursor.observeChanges({
             changed(docId, doc) {
-               console.log(docId, doc);
                handle.stop();
 
                assert.equal(doc.nested.b, 2);
@@ -134,7 +133,6 @@ describe('It should update data reactively', function () {
             if (handle.ready()) {
                c.stop();
 
-               console.log(docId);
                Meteor.call('update', {_id: docId}, {
                   $set: {
                      'nested.c.b': 1,
