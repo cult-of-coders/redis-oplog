@@ -1,7 +1,7 @@
-## Work in progress. 
-## Not on atmosphere yet.
+Welcome to Redis Oplog
+======================
 
-Thanks for understanding!
+[![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog)
 
 ## LICENSE: MIT
 

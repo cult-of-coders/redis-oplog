@@ -1,0 +1,13 @@
+sudo: false
+services:
+  - redis-server
+language: node_js
+node_js:
+  - "4.4.7"
+ 
+before_install:
+  - curl https://install.meteor.com | /bin/sh
+  - export PATH="$HOME/.meteor:$PATH"
+ 
+script:
+  - meteor --once test-packages --driver-package dispatch:mocha-phantomjs ./

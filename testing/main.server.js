@@ -1,6 +1,7 @@
 import '../lib/utils/testing';
 import '../lib/cache/testing';
 import '../lib/processors/testing';
+import '../lib/redis/testing';
 
 import { RedisCollection } from './boot';
 
