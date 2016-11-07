@@ -98,4 +98,52 @@ describe('It should update data reactively', function () {
          }
       });
    });
+
+   it('Should detect an update nested', function (done) {
+      let handle = Meteor.subscribe('redis_collection', {
+         game: 'chess',
+      });
+
+      Meteor.call('create', {
+         game: 'chess',
+         nested: {
+            a: 1,
+            b: 1,
+            c: {
+               a: 1
+            }
+         }
+      }, (err, docId) => {
+         const cursor = RedisCollection.find();
+
+         cursor.observeChanges({
+            changed(docId, doc) {
+               console.log(docId, doc);
+               handle.stop();
+
+               assert.equal(doc.nested.b, 2);
+               assert.equal(doc.nested.c.b, 1);
+               assert.equal(doc.nested.c.a, 1);
+               assert.equal(doc.nested.d, 1);
+
+               done();
+            }
+         });
+
+         Tracker.autorun((c) => {
+            if (handle.ready()) {
+               c.stop();
+
+               console.log(docId);
+               Meteor.call('update', {_id: docId}, {
+                  $set: {
+                     'nested.c.b': 1,
+                     'nested.b': 2,
+                     'nested.d': 1
+                  }
+               });
+            }
+         });
+      });
+   });
 });
