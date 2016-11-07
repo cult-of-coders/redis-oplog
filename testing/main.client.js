@@ -125,6 +125,8 @@ describe('It should update data reactively', function () {
                assert.equal(doc.nested.c.a, 1);
                assert.equal(doc.nested.d, 1);
 
+               Meteor.call('remove', {_id: docId});
+
                done();
             }
          });
