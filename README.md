@@ -24,7 +24,7 @@ meteor test-packages --driver-package practicalmeteor:mocha packages/redis-oplog
 ## Usage
 
 ```
-// in startup server file (ex: /imports/startup/server/redis.js
+// in startup server file (ex: /imports/startup/server/redis.js)
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 
 // simple usage
