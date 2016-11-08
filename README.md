@@ -3,22 +3,15 @@ Welcome to Redis Oplog
 
 [![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog)
 
+^ Build may be failing, because there is an issue when running tests with redis npm module.
+
 ## LICENSE: MIT
 
 ## Install
 (Temporary like this until it will be published to atmosphere)
 
 ```
-// Inside your meteor root
-mkdir -p packages
-cd packages
-git clone https://github.com/cult-of-coders/redis-oplog
 meteor add cultofcoders:redis-oplog
-
-// Run tests
-meteor test-packages --driver-package practicalmeteor:mocha packages/redis-oplog
-
-// Current tests unreliable, they only work the first time, because of database fixtures
 ```
 
 ## Usage
@@ -37,7 +30,9 @@ RedisOplog.init({
     redis: {
         port: 6379,          // Redis port
         host: '127.0.0.1',   // Redis host
-    }
+    },
+    debug: false, // default is false,
+    overridePublishFunction: false // if true, replaces .publish with .publishWithRedis
 });
 ```
 
@@ -54,6 +49,8 @@ Messages.insert(message)
 Messages.update(_id, message)
 Messages.remove(_id)
 
+// remove & update. this will send an additional message to redis channel "messages::${id}"
+
 // Does not offer support for upsert yet. You can do upsert, but it will not trigger reactivity with Redis.
 // Not hard to implement, but not the main focus right now
 
@@ -62,12 +59,6 @@ Messages.insert(message, {pushToRedis: false})
 Messages.update(_id, message, {pushToRedis: false})
 Messages.remove(_id, {pushToRedis: false})
 
-// remove & update. this will send an additional message to redis channel "messages::${id}"
-
-// inserting data in a certain namespace(s)
-Meteor.publishWithRedis('name', function (args) {
-    return Collection.find(selector, options);
-}) // will only listen for changes in that namespace.
 ```
 
 ## Fine-Tuning
@@ -109,8 +100,6 @@ Note: Even if you use channel, making a change to an _id will still push to `mes
 
 ### Namespacing
 
-Did I lose you yet ?
-
 Namespacing is a concept a bit different from channels. Because it will be collection aware. And it's purpose is to enable
 multi-tenant systems. Let's dive into an example:
 
@@ -148,37 +137,6 @@ You can use multiple namespaces and channels when you do insert, and even when y
 and this even works with multiple cursors!
 
 Instead of namespace, use namespaces and provide array of strings. Same applies to channel, on insert and on publication return.
-
-## What ?
-
-This is a replacement for MongoDB's oplog with Pub/Sub Redis.
-
-## Why ?
-
-Reactivity will be triggered by a mutation, something that happens in the app.
-This enables ability to fine-tune the level of reactivity and we can even disable it, if we want to make updates in large-batches,
-like migrations or something that does not require reactivity.
-
-Other mutations outside the app can still trigger reactivity as long as they communicate with Redis. Will offer documentation and support for that.
-
-This will also give you the ability to make any database, data-source reactive, by applying similar principles.
-
-## Data Flow:
-
-- Insert/Update/Remove => publish to Redis "collectionName::*"
-- Publications subscribe to "collectionName::*" and process changes for the client
-- We will also have dedicated channels for publications that filter by _id "collectionName::_id"
-- Additional support for reactivity namespacing, that can enable creating a chat app in Meteor like:
-
-```
-Message.insert(doc, cb, {
-    namespace: 'thread-id'
-})
-```
-
-## Resources:
-- 
-- https://github.com/matb33/meteor-collection-hooks/blob/master/collection-hooks.js#L198
 
 ## Merging scenarios:
 
