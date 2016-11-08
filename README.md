@@ -11,13 +11,13 @@ Tracking issue: https://github.com/meteor/meteor/issues/8028
 ## Install
 (Temporary like this until it will be published to atmosphere)
 
-```
+```bash
 meteor add cultofcoders:redis-oplog
 ```
 
 ## Usage
 
-```
+```js
 // in startup server file (ex: /imports/startup/server/redis.js)
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 
@@ -37,14 +37,14 @@ RedisOplog.init({
 });
 ```
 
-```
+```js
 Meteor.publishWithRedis('name', function (args) {
     return Collection.find(selector, options);
     // you can also return an array of cursors
 })
 ```
 
-```
+```js
 // inserting data the same way you are used to
 Messages.insert(message)
 Messages.update(_id, message)
@@ -75,7 +75,7 @@ listen to changes for those separate channels only. This is the most performant 
 ### Custom Channels
 
 You can create publications that listen to a certain channel or channels:
-```
+```js
 Meteor.publishWithRedis('messages_by_thread', function (threadId) {
     // perform additional security checks here
     
@@ -87,7 +87,7 @@ Meteor.publishWithRedis('messages_by_thread', function (threadId) {
 ```
 
 Now if you insert into Messages like you are used to, you will not see any changes, however you need to do:
-```
+```js
 Messages.insert(data, {
     channel: `thread.` + threadId
 })
@@ -104,7 +104,7 @@ Note: Even if you use channel, making a change to an _id will still push to `mes
 Namespacing is a concept a bit different from channels. Because it will be collection aware. And it's purpose is to enable
 multi-tenant systems. Let's dive into an example:
 
-```
+```js
 Meteor.publishWithRedis('users', function () {
     // get the company for this.userId
     
@@ -116,7 +116,7 @@ Meteor.publishWithRedis('users', function () {
 ```
 
 You would still have to be careful when you do inserts:
-```
+```js
 Messages.insert(data, {
     namespace: companyId
 })
