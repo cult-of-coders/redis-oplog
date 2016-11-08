@@ -9,7 +9,6 @@ Tracking issue: https://github.com/meteor/meteor/issues/8028
 ## LICENSE: MIT
 
 ## Install
-(Temporary like this until it will be published to atmosphere)
 
 ```bash
 meteor add cultofcoders:redis-oplog
