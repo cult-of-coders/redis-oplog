@@ -133,6 +133,46 @@ and this even works with multiple cursors!
 
 Instead of namespace, use namespaces and provide array of strings. Same applies to channel, on insert and on publication return.
 
+### Synthetic Mutation
+
+This is to emulate a write to the database that you don't actually need persisted. For example you have a chat, and you want
+to transmit to the other user that he is typing, or you are dragging something and you want the other user to see the dragging
+happening live.
+
+```
+import { SyntheticMutation } from 'meteor/cultofcoders:redis-oplog';
+
+SyntheticMutation(channel).update(messageId, {
+    someField: {
+        deepMerging: 'willHappen'
+    }
+})
+
+SyntheticMutation(channel).remove(_id);
+SyntheticMutation(channel).insert(dataWithId);
+
+// works with Mongo.Collection instances
+SyntheticMutation(MongoCollectionInstance)
+
+// if you fine-tuned the reactivity for example and you listen to message son a thread
+
+SyntheticMutation(`thread.${threadId}`).update(_id, {
+    typing: {
+        [userId]: true
+    }
+});
+```
+
+Warning! If your publication contains "fields" options. It must contain:
+```
+{
+    fields: { text: 1, typing: 1 }
+}
+```
+
+Even if the fields don't actually exist in the db. The reason we do it like this, is to allow control over access in the synthetic events.
+For some people you may want to see them, others you do not, depending on their role.
+
 ## Merging scenarios:
 
 https://docs.google.com/document/d/1Cx-J7xwP9IlbEa54RiT_34GK4o8M6XpPieRvNPI_aUE/edit?usp=sharing
