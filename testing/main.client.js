@@ -11,9 +11,10 @@ describe('It should update data reactively', function () {
 
       const cursor = RedisCollection.find();
 
-      cursor.observeChanges({
+      const observeChangesHandle = cursor.observeChanges({
          added(docId, doc) {
             if (doc.title === 'E') {
+               observeChangesHandle.stop();
                handle.stop();
                Meteor.call('remove', {_id: docId}, function () {
                   done();
@@ -47,8 +48,9 @@ describe('It should update data reactively', function () {
 
       const cursor = RedisCollection.find();
 
-      cursor.observeChanges({
+      const observeChangesHandle = cursor.observeChanges({
          removed(docId) {
+            observeChangesHandle.stop();
             handle.stop();
             done();
          }
@@ -78,8 +80,9 @@ describe('It should update data reactively', function () {
 
       const cursor = RedisCollection.find();
 
-      cursor.observeChanges({
+      const observeChangesHandle = cursor.observeChanges({
          changed(docId) {
+            observeChangesHandle.stop();
             handle.stop();
             done();
          }
@@ -116,8 +119,9 @@ describe('It should update data reactively', function () {
       }, (err, docId) => {
          const cursor = RedisCollection.find();
 
-         cursor.observeChanges({
+         const observeChangesHandle = cursor.observeChanges({
             changed(docId, doc) {
+               observeChangesHandle.stop();
                handle.stop();
 
                assert.equal(doc.nested.b, 2);

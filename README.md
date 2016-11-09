@@ -3,16 +3,10 @@ Welcome to Redis Oplog
 
 [![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog)
 
-^ Build may be failing, because there is an issue when running tests with redis npm module.
-Tracking issue: https://github.com/meteor/meteor/issues/8028
-
-## LICENSE: MIT
-
 ## Install
 
 ```bash
 meteor add cultofcoders:redis-oplog
-meteor npm i -S dot-object@1.5.4 sift@3.2.6 redis@2.6.3
 ```
 
 ## Usage
@@ -142,3 +136,5 @@ Instead of namespace, use namespaces and provide array of strings. Same applies 
 ## Merging scenarios:
 
 https://docs.google.com/document/d/1Cx-J7xwP9IlbEa54RiT_34GK4o8M6XpPieRvNPI_aUE/edit?usp=sharing
+
+## LICENSE: MIT
