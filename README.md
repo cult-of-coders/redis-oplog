@@ -12,6 +12,7 @@ Tracking issue: https://github.com/meteor/meteor/issues/8028
 
 ```bash
 meteor add cultofcoders:redis-oplog
+meteor npm i -S dot-object@1.5.4 sift@3.2.6 redis@2.6.3
 ```
 
 ## Usage
