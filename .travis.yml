@@ -6,11 +6,8 @@ node_js:
   - "4.4.7"
  
 before_install:
-  - curl https://install.meteor.com | /bin/sh
+  - curl https://install.meteor.com/?release=1.4.1.3 | /bin/sh
   - export PATH="$HOME/.meteor:$PATH"
-
-before_script:
-  - npm install -g redis@2.6.3 dot-object@1.5.4 sift@3.2.6
 
 script:
   - meteor --once test-packages --driver-package dispatch:mocha-phantomjs ./
