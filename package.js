@@ -10,12 +10,6 @@ Package.describe({
     documentation: 'README.md'
 });
 
-Npm.depends({
-    'sift': '3.2.6',
-    'dot-object': '1.5.4',
-    'redis': '2.6.3',
-});
-
 Package.onUse(function (api) {
     api.versionsFrom('1.4.2');
     api.use([
