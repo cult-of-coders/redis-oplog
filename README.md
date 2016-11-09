@@ -3,6 +3,12 @@ Welcome to Redis Oplog
 
 [![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog)
 
+
+## What ?
+
+A full re-implementation of the Meteor's MongoDB oplog tailing. This time, reactivity is controlled by the app, opening a new world
+into building reactive applications, highly performant chat apps, games, reactivity for non-persistent data.
+
 ## Install
 
 ```bash
