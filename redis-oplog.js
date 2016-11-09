@@ -8,9 +8,10 @@ checkNpmVersions({
 }, 'cultofcoders:redis-oplog');
 
 import init from './lib/init';
+import SyntheticMutation from './lib/mongo/syntheticMutation';
 
 const RedisOplog = {
     init
 };
 
-export { RedisOplog }
+export { RedisOplog, SyntheticMutation }
