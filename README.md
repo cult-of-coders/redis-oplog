@@ -9,6 +9,8 @@ Welcome to Redis Oplog
 A full re-implementation of the Meteor's MongoDB oplog tailing. This time, reactivity is controlled by the app, opening a new world
 into building reactive applications, highly performant chat apps, games, reactivity for non-persistent data.
 
+Incrementally adoptable & works with your current Meteor project.
+
 ## Install
 
 ```bash
