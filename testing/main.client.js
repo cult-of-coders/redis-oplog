@@ -1,6 +1,41 @@
 import { RedisCollection } from './boot';
 
 describe('It should update data reactively', function () {
+   it('Should detect a removal', function (done) {
+      let handle = Meteor.subscribe('redis_collection', {
+         game: 'chess',
+      }, {
+         sort: {score: -1},
+         limit: 5
+      });
+
+      const cursor = RedisCollection.find();
+
+      let idOfInterest = null;
+      const observeChangesHandle = cursor.observeChanges({
+         removed(docId) {
+            if (docId == idOfInterest) {
+               observeChangesHandle.stop();
+               handle.stop();
+               done();
+            }
+         }
+      });
+
+      Meteor.call('create', {
+         game: 'chess',
+         title: 'E'
+      }, (err, _id) => {
+         Tracker.autorun((c) => {
+            if (handle.ready()) {
+               c.stop();
+               idOfInterest = _id;
+               Meteor.call('remove', {_id});
+            }
+         });
+      });
+   });
+
    it('Should detect an insert', function (done) {
       let handle = Meteor.subscribe('redis_collection', {
          game: 'chess',
@@ -17,6 +52,7 @@ describe('It should update data reactively', function () {
                observeChangesHandle.stop();
                handle.stop();
                Meteor.call('remove', {_id: docId}, function () {
+                  console.log('exit insert');
                   done();
                });
             }
@@ -35,38 +71,6 @@ describe('It should update data reactively', function () {
                title: 'E'
             });
          }
-      });
-   });
-
-   it('Should detect a removal', function (done) {
-      let handle = Meteor.subscribe('redis_collection', {
-         game: 'chess',
-      }, {
-         sort: {score: -1},
-         limit: 5
-      });
-
-      const cursor = RedisCollection.find();
-
-      const observeChangesHandle = cursor.observeChanges({
-         removed(docId) {
-            observeChangesHandle.stop();
-            handle.stop();
-            done();
-         }
-      });
-
-      Meteor.call('create', {
-         game: 'chess',
-         title: 'E'
-      }, (err, _id) => {
-         Tracker.autorun((c) => {
-            if (handle.ready()) {
-               c.stop();
-
-               Meteor.call('remove', {_id});
-            }
-         });
       });
    });
 
