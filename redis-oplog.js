@@ -1,4 +1,3 @@
-import './lib/meteor.extension';
 import { checkNpmVersions } from 'meteor/tmeasday:check-npm-versions';
 
 checkNpmVersions({
