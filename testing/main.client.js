@@ -52,7 +52,6 @@ describe('It should update data reactively', function () {
                observeChangesHandle.stop();
                handle.stop();
                Meteor.call('remove', {_id: docId}, function () {
-                  console.log('exit insert');
                   done();
                });
             }

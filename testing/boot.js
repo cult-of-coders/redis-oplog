@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { _ } from 'meteor/underscore';
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 
 if (Meteor.isServer) {
@@ -16,18 +17,21 @@ export { RedisCollection };
 
 if (Meteor.isServer) {
     Meteor.publishWithRedis('redis_collection', function (filters, options) {
-        return RedisCollection.find(filters, options);
+        return RedisCollection.find(filters, _.extend({}, options, {
+            namespace: 'x'
+        }));
     });
 
     Meteor.methods({
         'create'(item) {
-            return RedisCollection.insert(item);
+            return RedisCollection.insert(item, {namespace: 'x'});
         },
         'update'(selectors, modifier) {
-            RedisCollection.update(selectors, modifier);
+            RedisCollection.update(selectors, modifier, {namespace: 'x'});
         },
         'remove'(selectors) {
-            RedisCollection.remove(selectors);
+            RedisCollection.remove(selectors, {namespace: 'x'});
         }
     })
 }
+
