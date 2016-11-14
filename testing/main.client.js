@@ -26,13 +26,8 @@ describe('It should update data reactively', function () {
          game: 'chess',
          title: 'E'
       }, (err, _id) => {
-         Tracker.autorun((c) => {
-            if (handle.ready()) {
-               c.stop();
-               idOfInterest = _id;
-               Meteor.call('remove', {_id});
-            }
-         });
+         idOfInterest = _id;
+         Meteor.call('remove', {_id});
       });
    });
 
