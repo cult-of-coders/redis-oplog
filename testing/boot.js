@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { _ } from 'meteor/underscore';
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 
 if (Meteor.isServer) {
@@ -6,7 +7,8 @@ if (Meteor.isServer) {
         redis: {
             port: 6379,          // Redis port
             host: '127.0.0.1',   // Redis host
-        }
+        },
+        debug: true
     });
 }
 
@@ -15,19 +17,22 @@ const RedisCollection = new Mongo.Collection('test_redis_collection');
 export { RedisCollection };
 
 if (Meteor.isServer) {
+    const opts = {namespace: 'x'};
+
     Meteor.publishWithRedis('redis_collection', function (filters, options) {
-        return RedisCollection.find(filters, options);
+        return RedisCollection.find(filters, _.extend({}, options, opts));
     });
 
     Meteor.methods({
         'create'(item) {
-            return RedisCollection.insert(item);
+            return RedisCollection.insert(item, opts);
         },
         'update'(selectors, modifier) {
-            RedisCollection.update(selectors, modifier);
+            RedisCollection.update(selectors, modifier, opts);
         },
         'remove'(selectors) {
-            RedisCollection.remove(selectors);
+            RedisCollection.remove(selectors, opts);
         }
     })
 }
+
