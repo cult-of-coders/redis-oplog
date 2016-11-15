@@ -39,7 +39,11 @@ RedisOplog.init({
 });
 ```
 
+## Basic Usage
+
 ```js
+// or Meteor.publish if you chose overridePublishFunction as true
+
 Meteor.publishWithRedis('name', function (args) {
     return Collection.find(selector, options);
     // you can also return an array of cursors
@@ -52,27 +56,31 @@ Messages.insert(message)
 Messages.update(_id, message)
 Messages.remove(_id)
 
-// remove & update. this will send an additional message to redis channel "messages::${id}"
+// upsert not supported for reactivity
+```
 
-// Does not offer support for upsert yet. You can do upsert, but it will not trigger reactivity with Redis.
-// Not hard to implement, but not the main focus right now
+## Stopping Reactivity
 
+We extend the mutators `insert`, `update` and `remove` to allow an extra argument. (Note: if you use callbacks it will still work if you put these options after the callback)
+
+```
 // inserting data without reactivity
 Messages.insert(message, {pushToRedis: false})
 Messages.update(_id, message, {pushToRedis: false})
 Messages.remove(_id, {pushToRedis: false})
-
 ```
 
 ## Fine-Tuning
 
 We introduce several concepts when it comes to making live-data truly scalable.
+By default when you do insert and update, depending on the collection's name, we push
+to `collectionName` channel in redis and also to `collectionName::_id` for _id represents
+the affected document.
 
 ### Direct Processing
 
-First concept is direct listening. If you return a cursor, or an array of cursors,
-that have as filters `_id` or `_id: {$in: ids}` then it overrides everything and will only
-listen to changes for those separate channels only. This is the most performant you can get.
+If you return a cursor, or an array of cursors, that have as filters `_id` or `_id: {$in: ids}` then it overrides 
+everything and will only listen to changes for those separate channels only. This will be very performant.
 
 ### Custom Channels
 
@@ -81,97 +89,116 @@ You can create publications that listen to a certain channel or channels:
 Meteor.publishWithRedis('messages_by_thread', function (threadId) {
     // perform additional security checks here
     
-    return {
-        cursor: Messages.find(selector, options),
-        channel: `thread.${threadId}`
-    }
+    return Messages.find(selector, {
+        channel: 'threads::' + threadId
+    }),
 })
+
+// you can use any string convetion you like for naming your channels.
 ```
 
-Now if you insert into Messages like you are used to, you will not see any changes, however you need to do:
+Now if you insert into Messages like you are used to, you will not see any changes. Because
+the default channel it will push to is 'messages', but we are listening to `threads::${threadId}`, so 
+the solution is this:
+
 ```js
 Messages.insert(data, {
-    channel: `thread.` + threadId
+    channel: `threads::` + threadId
 })
+// works the same with update/remove
 ```
 
 By doing this you have a very specific layer of reactivity.
-
-The channel to which redis will push is: `thread.$threadId`
 
 Note: Even if you use channel, making a change to an _id will still push to `messages::$id`
 
 ### Namespacing
 
 Namespacing is a concept a bit different from channels. Because it will be collection aware. And it's purpose is to enable
-multi-tenant systems. Let's dive into an example:
+multi-tenant systems.
 
 ```js
 Meteor.publishWithRedis('users', function () {
     // get the company for this.userId
     
-    return {
-        cursor: Users.findByCompany(companyId),
-        namespace: companyId
-    }
+    return Users.find({companyId}, {namespace: 'company::' + companyId})
 })
 ```
 
-You would still have to be careful when you do inserts:
 ```js
-Messages.insert(data, {
+Users.insert(data, {
     namespace: companyId
 })
 ```
 
-How is it different than channels ? And why did we separate these concepts ?
-
-Channel represents something unique. Namespace is something more broad.
-
-The channel to which redis will push is: `$companyId::messages`. Because messages is the name of the collection.
+The channel to which redis will push is: `users::${companyId}`.
 
 Note: Even if you use namespace, making a change to an _id will still push to `messages::$id`
 
-### Advanced
+### Allowed Options
 
-Multiple namespaces and channels and cursors.
+```js
+{
+    pushToRedis: false // disable reactivity
+    channel: '' // custom channel string, it will push to channel name
+    channels: [] // array of strings, it will push to those
+    namespace: '' // custom namespace
+    namespaces: [] // array of strings, it will push to collectionName::namespace
+}
+```
 
-You can use multiple namespaces and channels when you do insert, and even when you return a publication, 
-and this even works with multiple cursors!
+`channel`, `channels`, `namespace`, `namespaces` are also allowed as options when you return a cursor.
 
-Instead of namespace, use namespaces and provide array of strings. Same applies to channel, on insert and on publication return.
+### Fallback to polling
+
+If you chosen to override the default behavior "publish"
+```js
+Meteor.publish('users', function () {
+    // get the company for this.userId
+    
+    return Users.find({
+        companyId
+    }, {
+        disableOplog: true,
+        pollingIntervalMs: 20000 // poll every 20s
+    })
+})
+```
 
 ### Synthetic Mutation
 
-This is to emulate a write to the database that you don't actually need persisted. For example you have a chat, and you want
-to transmit to the other user that he is typing, or you are dragging something and you want the other user to see the dragging
-happening live.
+This is to emulate a write to the database that you don't actually need persisted. Basically,
+your publication would behave as if an actual update happened in the database.
 
-```
+You will use this for showing live things that happen, things that you don't want saved. 
+
+For example you have a chat, and you want to transmit to the other user that he is typing his message.
+The limit of using synthetic mutations is bound only to your imagination, it enables reactivity for non-persistent data.
+
+```js
 import { SyntheticMutation } from 'meteor/cultofcoders:redis-oplog';
 
-SyntheticMutation(channel).update(messageId, {
+SyntheticMutation(channelString).update(messageId, {
     someField: {
         deepMerging: 'willHappen'
     }
 })
 
-SyntheticMutation(channel).remove(_id);
-SyntheticMutation(channel).insert(dataWithId);
+SyntheticMutation(channelString).remove(_id);
+SyntheticMutation(channelString).insert(dataWithId);
 
-// works with Mongo.Collection instances
-SyntheticMutation(MongoCollectionInstance)
+// also accepts with Mongo.Collection instances
+SyntheticMutation(Messages).insert({text: 'Hello'})
 
 // if you fine-tuned the reactivity for example and you listen to message son a thread
-
-SyntheticMutation(`thread.${threadId}`).update(_id, {
+SyntheticMutation(`threads::${threadId}`).update(threadId, {
     typing: {
         [userId]: true
     }
 });
 ```
 
-Warning! If your publication contains "fields" options. It must contain:
+Warning! If your publication contains "fields" options.
 ```
 {
     fields: { text: 1, typing: 1 }
@@ -180,6 +207,10 @@ Warning! If your publication contains "fields" options. It must contain:
 
 Even if the fields don't actually exist in the db. The reason we do it like this, is to allow control over access in the synthetic events.
 For some people you may want to see them, others you do not, depending on their role.
+
+## Publish Composite
+
+It works with publishComposite package out of the box, you just need to install it and that's it. It will use Redis as the oplog.
 
 ## Merging scenarios:
 
