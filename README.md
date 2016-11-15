@@ -210,9 +210,9 @@ For some people you may want to see them, others you do not, depending on their 
 
 ## Publish Composite
 
-It works with publishComposite package out of the box, you just need to install it and that's it. It will use Redis as the oplog.
+It works with [publish composite package](https://github.com/englue/meteor-publish-composite) out of the box, you just need to install it and that's it. It will use Redis as the oplog.
 
-## Merging scenarios:
+## Merging scenarios
 
 https://docs.google.com/document/d/1Cx-J7xwP9IlbEa54RiT_34GK4o8M6XpPieRvNPI_aUE/edit?usp=sharing
 
