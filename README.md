@@ -133,7 +133,7 @@ Users.insert(data, {
 
 The channel to which redis will push is: `users::${companyId}`.
 
-Note: Even if you use namespace, making a change to an _id will still push to `messages::$id`
+Note: Even if you use namespace, making a change (update/remove) to an _id will still push to `users::${id}`
 
 ### Allowed Options
 
