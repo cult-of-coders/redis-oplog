@@ -18,6 +18,8 @@ meteor add cultofcoders:redis-oplog
 
 ## Usage
 
+Import this before anything else server-side.
+
 ```js
 // in startup server file (ex: /imports/startup/server/redis.js)
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
