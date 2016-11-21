@@ -18,6 +18,7 @@ export { RedisCollection };
 
 if (Meteor.isServer) {
     const opts = {namespace: 'x'};
+    RedisCollection.getRedisOptions(() => opts);
 
     RedisCollection.allow({
       insert: () => true,
@@ -36,13 +37,13 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         'create'(item) {
-            return RedisCollection.insert(item, opts);
+            return RedisCollection.insert(item);
         },
         'update'(selectors, modifier) {
-            RedisCollection.update(selectors, modifier, opts);
+            RedisCollection.update(selectors, modifier);
         },
         'remove'(selectors) {
-            RedisCollection.remove(selectors, opts);
+            RedisCollection.remove(selectors);
         }
     })
 }
