@@ -150,4 +150,106 @@ describe('It should update data reactively', function () {
             });
         });
     });
+
+
+    it('Should detect a removal from client side', function (done) {
+        let handle = Meteor.subscribe('redis_collection', {
+            game: 'chess',
+        }, {
+            sort: {score: -1},
+            limit: 5
+        });
+
+        const cursor = RedisCollection.find();
+
+        let idOfInterest = null;
+        const observeChangesHandle = cursor.observeChanges({
+            removed(docId) {
+                if (docId == idOfInterest) {
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    done();
+                }
+            }
+        });
+
+        Meteor.call('create', {
+            game: 'chess',
+            title: 'E'
+        }, (err, _id) => {
+            idOfInterest = _id;
+            setTimeout(() => {
+                RedisCollection.remove({_id});
+            }, 100)
+        });
+    });
+
+    it('Should detect an insert from client side', function (done) {
+        let handle = Meteor.subscribe('redis_collection', {
+            game: 'chess',
+        }, {
+            sort: {score: -1},
+            limit: 5
+        });
+
+        const cursor = RedisCollection.find();
+
+        const observeChangesHandle = cursor.observeChanges({
+            added(docId, doc) {
+                if (doc.title === 'E') {
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    Meteor.call('remove', {_id: docId}, function () {
+                        done();
+                    });
+                }
+            }
+        });
+
+        Tracker.autorun((c) => {
+            if (handle.ready()) {
+                c.stop();
+                let data = cursor.fetch();
+
+                assert.lengthOf(data, 3);
+
+                RedisCollection.insert({
+                    game: 'chess',
+                    title: 'E'
+                });
+            }
+        });
+    });
+
+    it('Should detect an update from client side', function (done) {
+        let handle = Meteor.subscribe('redis_collection', {
+            game: 'chess',
+        }, {
+            sort: {score: -1},
+            limit: 5
+        });
+
+        const cursor = RedisCollection.find();
+
+        const observeChangesHandle = cursor.observeChanges({
+            changed(docId) {
+                observeChangesHandle.stop();
+                handle.stop();
+                done();
+            }
+        });
+
+        Tracker.autorun((c) => {
+            if (handle.ready()) {
+                c.stop();
+                let data = cursor.fetch();
+
+                RedisCollection.update({_id: data[0]._id}, {
+                    $set: {
+                        score: Math.random()
+                    }
+                });
+            }
+        });
+    });
 });

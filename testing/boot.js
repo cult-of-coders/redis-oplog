@@ -18,6 +18,18 @@ export { RedisCollection };
 
 if (Meteor.isServer) {
     const opts = {namespace: 'x'};
+    RedisCollection.getRedisOptions(() => opts);
+
+    RedisCollection.allow({
+      insert: () => true,
+      update: () => true,
+      remove: () => true,
+    })
+    RedisCollection.deny({
+      insert: () => false,
+      update: () => false,
+      remove: () => false,
+    })
 
     Meteor.publishWithRedis('redis_collection', function (filters, options) {
         return RedisCollection.find(filters, _.extend({}, options, opts));
@@ -25,14 +37,13 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         'create'(item) {
-            return RedisCollection.insert(item, opts);
+            return RedisCollection.insert(item);
         },
         'update'(selectors, modifier) {
-            RedisCollection.update(selectors, modifier, opts);
+            RedisCollection.update(selectors, modifier);
         },
         'remove'(selectors) {
-            RedisCollection.remove(selectors, opts);
+            RedisCollection.remove(selectors);
         }
     })
 }
-
