@@ -186,4 +186,44 @@ describe('It should update data reactively', function () {
             });
         });
     });
+
+    it('Should detect an update of a nested field when fields is specified', function (done) {
+        Meteor.call('create', {
+            "roles": {
+                "_groups": [
+                    "company1",
+                    "company2",
+                    "company3"
+                ],
+                "_main": "company1",
+                "_global": {
+                    "roles": [
+                        "manage-users",
+                        "manage-profiles",
+                    ]
+                }
+            }
+        }, (err, _id) => {
+            let handle = Meteor.subscribe('redis_collection', {}, {
+                fields: {roles: 1}
+            });
+
+            const cursor = RedisCollection.find();
+            const observeChangesHandle = cursor.observeChanges({
+                changed(docId, doc) {
+                    console.log(docId, doc);
+                    observeChangesHandle.stop();
+                    done();
+                    Meteor.call('remove', { _id })
+                }
+            });
+
+            Tracker.autorun((c) => {
+                if (handle.ready()) {
+                    c.stop();
+                    Meteor.call('update', { _id }, { $set: { 'roles._main': 'company2' } });
+                }
+            });
+        });
+    });
 });
