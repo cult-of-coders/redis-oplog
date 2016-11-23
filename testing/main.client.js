@@ -211,7 +211,7 @@ describe('It should update data reactively', function () {
             const cursor = RedisCollection.find();
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId, doc) {
-                    console.log(docId, doc);
+                    assert.equal(docId, _id);
                     observeChangesHandle.stop();
                     done();
                     Meteor.call('remove', { _id })
