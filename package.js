@@ -14,6 +14,7 @@ Npm.depends({
     'sift': '3.2.6',
     'dot-object': '1.5.4',
     'redis': '2.6.3',
+    'event-emitter': '0.3.4'
 });
 
 Package.onUse(function (api) {
