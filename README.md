@@ -13,7 +13,6 @@ Incrementally adoptable & works with your current Meteor project.
 ## Current Limitations
 
 - No support for upsert
-- Does not offer support for callback functions for insert/update/remove
 
 ## Install
 
