@@ -334,13 +334,11 @@ describe('It should update data reactively', function () {
                 let inChangedEvent = false;
                 const observeChangesHandle = cursor.observeChanges({
                     changed(docId, doc) {
-                        console.log(_id, docId, doc, RedisCollection.findOne(docId));
                         assert.equal(docId, _id);
                         inChangedEvent = true;
                         // assert.equal(doc.something, 30);
                     },
                     removed(docId) {
-                        console.log('in-remove', _id, docId, RedisCollection.findOne(docId));
                         assert.isTrue(inChangedEvent);
                         assert.equal(docId, _id);
 
