@@ -25,6 +25,7 @@ Package.onUse(function (api) {
         'ejson',
         'tmeasday:check-npm-versions@0.3.1',
         'dburles:mongo-collection-instances@0.3.5',
+        'minimongo',
         'mongo'
     ]);
 

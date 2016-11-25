@@ -19,6 +19,18 @@ export { RedisCollection };
 if (Meteor.isServer) {
     const opts = {namespace: 'x'};
 
+    RedisCollection.allow({
+      insert: () => true,
+      update: () => true,
+      remove: () => true,
+    })
+
+    RedisCollection.deny({
+      insert: () => false,
+      update: () => false,
+      remove: () => false,
+    })
+
     Meteor.publishWithRedis('redis_collection', function (filters, options) {
         return RedisCollection.find(filters, _.extend({}, options, opts));
     });
@@ -35,4 +47,3 @@ if (Meteor.isServer) {
         }
     })
 }
-

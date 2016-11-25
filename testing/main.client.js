@@ -275,4 +275,39 @@ describe('It should update data reactively', function () {
             }, 100)
         });
     });
+
+    it('Should detect a removal from client side', function (done) {
+        Meteor.call('create', {
+            game: 'chess',
+            title: 'E'
+        }, (err, _id) => {
+            RedisCollection.remove({ _id }, (err) => {
+              done(err)
+            });
+        });
+    });
+
+    it('Should detect an insert from client side', function (done) {
+        RedisCollection.insert({
+            game: 'backgammon',
+            title: 'E'
+        }, (err, _id) => {
+          if (err) return done(err)
+          Meteor.call('remove', { _id }, done);
+        });
+    });
+
+    it('Should detect an update from client side', function (done) {
+        Meteor.call('create', {
+            game: 'chess',
+            title: 'E'
+        }, (err, _id) => {
+            RedisCollection.update({ _id }, {
+              $set: { score: Math.random() }
+            }, (e) => {
+              if (e) return done(e)
+              Meteor.call('remove', { _id }, done);
+            });
+        });
+    });
 });
