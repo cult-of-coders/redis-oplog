@@ -15,11 +15,10 @@ describe('It should update data reactively', function () {
         let idOfInterest = null;
         const observeChangesHandle = cursor.observeChanges({
             removed(docId) {
-                if (docId == idOfInterest) {
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                }
+                assert.equal(docId, idOfInterest);
+                observeChangesHandle.stop();
+                handle.stop();
+                done();
             }
         });
 
@@ -130,9 +129,9 @@ describe('It should update data reactively', function () {
                     assert.equal(doc.nested.c.a, 1);
                     assert.equal(doc.nested.d, 1);
 
-                    Meteor.call('remove', {_id: docId});
-
-                    done();
+                    Meteor.call('remove', {_id: docId}, () => {
+                        done();
+                    });
                 }
             });
 
@@ -174,8 +173,9 @@ describe('It should update data reactively', function () {
 
                     observeChangesHandle.stop();
                     handle.stop();
-                    Meteor.call('remove', { _id });
-                    done();
+                    Meteor.call('remove', { _id }, () => {
+                        done();
+                    });
                 }
             });
 
@@ -213,6 +213,7 @@ describe('It should update data reactively', function () {
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId, doc) {
                     assert.equal(docId, _id);
+                    handle.stop();
                     observeChangesHandle.stop();
                     done();
                     Meteor.call('remove', { _id })
@@ -258,8 +259,9 @@ describe('It should update data reactively', function () {
                                 assert.equal(element.quantity, element.stockId)
                             }
                         });
+                        handle.stop();
                         observeChangesHandle.stop();
-                        Meteor.call('remove', { _id })
+                        Meteor.call('remove', { _id });
                         done();
                     }
                 });
@@ -310,4 +312,108 @@ describe('It should update data reactively', function () {
             });
         });
     });
+
+    it('Should work with $and operators', function (done) {
+        Meteor.call('create', {
+            orgid: '1',
+            siteIds: ['1', '2'],
+            Year: 2017
+        }, (err, _id) => {
+            let handle = Meteor.subscribe('redis_collection', {
+                $and: [{
+                    orgid: '1',
+                }, {
+                    siteIds: {$in: ['1']}
+                }, {
+                    'Year': {$in: [2017]}
+                }]
+            });
+
+            setTimeout(() => {
+                const cursor = RedisCollection.find();
+                let inChangedEvent = false;
+                const observeChangesHandle = cursor.observeChanges({
+                    changed(docId, doc) {
+                        console.log(_id, docId, doc, RedisCollection.findOne(docId));
+                        assert.equal(docId, _id);
+                        inChangedEvent = true;
+                        // assert.equal(doc.something, 30);
+                    },
+                    removed(docId) {
+                        console.log('in-remove', _id, docId, RedisCollection.findOne(docId));
+                        assert.isTrue(inChangedEvent);
+                        assert.equal(docId, _id);
+
+                        handle.stop();
+                        observeChangesHandle.stop();
+                        done();
+                    }
+                });
+
+                Tracker.autorun((c) => {
+                    if (handle.ready()) {
+                        c.stop();
+                        let object = RedisCollection.findOne(_id);
+                        assert.isObject(object);
+
+                        Meteor.call('update', { _id }, {
+                            $set: { 'something': 30 }
+                        }, () => {
+                            Meteor.call('update', { _id }, {
+                                $set: { 'Year': 2018 }
+                            });
+                        });
+                    }
+                });
+            }, 100)
+        });
+    });
+
+    it('Should work with $and operators - client side', function (done) {
+        Meteor.call('create', {
+            orgid: '2',
+            siteIds: ['1', '2'],
+            Year: 2017
+        }, (err, _id) => {
+            let handle = Meteor.subscribe('redis_collection', {
+                $and: [{
+                    orgid: '2',
+                }, {
+                    siteIds: {$in: ['1']}
+                }, {
+                    'Year': {$in: [2017]}
+                }]
+            });
+
+            setTimeout(() => {
+                const cursor = RedisCollection.find();
+                let inChangedEvent = false;
+                const observeChangesHandle = cursor.observeChanges({
+                    changed(docId, doc) {
+                        assert.equal(docId, _id);
+                        inChangedEvent = true;
+                        // assert.equal(doc.something, 30);
+                    },
+                    removed(docId) {
+                        assert.isTrue(inChangedEvent);
+                        assert.equal(docId, _id);
+                        handle.stop();
+                        observeChangesHandle.stop();
+                        done();
+                    }
+                });
+
+                Tracker.autorun((c) => {
+                    if (handle.ready()) {
+                        c.stop();
+                        let object = RedisCollection.findOne(_id);
+                        assert.isObject(object);
+
+                        RedisCollection.update({ _id }, {$set: { 'something': 30 }});
+                        RedisCollection.remove({ _id });
+                    }
+                });
+            }, 100)
+        });
+    })
 });

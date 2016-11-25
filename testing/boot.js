@@ -37,6 +37,10 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         'create'(item) {
+            if (_.isArray(item)) {
+                return _.map(item, i => RedisCollection.insert(i, opts));
+            }
+
             return RedisCollection.insert(item, opts);
         },
         'update'(selectors, modifier) {
