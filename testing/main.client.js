@@ -1,4 +1,5 @@
 import {RedisCollection} from './boot';
+import {_} from 'meteor/underscore';
 
 describe('It should update data reactively', function () {
     it('Should detect a removal', function (done) {
@@ -223,6 +224,89 @@ describe('It should update data reactively', function () {
                     c.stop();
                     Meteor.call('update', { _id }, { $set: { 'roles._main': 'company2' } });
                 }
+            });
+        });
+    });
+
+    it('Should update properly a nested field when a positional parameter is used', function (done) {
+        Meteor.call('create', {
+            "bom": [{
+                stockId: 1,
+                quantity: 1
+            }, {
+                stockId: 2,
+                quantity: 2,
+            }, {
+                stockId: 3,
+                quantity: 3
+            }]
+        }, (err, _id) => {
+            let handle = Meteor.subscribe('redis_collection', {}, {
+                fields: {bom: 1}
+            });
+
+            setTimeout(() => {
+                const cursor = RedisCollection.find();
+                const observeChangesHandle = cursor.observeChanges({
+                    changed(docId, doc) {
+                        assert.equal(docId, _id);
+                        doc.bom.forEach(element => {
+                           assert.isTrue(_.keys(element).length === 2);
+                            if (element.stockId === 1) {
+                                assert.equal(element.quantity, 30);
+                            } else {
+                                assert.equal(element.quantity, element.stockId)
+                            }
+                        });
+                        observeChangesHandle.stop();
+                        Meteor.call('remove', { _id })
+                        done();
+                    }
+                });
+
+                Tracker.autorun((c) => {
+                    if (handle.ready()) {
+                        c.stop();
+                        Meteor.call('update', { _id, 'bom.stockId': 1 }, {
+                            $set: { 'bom.$.quantity': 30 }
+                        });
+                    }
+                });
+            }, 100)
+        });
+    });
+
+    it('Should detect a removal from client side', function (done) {
+        Meteor.call('create', {
+            game: 'chess',
+            title: 'E'
+        }, (err, _id) => {
+            RedisCollection.remove({ _id }, (err) => {
+              done(err)
+            });
+        });
+    });
+
+    it('Should detect an insert from client side', function (done) {
+        RedisCollection.insert({
+            game: 'backgammon',
+            title: 'E'
+        }, (err, _id) => {
+          if (err) return done(err)
+          Meteor.call('remove', { _id }, done);
+        });
+    });
+
+    it('Should detect an update from client side', function (done) {
+        Meteor.call('create', {
+            game: 'chess',
+            title: 'E'
+        }, (err, _id) => {
+            RedisCollection.update({ _id }, {
+              $set: { score: Math.random() }
+            }, (e) => {
+              if (e) return done(e)
+              Meteor.call('remove', { _id }, done);
             });
         });
     });

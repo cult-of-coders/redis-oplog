@@ -13,6 +13,7 @@ Incrementally adoptable & works with your current Meteor project.
 ## Current Limitations
 
 - No support for upsert
+- Does not offer support for callback functions for insert/update/remove
 
 If you want support for client-side mutations, check-out this package:
 - https://github.com/maxnowack/meteor-allowdeny-redisoplog

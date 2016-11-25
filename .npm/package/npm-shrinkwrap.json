@@ -20,6 +20,11 @@
       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
       "from": "concat-map@0.0.1"
     },
+    "d": {
+      "version": "0.1.1",
+      "resolved": "https://registry.npmjs.org/d/-/d-0.1.1.tgz",
+      "from": "d@>=0.1.1 <0.2.0"
+    },
     "dot-object": {
       "version": "1.5.4",
       "resolved": "https://registry.npmjs.org/dot-object/-/dot-object-1.5.4.tgz",
@@ -29,6 +34,26 @@
       "version": "2.1.0-0",
       "resolved": "https://registry.npmjs.org/double-ended-queue/-/double-ended-queue-2.1.0-0.tgz",
       "from": "double-ended-queue@>=2.1.0-0 <3.0.0"
+    },
+    "es5-ext": {
+      "version": "0.10.12",
+      "resolved": "https://registry.npmjs.org/es5-ext/-/es5-ext-0.10.12.tgz",
+      "from": "es5-ext@>=0.10.7 <0.11.0"
+    },
+    "es6-iterator": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/es6-iterator/-/es6-iterator-2.0.0.tgz",
+      "from": "es6-iterator@>=2.0.0 <3.0.0"
+    },
+    "es6-symbol": {
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/es6-symbol/-/es6-symbol-3.1.0.tgz",
+      "from": "es6-symbol@>=3.1.0 <3.2.0"
+    },
+    "event-emitter": {
+      "version": "0.3.4",
+      "resolved": "https://registry.npmjs.org/event-emitter/-/event-emitter-0.3.4.tgz",
+      "from": "event-emitter@0.3.4"
     },
     "fs.realpath": {
       "version": "1.0.0",
@@ -81,8 +106,8 @@
       "from": "redis-commands@>=1.2.0 <2.0.0"
     },
     "redis-parser": {
-      "version": "2.1.1",
-      "resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-2.1.1.tgz",
+      "version": "2.2.0",
+      "resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-2.2.0.tgz",
       "from": "redis-parser@>=2.0.0 <3.0.0"
     },
     "sift": {
