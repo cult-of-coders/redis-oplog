@@ -43,11 +43,11 @@ if (Meteor.isServer) {
 
             return RedisCollection.insert(item, opts);
         },
-        'update'(selectors, modifier) {
-            RedisCollection.update(selectors, modifier, opts);
+        'update'(selectors, modifier, options) {
+            return RedisCollection.update(selectors, modifier, _.extend({}, opts, options));
         },
         'remove'(selectors) {
-            RedisCollection.remove(selectors, opts);
+            return RedisCollection.remove(selectors, opts);
         }
     })
 }
