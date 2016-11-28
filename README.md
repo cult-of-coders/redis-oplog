@@ -13,7 +13,6 @@ Incrementally adoptable & works with your current Meteor project.
 ## Current Limitations
 
 - No support for upsert
-- Does not offer support for callback functions for insert/update/remove
 
 ## Install
 
@@ -32,7 +31,7 @@ import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 // simple usage
 RedisOplog.init() // will work with 127.0.0.1:6379, the default
 
-// sets up the configuration parameters 
+// sets up the configuration parameters
 // https://github.com/luin/ioredis#connect-to-redis
 // you can use Meteor.settings here as well.
 RedisOplog.init({
@@ -85,7 +84,7 @@ the affected document.
 
 ### Direct Processing
 
-If you return a cursor, or an array of cursors, that have as filters `_id` or `_id: {$in: ids}` then it overrides 
+If you return a cursor, or an array of cursors, that have as filters `_id` or `_id: {$in: ids}` then it overrides
 everything and will only listen to changes for those separate channels only. This will be very performant.
 
 ### Custom Channels
@@ -94,7 +93,7 @@ You can create publications that listen to a certain channel or channels:
 ```js
 Meteor.publishWithRedis('messages_by_thread', function (threadId) {
     // perform additional security checks here
-    
+
     return Messages.find(selector, {
         channel: 'threads::' + threadId
     }),
@@ -104,7 +103,7 @@ Meteor.publishWithRedis('messages_by_thread', function (threadId) {
 ```
 
 Now if you insert into Messages like you are used to, you will not see any changes. Because
-the default channel it will push to is 'messages', but we are listening to `threads::${threadId}`, so 
+the default channel it will push to is 'messages', but we are listening to `threads::${threadId}`, so
 the solution is this:
 
 ```js
@@ -126,7 +125,7 @@ multi-tenant systems.
 ```js
 Meteor.publishWithRedis('users', function () {
     // get the company for this.userId
-    
+
     return Users.find({companyId}, {namespace: 'company::' + companyId})
 })
 ```
@@ -161,7 +160,7 @@ If you chosen to override the default behavior "publish"
 ```js
 Meteor.publish('users', function () {
     // get the company for this.userId
-    
+
     return Users.find({
         companyId
     }, {
@@ -176,7 +175,7 @@ Meteor.publish('users', function () {
 This is to emulate a write to the database that you don't actually need persisted. Basically,
 your publication would behave as if an actual update happened in the database.
 
-You will use this for showing live things that happen, things that you don't want saved. 
+You will use this for showing live things that happen, things that you don't want saved.
 
 For example you have a chat, and you want to transmit to the other user that he is typing his message.
 The limit of using synthetic mutations is bound only to your imagination, it enables reactivity for non-persistent data.
