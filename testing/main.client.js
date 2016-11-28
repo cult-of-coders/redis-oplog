@@ -151,6 +151,68 @@ describe('It should update data reactively', function () {
         });
     });
 
+    it('Should not update multiple documents if not specified', function (done) {
+        let handle = Meteor.subscribe('redis_collection', { game: 'monopoly' });
+
+        Meteor.call('create', { game: 'monopoly', title: 'test' }, (err, _id1) => {
+          Meteor.call('create', { game: 'monopoly', title: 'test2' }, (err, _id2) => {
+            const cursor = RedisCollection.find({ game: 'monopoly' });
+
+            let wrongDocChanged = false;
+            const observeChangesHandle = cursor.observeChanges({
+              changed(docId) {
+                if (docId !== _id1) {
+                  wrongDocChanged = true
+                }
+              }
+            });
+
+            Tracker.autorun((c) => {
+                if (!handle.ready()) return;
+                c.stop();
+                Meteor.call('update', { game: 'monopoly'}, {
+                  $set: { score: Math.random() }
+                }, (err, result) => {
+                  observeChangesHandle.stop();
+                  handle.stop();
+                  Meteor.call('remove', { game: 'monopoly' })
+                  done(wrongDocChanged && 'expected only one document change');
+                });
+            });
+          })
+        })
+    });
+
+    it('Should update multiple documents if specified', function (done) {
+        let handle = Meteor.subscribe('redis_collection', { game: 'monopoly2' });
+
+        Meteor.call('create', { game: 'monopoly2', title: 'test' }, (err, _id1) => {
+          Meteor.call('create', { game: 'monopoly2', title: 'test2' }, (err, _id2) => {
+            const cursor = RedisCollection.find({ game: 'monopoly2' });
+
+            let changes = 0
+            const observeChangesHandle = cursor.observeChanges({
+              changed(docId) {
+                changes += 1
+              }
+            });
+
+            Tracker.autorun((c) => {
+                if (!handle.ready()) return;
+                c.stop();
+                Meteor.call('update', { game: 'monopoly2'}, {
+                  $set: { score: Math.random() }
+                }, { multi: true }, (err, result) => {
+                  observeChangesHandle.stop();
+                  handle.stop();
+                  Meteor.call('remove', { game: 'monopoly2' })
+                  done(changes !== 2 && 'expected multiple changes');
+                });
+            });
+          })
+        })
+    });
+
     it('Should detect an update of a non published document', function (done) {
         Meteor.call('create', {
             game: 'backgammon',
