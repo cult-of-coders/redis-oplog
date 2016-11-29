@@ -3,6 +3,7 @@ import '../lib/cache/testing';
 import '../lib/processors/testing';
 import '../lib/redis/testing';
 import './mutation_callbacks'
+import './initial_add'
 
 import { RedisCollection } from './boot';
 
