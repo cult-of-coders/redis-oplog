@@ -10,7 +10,7 @@ import publishWithRedis from './lib/publishWithRedis';
 import { RedisPipe, Events } from './lib/constants';
 
 import init from './lib/init';
-import SyntheticMutation from './lib/mongo/syntheticMutation';
+import SyntheticMutator from './lib/mongo/SyntheticMutator';
 
 const RedisOplog = {
     init
@@ -18,7 +18,7 @@ const RedisOplog = {
 
 export {
     RedisOplog,
-    SyntheticMutation,
+    SyntheticMutator,
     publishWithRedis,
     RedisPipe,
     Events

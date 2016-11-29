@@ -13,7 +13,8 @@ Package.describe({
 Npm.depends({
     'sift': '3.2.6',
     'dot-object': '1.5.4',
-    'redis': '2.6.3'
+    'redis': '2.6.3',
+    'mongo-query': '0.5.7'
 });
 
 Package.onUse(function (api) {
@@ -25,7 +26,8 @@ Package.onUse(function (api) {
         'tmeasday:check-npm-versions@0.3.1',
         'dburles:mongo-collection-instances@0.3.5',
         'minimongo',
-        'mongo'
+        'mongo',
+        'random'
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
@@ -38,6 +40,8 @@ Package.onTest(function (api) {
     api.use('ecmascript');
     api.use('tracker');
     api.use('mongo');
+    api.use('random');
+    api.use('matb33:collection-hooks');
 
     api.use('practicalmeteor:mocha');
     api.use('practicalmeteor:chai');

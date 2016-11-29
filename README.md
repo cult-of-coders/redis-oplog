@@ -13,6 +13,7 @@ Incrementally adoptable & works with your current Meteor project.
 ## Current Limitations
 
 - No support for upsert
+- No support for callbacks on mutations like .insert/.update/.remove
 
 ## Install
 
@@ -181,11 +182,18 @@ For example you have a chat, and you want to transmit to the other user that he 
 The limit of using synthetic mutations is bound only to your imagination, it enables reactivity for non-persistent data.
 
 ```js
-import { SyntheticMutation } from 'meteor/cultofcoders:redis-oplog';
+import { SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
 
-SyntheticMutation(channelString).update(messageId, {
+SyntheticMutator.update(channelString, messageId, {
     someField: {
         deepMerging: 'willHappen'
+    }
+})
+
+// added support for mongo operators
+SyntheticMutator.update(channelString, messageId, {
+    $push: {
+        someField: someValue
     }
 })
 
