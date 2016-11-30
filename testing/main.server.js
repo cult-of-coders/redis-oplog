@@ -5,7 +5,7 @@ import '../lib/cache/testing';
 import '../lib/processors/testing';
 import '../lib/redis/testing';
 import './collection_hooks.server';
-
+import './observe_callbacks.server';
 // import './mutation_callbacks'
 import './initial_add';
 import { _ } from 'meteor/underscore';
