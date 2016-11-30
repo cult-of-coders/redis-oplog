@@ -1,5 +1,8 @@
 ## CHANGELOG
 
+### 1.0.5 - 1.0.15
+- Bug fixes and improvements
+
 ### 1.0.5
 - Fix for infinite loop when overriding publish
 

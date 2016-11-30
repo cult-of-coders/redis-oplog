@@ -98,21 +98,24 @@ _.each(Collections, (Collection, key) => {
 
             const cursor = Collection.find();
 
+            let idOfInterest;
             let observeChangesHandle = cursor.observeChanges({
                 removed(docId, doc) {
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
+                    if (docId == idOfInterest) {
+                        observeChangesHandle.stop();
+                        handle.stop();
+                        done();
+                    }
                 }
             });
 
             Tracker.autorun((c) => {
                 if (handle.ready()) {
                     c.stop();
-                    let _id = cursor.fetch()[0]._id;
-                    assert.isString(_id);
+                    idOfInterest = cursor.fetch()[0]._id;
+                    assert.isString(idOfInterest);
 
-                    Meteor.call(`synthetic.${config[key].suffix}`, 'remove', _id)
+                    Meteor.call(`synthetic.${config[key].suffix}`, 'remove', idOfInterest)
                 }
             });
         })
