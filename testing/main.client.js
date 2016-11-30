@@ -34,7 +34,9 @@ _.each(Collections, (Collection, key) => {
                         title: 'E'
                     }, (err, _id) => {
                         idOfInterest = _id;
-                        Meteor.call(`remove.${config[key].suffix}`, {_id});
+                        Meteor.setTimeout(() => {
+                            Meteor.call(`remove.${config[key].suffix}`, {_id});
+                        }, 100);
                     });
                 }
             });
