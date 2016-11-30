@@ -13,11 +13,15 @@ Incrementally adoptable & works with your current Meteor project.
 ## Current Limitations
 
 - No support for upsert
+- No support for callbacks on mutations like .insert/.update/.remove
+- Not reliable to display the correct sort when new changes come in, and the sort options are not present in the fields. Because we do not make use of observe-sequence, so addedAt, movedAt, etc will not be called.
+- No full support for .observe(), the added event will only push the newDoc without oldDoc
 
 ## Install
 
 ```bash
 meteor add cultofcoders:redis-oplog
+meteor add disable-oplog
 ```
 
 ## Usage
@@ -140,15 +144,27 @@ The channel to which redis will push is: `users::${companyId}`.
 
 Note: Even if you use namespace, making a change (update/remove) to an _id will still push to `users::${id}`
 
-### Allowed Options
+### Allowed Options For Cursors
 
 ```js
 {
-    pushToRedis: false // disable reactivity
-    channel: '' // custom channel string, it will push to channel name
-    channels: [] // array of strings, it will push to those
-    namespace: '' // custom namespace
-    namespaces: [] // array of strings, it will push to collectionName::namespace
+    channel: '' // it will only listen to this channel
+    channels: [] // array of strings, it will listen to those
+    namespace: 'namespaceString' // it will listen to namespaceString::collectionName
+    namespaces: [] // same as above
+    protectFromRaceCondition: true // by default this is false, if you have super-critical data, it's best that you set this to true, the cost for this lies in extra DB + Network traffic to always fetch the updated fields from the db
+}
+```
+
+### Allowed Options For Mutations
+
+```
+{
+    channel: '' // will only reach the cursors that listen to this channel
+    channels: [] // will reach all cursors that listen to any of these channels
+    namespace: '' 
+    namespaces: [] 
+    pushToRedis: true // default is true, use false if you don't want reactivity at all. Useful when doing large batch inserts/updates.
 }
 ```
 
@@ -181,26 +197,23 @@ For example you have a chat, and you want to transmit to the other user that he 
 The limit of using synthetic mutations is bound only to your imagination, it enables reactivity for non-persistent data.
 
 ```js
-import { SyntheticMutation } from 'meteor/cultofcoders:redis-oplog';
+import { SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
 
-SyntheticMutation(channelString).update(messageId, {
+SyntheticMutator.update(channelString, messageId, {
     someField: {
         deepMerging: 'willHappen'
     }
 })
 
-SyntheticMutation(channelString).remove(_id);
-SyntheticMutation(channelString).insert(dataWithId);
-
-// also accepts with Mongo.Collection instances
-SyntheticMutation(Messages).insert({text: 'Hello'})
-
-// if you fine-tuned the reactivity for example and you listen to message son a thread
-SyntheticMutation(`threads::${threadId}`).update(threadId, {
-    typing: {
-        [userId]: true
+// added support for mongo operators
+SyntheticMutator.update(channelString, messageId, {
+    $push: {
+        someField: someValue
     }
-});
+})
+
+SyntheticMutator.insert(channel, data);
+SyntheticMutator.remove(channel, _id);
 ```
 
 Warning! If your publication contains "fields" options.
