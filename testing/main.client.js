@@ -444,31 +444,103 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it ('Should work with the $pull operator properly', async function (done) {
+        it ('Should work with the $addToSet', async function (done) {
             let _id = await createSync(
-                {pull_operator: true, connections: [1]},
+                {operators: true, connections: [1, 2], number: 10},
             );
 
 
-            let handle = subscribe({pull_operator: true}, {});
-            let cursor = Collection.find({pull_operator: true});
+            let handle = subscribe({_id});
+            let cursor = Collection.find({_id});
 
             await waitForHandleToBeReady(handle);
 
             const observer = cursor.observeChanges({
                 changed(docId, doc) {
-                    if (docId == _id) {
-                        assert.lengthOf(doc.connections, 0);
-                        done();
-                    }
+                    assert.equal(docId, _id);
+                    assert.lengthOf(doc.connections, 3);
+
+                    observer.stop();
+                    handle.stop();
+                    done();
                 }
             });
 
-            update({ _id }, {
-                $pull: {
-                    connections: {$in: [1]}
+            await updateSync({ _id }, {
+                $addToSet: {
+                    connections: 3
                 }
-            })
+            });
+        });
+
+        it ('Should work with the $pull', async function (done) {
+            let _id = await createSync(
+                {operators: true, connections: [1, 2], number: 10},
+            );
+
+            let handle = subscribe({_id});
+            let cursor = Collection.find({_id});
+
+            await waitForHandleToBeReady(handle);
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.lengthOf(doc.connections, 1);
+
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            await updateSync({ _id }, {
+                $pull: {
+                    connections: 2
+                }
+            });
+        });
+
+        it ('Should work with the $pull and $set in combination', async function (done) {
+            let _id = await createSync(
+                {operators: true, connections: [1, 2], number: 10},
+            );
+
+            let handle = subscribe({_id});
+            let cursor = Collection.find({
+                _id: {
+                    $in: [_id]
+                }
+            }, {
+                fields: {
+                    operators: 1,
+                    connections: 1,
+                    number: 1
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.equal(doc.number, 20);
+                    assert.lengthOf(doc.connections, 1);
+
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            await updateSync(_id, {
+                $pull: {
+                    connections: {$in: [2]}
+                },
+                $set: {
+                    number: 20
+                }
+            });
         })
     });
 });
