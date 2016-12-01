@@ -442,6 +442,33 @@ _.each(Collections, (Collection, key) => {
             await updateSync(_id2, {
                 $set: {name: 'Michael Willowy'}
             });
+        });
+
+        it ('Should work with the $pull operator properly', async function (done) {
+            let _id = await createSync(
+                {pull_operator: true, connections: [1]},
+            );
+
+
+            let handle = subscribe({pull_operator: true}, {});
+            let cursor = Collection.find({pull_operator: true});
+
+            await waitForHandleToBeReady(handle);
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    if (docId == _id) {
+                        assert.lengthOf(doc.connections, 0);
+                        done();
+                    }
+                }
+            });
+
+            update({ _id }, {
+                $pull: {
+                    connections: {$in: [1]}
+                }
+            })
         })
     });
 });
