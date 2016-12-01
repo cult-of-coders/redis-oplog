@@ -1,36 +1,22 @@
 import {Collections, config} from './boot';
 import {_} from 'meteor/underscore';
 import './synthetic_mutators';
+import helperGenerator from './lib/helpers';
 
 _.each(Collections, (Collection, key) => {
-    const create = (...args) => {
-        Meteor.call(`create.${config[key].suffix}`, ...args);
-    };
-
-    const remove = (...args) => {
-        Meteor.call(`remove.${config[key].suffix}`, ...args);
-    };
-
-    const update = (...args) => {
-        Meteor.call(`update.${config[key].suffix}`, ...args);
-    };
-
-    const subscribe = (...args) => {
-        return Meteor.subscribe(`publication.${config[key].suffix}`, ...args);
-    };
-
-    const onHandleReady = (handle, callback) => {
-        Tracker.autorun(c => {
-            if (handle.ready()) {
-                c.stop();
-
-                callback();
-            }
-        })
-    };
+    const {
+        create,
+        createSync,
+        update,
+        updateSync,
+        remove,
+        removeSync,
+        subscribe,
+        waitForHandleToBeReady
+    } = helperGenerator(config[key].suffix);
 
     describe('It should work with: ' + key, function () {
-        it('Should detect a removal', function (done) {
+        it('Should detect a removal', async function (done) {
             let handle = subscribe({
                 game: 'chess',
             }, {
@@ -39,11 +25,11 @@ _.each(Collections, (Collection, key) => {
             });
 
             const cursor = Collection.find();
-            var idOfInterest;
+            var _id;
 
             let observeChangesHandle = cursor.observeChanges({
                 removed(docId) {
-                    if (docId == idOfInterest) {
+                    if (docId == _id) {
                         observeChangesHandle.stop();
                         handle.stop();
                         done();
@@ -51,24 +37,13 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
+            await waitForHandleToBeReady(handle);
 
-                    create({
-                        game: 'chess',
-                        title: 'E'
-                    }, (err, _id) => {
-                        idOfInterest = _id;
-                        Meteor.setTimeout(() => {
-                            remove({_id});
-                        }, 100);
-                    });
-                }
-            });
+            _id = await createSync({game: 'chess', title: 'E'});
+            remove({_id});
         });
 
-        it('Should detect an insert', function (done) {
+        it('Should detect an insert', async function (done) {
             let handle = subscribe({
                 game: 'chess',
             }, {
@@ -90,22 +65,18 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
-                    let data = cursor.fetch();
+            await waitForHandleToBeReady(handle);
+            let data = cursor.fetch();
 
-                    assert.lengthOf(data, 3);
+            assert.lengthOf(data, 3);
 
-                    create({
-                        game: 'chess',
-                        title: 'E'
-                    });
-                }
+            create({
+                game: 'chess',
+                title: 'E'
             });
         });
 
-        it('Should detect an update', function (done) {
+        it('Should detect an update', async function (done) {
             let handle = subscribe({
                 game: 'chess',
             }, {
@@ -123,26 +94,21 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
-                    let data = cursor.fetch();
+            await waitForHandleToBeReady(handle);
 
-                    update({_id: data[0]._id}, {
-                        $set: {
-                            score: Math.random()
-                        }
-                    });
+            let data = cursor.fetch();
+
+            update({_id: data[0]._id}, {
+                $set: {
+                    score: Math.random()
                 }
             });
         });
 
-        it('Should detect an update nested', function (done) {
-            let handle = subscribe({
-                game: 'chess',
-            });
+        it('Should detect an update nested', async function (done) {
+            let handle = subscribe({game: 'chess'});
 
-            create({
+            let docId = await createSync({
                 game: 'chess',
                 nested: {
                     a: 1,
@@ -151,142 +117,130 @@ _.each(Collections, (Collection, key) => {
                         a: 1
                     }
                 }
-            }, (err, docId) => {
-                const cursor = Collection.find();
+            });
 
-                const observeChangesHandle = cursor.observeChanges({
-                    changed(docId, doc) {
-                        observeChangesHandle.stop();
-                        handle.stop();
+            const cursor = Collection.find();
 
-                        assert.equal(doc.nested.b, 2);
-                        assert.equal(doc.nested.c.b, 1);
-                        assert.equal(doc.nested.c.a, 1);
-                        assert.equal(doc.nested.d, 1);
+            const observeChangesHandle = cursor.observeChanges({
+                changed(docId, doc) {
+                    observeChangesHandle.stop();
+                    handle.stop();
 
-                        remove({_id: docId}, () => {
-                            done();
-                        });
-                    }
-                });
+                    assert.equal(doc.nested.b, 2);
+                    assert.equal(doc.nested.c.b, 1);
+                    assert.equal(doc.nested.c.a, 1);
+                    assert.equal(doc.nested.d, 1);
 
-                Tracker.autorun((c) => {
-                    if (handle.ready()) {
-                        c.stop();
+                    remove({_id: docId}, () => {
+                        done();
+                    });
+                }
+            });
 
-                        update({_id: docId}, {
-                            $set: {
-                                'nested.c.b': 1,
-                                'nested.b': 2,
-                                'nested.d': 1
-                            }
-                        });
-                    }
-                });
+            await waitForHandleToBeReady(handle);
+
+            update({_id: docId}, {
+                $set: {
+                    'nested.c.b': 1,
+                    'nested.b': 2,
+                    'nested.d': 1
+                }
             });
         });
 
-        it('Should not update multiple documents if not specified', function (done) {
+        it('Should not update multiple documents if not specified (multi:true)', async function (done) {
             let handle = subscribe({game: 'monopoly'});
 
-            create({game: 'monopoly', title: 'test'}, (err, _id1) => {
-                create({game: 'monopoly', title: 'test2'}, (err, _id2) => {
-                    const cursor = Collection.find({game: 'monopoly'});
+            [_id1, id2] = await createSync([
+                {game: 'monopoly', title: 'test'},
+                {game: 'monopoly', title: 'test2'}
+            ]);
 
-                    let wrongDocChanged = false;
-                    const observeChangesHandle = cursor.observeChanges({
-                        changed(docId) {
-                            if (docId !== _id1) {
-                                wrongDocChanged = true
-                            }
-                        }
-                    });
+            const cursor = Collection.find({game: 'monopoly'});
 
-                    Tracker.autorun((c) => {
-                        if (!handle.ready()) return;
-                        c.stop();
-                        update({game: 'monopoly'}, {
-                            $set: {score: Math.random()}
-                        }, (err, result) => {
-                            observeChangesHandle.stop();
-                            handle.stop();
-                            remove({game: 'monopoly'})
-                            done(wrongDocChanged && 'expected only one document change');
-                        });
-                    });
-                })
-            })
+            const observeChangesHandle = cursor.observeChanges({
+                changed(docId) {
+                    assert.equal(docId, _id1);
+                    remove({game: 'monopoly'});
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            update({game: 'monopoly'}, {$set: {score: Math.random()}});
         });
 
-        it('Should update multiple documents if specified', function (done) {
+        // TODO: fix this test
+        it('Should update multiple documents if specified', async function (done) {
             let handle = subscribe({game: 'monopoly2'});
 
-            create({game: 'monopoly2', title: 'test'}, (err, _id1) => {
-                create({game: 'monopoly2', title: 'test2'}, (err, _id2) => {
-                    const cursor = Collection.find({game: 'monopoly2'});
+            [_id1, id2] = await createSync([
+                {game: 'monopoly2', title: 'test'},
+                {game: 'monopoly2', title: 'test2'}
+            ]);
 
-                    let changes = 0;
-                    const observeChangesHandle = cursor.observeChanges({
-                        changed(docId) {
-                            changes += 1
-                        }
-                    });
+            const cursor = Collection.find({game: 'monopoly2'});
 
-                    Tracker.autorun((c) => {
-                        if (!handle.ready()) return;
-                        c.stop();
-                        update({game: 'monopoly2'}, {
-                            $set: {score: Math.random()}
-                        }, {multi: true}, (err, result) => {
-                            observeChangesHandle.stop();
-                            handle.stop();
-                            remove({game: 'monopoly2'})
-                            done(changes !== 2 && 'expected multiple changes');
-                        });
-                    });
-                })
-            })
-        });
+            let changes = 0;
+            const observeChangesHandle = cursor.observeChanges({
+                changed(docId) {
+                    changes += 1
+                }
+            });
 
-        it('Should detect an update of a non published document', function (done) {
-            create({
-                game: 'backgammon',
-                title: 'test'
-            }, (err, _id) => {
-                let handle = subscribe({
-                    game: 'chess',
-                });
-
-                const score = Math.random()
-
-                const cursor = Collection.find();
-                const observeChangesHandle = cursor.observeChanges({
-                    added(docId, doc) {
-                        if (docId !== _id) return;
-
-                        assert.equal(doc.game, 'chess');
-                        assert.equal(doc.score, score);
-                        assert.equal(doc.title, 'test');
-
-                        observeChangesHandle.stop();
-                        handle.stop();
-                        remove({_id}, () => {
-                            done();
-                        });
-                    }
-                });
-
-                Tracker.autorun((c) => {
-                    if (handle.ready()) {
-                        c.stop();
-                        update({_id}, {$set: {game: 'chess', score}});
-                    }
+            Tracker.autorun((c) => {
+                if (!handle.ready()) return;
+                c.stop();
+                update({game: 'monopoly2'}, {
+                    $set: {score: Math.random()}
+                }, {multi: true}, (err, result) => {
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    remove({game: 'monopoly2'});
+                    done(changes !== 2 && 'expected multiple changes');
                 });
             });
         });
 
-        it('Should detect an update of a nested field when fields is specified', function (done) {
-            create({
+        it('Should detect an update of a non published document', async function (done) {
+            let _id = await createSync({
+                game: 'backgammon',
+                title: 'test'
+            });
+
+            let handle = subscribe({
+                game: 'chess',
+            });
+
+            const score = Math.random();
+            const cursor = Collection.find();
+
+            const observeChangesHandle = cursor.observeChanges({
+                added(docId, doc) {
+                    if (docId !== _id) return;
+
+                    assert.equal(doc.game, 'chess');
+                    assert.equal(doc.score, score);
+                    assert.equal(doc.title, 'test');
+
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    remove({_id}, () => {
+                        done();
+                    });
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            update({_id}, {$set: {game: 'chess', score}});
+        });
+
+        it('Should detect an update of a nested field when fields is specified', async function (done) {
+            let _id = await createSync({
                 "roles": {
                     "_groups": [
                         "company1",
@@ -301,33 +255,29 @@ _.each(Collections, (Collection, key) => {
                         ]
                     }
                 }
-            }, (err, _id) => {
-                let handle = subscribe({}, {
-                    fields: {roles: 1}
-                });
-
-                const cursor = Collection.find();
-                const observeChangesHandle = cursor.observeChanges({
-                    changed(docId, doc) {
-                        assert.equal(docId, _id);
-                        handle.stop();
-                        observeChangesHandle.stop();
-                        done();
-                        remove({_id})
-                    }
-                });
-
-                Tracker.autorun((c) => {
-                    if (handle.ready()) {
-                        c.stop();
-                        update({_id}, {$set: {'roles._main': 'company2'}});
-                    }
-                });
             });
+
+            let handle = subscribe({}, {
+                fields: {roles: 1}
+            });
+
+            const cursor = Collection.find();
+            const observeChangesHandle = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    handle.stop();
+                    observeChangesHandle.stop();
+                    done();
+                    remove({_id})
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+            update({_id}, {$set: {'roles._main': 'company2'}});
         });
 
-        it('Should update properly a nested field when a positional parameter is used', function (done) {
-            create({
+        it('Should update properly a nested field when a positional parameter is used', async function (done) {
+            let _id = await createSync({
                 "bom": [{
                     stockId: 1,
                     quantity: 1
@@ -338,40 +288,35 @@ _.each(Collections, (Collection, key) => {
                     stockId: 3,
                     quantity: 3
                 }]
-            }, (err, _id) => {
-                let handle = subscribe({}, {
-                    fields: {bom: 1}
-                });
+            });
 
-                setTimeout(() => {
-                    const cursor = Collection.find();
-                    const observeChangesHandle = cursor.observeChanges({
-                        changed(docId, doc) {
-                            assert.equal(docId, _id);
-                            doc.bom.forEach(element => {
-                                assert.isTrue(_.keys(element).length === 2);
-                                if (element.stockId === 1) {
-                                    assert.equal(element.quantity, 30);
-                                } else {
-                                    assert.equal(element.quantity, element.stockId)
-                                }
-                            });
-                            handle.stop();
-                            observeChangesHandle.stop();
-                            remove({_id});
-                            done();
+            let handle = subscribe({}, {
+                fields: {bom: 1}
+            });
+
+            const cursor = Collection.find();
+            const observeChangesHandle = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    doc.bom.forEach(element => {
+                        assert.isTrue(_.keys(element).length === 2);
+                        if (element.stockId === 1) {
+                            assert.equal(element.quantity, 30);
+                        } else {
+                            assert.equal(element.quantity, element.stockId)
                         }
                     });
+                    handle.stop();
+                    observeChangesHandle.stop();
+                    remove({_id});
+                    done();
+                }
+            });
 
-                    Tracker.autorun((c) => {
-                        if (handle.ready()) {
-                            c.stop();
-                            update({_id, 'bom.stockId': 1}, {
-                                $set: {'bom.$.quantity': 30}
-                            });
-                        }
-                    });
-                }, 100)
+            await waitForHandleToBeReady(handle);
+
+            update({_id, 'bom.stockId': 1}, {
+                $set: {'bom.$.quantity': 30}
             });
         });
 
@@ -410,12 +355,14 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with $and operators', function (done) {
-            create({
-                orgid: '1',
-                siteIds: ['1', '2'],
-                Year: 2017
-            }, (err, _id) => {
+        ['server', 'client'].forEach(context => {
+            it('Should work with $and operators: ' + context, async function (done) {
+                let _id = await createSync({
+                    orgid: '1',
+                    siteIds: ['1', '2'],
+                    Year: 2017
+                });
+
                 let handle = subscribe({
                     $and: [{
                         orgid: '1',
@@ -426,130 +373,75 @@ _.each(Collections, (Collection, key) => {
                     }]
                 });
 
-                setTimeout(() => {
-                    const cursor = Collection.find();
-                    let inChangedEvent = false;
-                    const observeChangesHandle = cursor.observeChanges({
-                        changed(docId, doc) {
-                            assert.equal(docId, _id);
-                            inChangedEvent = true;
-                            // assert.equal(doc.something, 30);
-                        },
-                        removed(docId) {
-                            assert.isTrue(inChangedEvent);
-                            assert.equal(docId, _id);
-
-                            handle.stop();
-                            observeChangesHandle.stop();
-                            done();
-                        }
-                    });
-
-                    Tracker.autorun((c) => {
-                        if (handle.ready()) {
-                            c.stop();
-                            let object = Collection.findOne(_id);
-                            assert.isObject(object);
-
-                            update({_id}, {
-                                $set: {'something': 30}
-                            }, () => {
-                                update({_id}, {
-                                    $set: {'Year': 2018}
-                                });
-                            });
-                        }
-                    });
-                }, 100)
-            });
-        });
-
-        it('Should work with $and operators - client side', function (done) {
-            create({
-                orgid: '2',
-                siteIds: ['1', '2'],
-                Year: 2017
-            }, (err, _id) => {
-                let handle = subscribe({
-                    $and: [{
-                        orgid: '2',
-                    }, {
-                        siteIds: {$in: ['1']}
-                    }, {
-                        'Year': {$in: [2017]}
-                    }]
-                });
-
-                setTimeout(() => {
-                    const cursor = Collection.find();
-                    let inChangedEvent = false;
-                    const observeChangesHandle = cursor.observeChanges({
-                        changed(docId, doc) {
-                            assert.equal(docId, _id);
-                            inChangedEvent = true;
-                            // assert.equal(doc.something, 30);
-                        },
-                        removed(docId) {
-                            assert.isTrue(inChangedEvent);
-                            assert.equal(docId, _id);
-                            handle.stop();
-                            observeChangesHandle.stop();
-                            done();
-                        }
-                    });
-
-                    Tracker.autorun((c) => {
-                        if (handle.ready()) {
-                            c.stop();
-                            let object = Collection.findOne(_id);
-                            assert.isObject(object);
-
-                            Collection.update({_id}, {$set: {'something': 30}});
-                            Collection.remove({_id});
-                        }
-                    });
-                }, 100)
-            });
-        });
-
-        it('Should be able to detect subsequent updates for direct processing with _ids', function (done) {
-            create([
-                {subsequent_test: true, name: 'John Smith'},
-                {subsequent_test: true, name: 'Michael Willow'},
-            ], (err, res) => {
-                [_id1, _id2] = res;
-
-                let handle = subscribe({_id: {$in: res}}, {
-                    fields: {subsequent_test: 1, name: 1}
-                });
-
-                const cursor = Collection.find({subsequent_test: true});
-                let inFirst = false;
-                const observer = cursor.observeChanges({
+                const cursor = Collection.find();
+                let inChangedEvent = false;
+                const observeChangesHandle = cursor.observeChanges({
                     changed(docId, doc) {
-                        if (docId == _id1) {
-                            inFirst = true;
-                            assert.equal('John Smithy', doc.name);
-                        }
-                        if (docId == _id2) {
-                            assert.isTrue(inFirst);
-                            assert.equal('Michael Willowy', doc.name);
-                            handle.stop();
-                            observer.stop();
-                            done();
-                        }
+                        assert.equal(docId, _id);
+                        inChangedEvent = true;
+                        // assert.equal(doc.something, 30);
+                    },
+                    removed(docId) {
+                        assert.isTrue(inChangedEvent);
+                        assert.equal(docId, _id);
+
+                        handle.stop();
+                        observeChangesHandle.stop();
+                        done();
                     }
                 });
-                onHandleReady(handle, () => {
-                    update(_id1, {
-                        $set: {name: 'John Smithy'}
-                    }, () => {
-                        update(_id2, {
-                            $set: {name: 'Michael Willowy'}
-                        })
-                    })
-                });
-            })
+
+                await waitForHandleToBeReady(handle);
+                let object = Collection.findOne(_id);
+                assert.isObject(object);
+
+                if (context == 'server') {
+                    await updateSync({_id}, {$set: {'something': 30}});
+                    await updateSync({_id}, {$set: {'Year': 2018}})
+                } else {
+                    Collection.update({_id}, {$set: {'something': 30}});
+                    Collection.remove({_id});
+                }
+            });
+        });
+
+        it('Should be able to detect subsequent updates for direct processing with _ids', async function (done) {
+            let [_id1, _id2] = await createSync([
+                {subsequent_test: true, name: 'John Smith'},
+                {subsequent_test: true, name: 'Michael Willow'},
+            ]);
+
+            let handle = subscribe({_id: {$in: [_id1, _id2]}}, {
+                fields: {subsequent_test: 1, name: 1}
+            });
+
+            const cursor = Collection.find({subsequent_test: true});
+            let inFirst = false;
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    if (docId == _id1) {
+                        inFirst = true;
+                        assert.equal('John Smithy', doc.name);
+                    }
+                    if (docId == _id2) {
+                        assert.isTrue(inFirst);
+                        assert.equal('Michael Willowy', doc.name);
+                        handle.stop();
+                        observer.stop();
+                        done();
+                    }
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            await updateSync(_id1, {
+                $set: {name: 'John Smithy'}
+            });
+            await updateSync(_id2, {
+                $set: {name: 'Michael Willowy'}
+            });
         })
     });
 });

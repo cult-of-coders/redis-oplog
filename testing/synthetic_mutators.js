@@ -1,11 +1,20 @@
 import { Collections, config } from './boot';
 import { Random } from 'meteor/random';
 import { _ } from 'meteor/underscore';
+import helperGenerator from './lib/helpers';
 
 _.each(Collections, (Collection, key) => {
+    const {
+        update,
+        remove,
+        synthetic,
+        subscribe,
+        waitForHandleToBeReady
+    } = helperGenerator(config[key].suffix);
+
     describe('It should work with synthetic mutators: ' + key, function () {
-        it ('Should work with insert', function (done) {
-            let handle = Meteor.subscribe(`publication.${config[key].suffix}`, {
+        it ('Should work with insert', async function (done) {
+            let handle = subscribe({
                 game: `synthetic.${config[key].suffix}`,
             });
 
@@ -20,19 +29,15 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
-
-                    Meteor.call(`synthetic.${config[key].suffix}`, 'insert', {
-                        game: `synthetic.${config[key].suffix}`
-                    })
-                }
+            await waitForHandleToBeReady(handle);
+            
+            synthetic('insert', {
+                game: `synthetic.${config[key].suffix}`
             });
         });
 
-        it ('Should work with update with operators', function (done) {
-            let handle = Meteor.subscribe(`publication.${config[key].suffix}`, {
+        it ('Should work with update with operators', async function (done) {
+            let handle = subscribe({
                 game: 'chess',
             });
 
@@ -47,25 +52,20 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
-                    let _id = cursor.fetch()[0]._id;
-                    assert.isString(_id);
+            await waitForHandleToBeReady(handle);
 
-                    Meteor.call(`synthetic.${config[key].suffix}`, 'update', _id, {
-                        $set: {
-                            isPlaying: true
-                        },
-                    })
+            let _id = cursor.fetch()[0]._id;
+            assert.isString(_id);
+
+            synthetic('update', _id, {
+                $set: {
+                    isPlaying: true
                 }
-            });
-        })
+            })
+        });
 
-        it ('Should work with update', function (done) {
-            let handle = Meteor.subscribe(`publication.${config[key].suffix}`, {
-                game: 'chess',
-            });
+        it ('Should work with update', async function (done) {
+            let handle = subscribe({game: 'chess',});
 
             const cursor = Collection.find();
 
@@ -78,30 +78,27 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
-                    let _id = cursor.fetch()[0]._id;
-                    assert.isString(_id);
+            await waitForHandleToBeReady(handle);
 
-                    Meteor.call(`synthetic.${config[key].suffix}`, 'update', _id, {
-                        isPlaying: true
-                    })
-                }
-            });
-        })
+            let _id = cursor.fetch()[0]._id;
+            assert.isString(_id);
 
-        it ('Should work with remove', function (done) {
-            let handle = Meteor.subscribe(`publication.${config[key].suffix}`, {
+            synthetic('update', _id, {
+                isPlaying: true
+            })
+        });
+
+        it ('Should work with remove', async function (done) {
+            let handle = subscribe({
                 game: 'chess',
             });
 
             const cursor = Collection.find();
 
-            let idOfInterest;
+            let _id;
             let observeChangesHandle = cursor.observeChanges({
                 removed(docId, doc) {
-                    if (docId == idOfInterest) {
+                    if (docId == _id) {
                         observeChangesHandle.stop();
                         handle.stop();
                         done();
@@ -109,15 +106,12 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (handle.ready()) {
-                    c.stop();
-                    idOfInterest = cursor.fetch()[0]._id;
-                    assert.isString(idOfInterest);
+            await waitForHandleToBeReady(handle);
 
-                    Meteor.call(`synthetic.${config[key].suffix}`, 'remove', idOfInterest)
-                }
-            });
+            _id = cursor.fetch()[0]._id;
+            assert.isString(_id);
+
+            synthetic('remove', _id)
         })
     });
 });
