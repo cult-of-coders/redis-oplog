@@ -30,6 +30,11 @@
       "resolved": "https://registry.npmjs.org/debug/-/debug-2.3.3.tgz",
       "from": "debug@*"
     },
+    "deep-extend": {
+      "version": "0.4.1",
+      "resolved": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.4.1.tgz",
+      "from": "deep-extend@0.4.1"
+    },
     "dot-component": {
       "version": "0.1.1",
       "resolved": "https://registry.npmjs.org/dot-component/-/dot-component-0.1.1.tgz",

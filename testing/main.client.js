@@ -503,17 +503,16 @@ _.each(Collections, (Collection, key) => {
 
         it ('Should work with the $pull and $set in combination', async function (done) {
             let _id = await createSync(
-                {operators: true, connections: [1, 2], number: 10},
+                {test_pull_and_set_combo: true, connections: [1], number: 10},
             );
 
-            let handle = subscribe({_id});
+            let handle = subscribe({test_pull_and_set_combo: true});
             let cursor = Collection.find({
                 _id: {
                     $in: [_id]
                 }
             }, {
                 fields: {
-                    operators: 1,
                     connections: 1,
                     number: 1
                 }
@@ -525,7 +524,7 @@ _.each(Collections, (Collection, key) => {
                 changed(docId, doc) {
                     assert.equal(docId, _id);
                     assert.equal(doc.number, 20);
-                    assert.lengthOf(doc.connections, 1);
+                    assert.lengthOf(doc.connections, 0);
 
                     observer.stop();
                     handle.stop();
@@ -535,7 +534,7 @@ _.each(Collections, (Collection, key) => {
 
             await updateSync(_id, {
                 $pull: {
-                    connections: {$in: [2]}
+                    connections: {$in: [1]}
                 },
                 $set: {
                     number: 20
