@@ -1,6 +1,7 @@
 import {Collections, config} from './boot';
 import {_} from 'meteor/underscore';
 import './synthetic_mutators';
+import './client_side_mutators';
 import helperGenerator from './lib/helpers';
 
 _.each(Collections, (Collection, key) => {
@@ -320,41 +321,6 @@ _.each(Collections, (Collection, key) => {
 
             update({_id, 'bom.stockId': 1}, {
                 $set: {'bom.$.quantity': 30}
-            });
-        });
-
-        // it('Should detect a removal from client side', function (done) {
-        //     create({
-        //         game: 'chess',
-        //         title: 'E'
-        //     }, (err, _id) => {
-        //         Collection.remove({ _id }, (err) => {
-        //           done(err)
-        //         });
-        //     });
-        // });
-
-        it('Should detect an insert from client side', function (done) {
-            Collection.insert({
-                game: 'backgammon',
-                title: 'E'
-            }, (err, _id) => {
-                if (err) return done(err);
-                remove({_id}, done);
-            });
-        });
-
-        it('Should detect an update from client side', function (done) {
-            create({
-                game: 'chess',
-                title: 'E'
-            }, (err, _id) => {
-                Collection.update({_id}, {
-                    $set: {score: Math.random()}
-                }, (e) => {
-                    if (e) return done(e);
-                    remove({_id}, done);
-                });
             });
         });
 
