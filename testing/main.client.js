@@ -105,7 +105,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should detect an update nested', async function (done) {
+        it('Should detect an update deeply nested', async function (done) {
             let handle = subscribe({game: 'chess'});
 
             let docId = await createSync({
@@ -127,10 +127,12 @@ _.each(Collections, (Collection, key) => {
                     handle.stop();
 
                     assert.equal(doc.nested.b, 2);
+                    assert.equal(doc.nested.a, 1);
                     assert.equal(doc.nested.c.b, 1);
+                    assert.equal(doc.nested.c.a, 1);
                     assert.equal(doc.nested.d, 1);
                     assert.lengthOf(_.keys(doc), 1);
-                    assert.lengthOf(_.keys(doc.nested), 3);
+                    assert.lengthOf(_.keys(doc.nested), 4);
 
                     remove({_id: docId}, () => {
                         done();
@@ -498,6 +500,41 @@ _.each(Collections, (Collection, key) => {
             await updateSync({ _id }, {
                 $pull: {
                     connections: 2
+                }
+            });
+        });
+
+        it('Should work with nested field updates', async function (done) {
+            let _id = await createSync({
+                profile: {
+                    language: 'EN',
+                    email: 'xxx@xxx.com',
+                    number: 5
+                }
+            });
+
+            let handle = subscribe({_id});
+            let cursor = Collection.find({_id});
+
+            await waitForHandleToBeReady(handle);
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.equal(doc.profile.number, 10);
+                    const fullDoc = Collection.findOne(docId);
+                    assert.equal(fullDoc.profile.language, 'EN');
+                    assert.equal(fullDoc.profile.email, 'xxx@xxx.com');
+
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            await updateSync(_id, {
+                $set: {
+                    'profile.number': 10
                 }
             });
         });
