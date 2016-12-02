@@ -91,6 +91,11 @@ the affected document.
 If you return a cursor, or an array of cursors, that have as filters `_id` or `_id: {$in: ids}` then it overrides
 everything and will only listen to changes for those separate channels only. This will be very performant.
 
+WARNING!
+
+Direct processing overrides any custom channels or namespaces that you specify. Because it is the most efficient type of query-ing
+by listening to separate channels like "collection::{id}"
+
 ### Custom Channels
 
 You can create publications that listen to a certain channel or channels:
@@ -99,7 +104,7 @@ Meteor.publishWithRedis('messages_by_thread', function (threadId) {
     // perform additional security checks here
 
     return Messages.find(selector, {
-        channel: 'threads::' + threadId
+        channel: 'threads::' + threadId + '::messages';
     }),
 })
 
@@ -107,12 +112,12 @@ Meteor.publishWithRedis('messages_by_thread', function (threadId) {
 ```
 
 Now if you insert into Messages like you are used to, you will not see any changes. Because
-the default channel it will push to is 'messages', but we are listening to `threads::${threadId}`, so
+the default channel it will push to is 'messages', but we are listening to `threads::${threadId}::messages`, so
 the solution is this:
 
 ```js
 Messages.insert(data, {
-    channel: `threads::` + threadId
+    channel: `threads::` + threadId + '::messages';
 })
 // works the same with update/remove
 ```
