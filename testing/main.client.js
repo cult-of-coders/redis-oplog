@@ -129,6 +129,8 @@ _.each(Collections, (Collection, key) => {
                     assert.equal(doc.nested.b, 2);
                     assert.equal(doc.nested.c.b, 1);
                     assert.equal(doc.nested.d, 1);
+                    assert.lengthOf(_.keys(doc), 1);
+                    assert.lengthOf(_.keys(doc.nested), 3);
 
                     remove({_id: docId}, () => {
                         done();
