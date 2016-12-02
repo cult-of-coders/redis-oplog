@@ -505,7 +505,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it ('Should work with the $pull and $set in combination', async function (done) {
+        it('Should work with the $pull and $set in combination', async function (done) {
             let _id = await createSync(
                 {test_pull_and_set_combo: true, connections: [1], number: 10},
             );
@@ -543,6 +543,52 @@ _.each(Collections, (Collection, key) => {
                 $set: {
                     number: 20
                 }
+            });
+        });
+
+        it('Should work properly with limit-sort kind of queries', async function (done) {
+            const context = 'limit-sort-test';
+            const ids = await createSync([
+                {context, number: 5, text: 'T - 1'},
+                {context, number: 10, text: 'T - 2'},
+                {context, number: 15, text: 'T - 3'},
+                {context, number: 20, text: 'T - 4'},
+                {context, number: 25, text: 'T - 5'},
+            ]);
+            const [_id1, _id2, _id3, _id4, _id5] = ids;
+
+            const handle = subscribe({
+                context: 'limit-sort-test',
+            }, {
+                sort: {number: -1}
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context}, );
+            cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id2);
+                    assert.equal(doc.number, 30);
+                },
+                removed(docId) {
+                    assert.equal(docId, _id3);
+                    done();
+                }
+            });
+
+            const data = cursor.fetch();
+
+            assert.lengthOf(data, 5);
+            ids.forEach((_id, idx) => {
+                assert.equal(data[5-1-idx]._id, _id);
+            });
+
+            updateSync({_id: _id2}, {
+                $set: {number: 30}
+            });
+            updateSync({_id: _id3}, {
+                $set: {context: 'limit-sort-test-invalidate'}
             });
         })
     });
