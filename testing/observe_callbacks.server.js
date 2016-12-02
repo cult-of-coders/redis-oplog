@@ -1,9 +1,8 @@
 import { Mongo } from 'meteor/mongo';
 
+const Collection = new Mongo.Collection('test_observe_callbacks');
+
 describe('Observe callbacks should work with added()', function () {
-    const Collection = new Mongo.Collection('test_observe_callbacks');
-
-
     it('Should work', function (done) {
         Collection.remove({});
 
@@ -46,6 +45,27 @@ describe('Observe callbacks should work with added()', function () {
 
             handler.stop();
 
+            done();
+        }, 100)
+    });
+
+    it ('Should not be triggered if no changes are detected', function (done) {
+        Collection.remove({});
+        const _id = Collection.insert({number: 10});
+
+        let inChanged = false;
+        const handler = Collection.find().observe({
+            changed(newDoc, oldDoc) {
+                inChanged = true;
+            }
+        });
+
+        Collection.update(_id, {
+            $set: {number: 10}
+        });
+
+        setTimeout(() => {
+            assert.isFalse(inChanged);
             done();
         }, 100)
     })

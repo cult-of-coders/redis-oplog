@@ -4,10 +4,10 @@ import '../lib/utils/testing';
 import '../lib/cache/testing';
 import '../lib/processors/testing';
 import '../lib/redis/testing';
+import './initial_add';
 import './collection_hooks.server';
 import './observe_callbacks.server';
 // import './mutation_callbacks'
-import './initial_add';
 import { _ } from 'meteor/underscore';
 
 _.each(Collections, (Collection) => {
