@@ -15,7 +15,6 @@ Incrementally adoptable & works with your current Meteor project.
 - No support for upsert
 - No support for callbacks on mutations like .insert/.update/.remove
 - Not reliable to display the correct sort when new changes come in, and the sort options are not present in the fields. Because we do not make use of observe-sequence, so addedAt, movedAt, etc will not be called.
-- Does not work with "null" publications
 
 ## Install
 
