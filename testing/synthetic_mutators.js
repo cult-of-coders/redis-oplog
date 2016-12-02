@@ -6,6 +6,7 @@ import helperGenerator from './lib/helpers';
 _.each(Collections, (Collection, key) => {
     const {
         update,
+        createSync,
         remove,
         synthetic,
         subscribe,
@@ -36,7 +37,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it ('Should work with update with operators', async function (done) {
+        it ('Should work with update with operators: $set', async function (done) {
             let handle = subscribe({
                 game: 'chess',
             });
@@ -60,6 +61,36 @@ _.each(Collections, (Collection, key) => {
             synthetic('update', _id, {
                 $set: {
                     isPlaying: true
+                }
+            })
+        });
+
+        it ('Should work with update with operators: $push', async function (done) {
+            let _id = await createSync({
+                synthetic_test: true,
+                connections: []
+            });
+
+            let handle = subscribe({synthetic_test: true})
+
+            const cursor = Collection.find({
+                synthetic_test: true
+            });
+
+            let observeChangesHandle = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.lengthOf(doc.connections, 1);
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            synthetic('update', _id, {
+                $push: {
+                    connections: 1
                 }
             })
         });
