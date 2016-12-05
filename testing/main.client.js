@@ -566,13 +566,15 @@ _.each(Collections, (Collection, key) => {
             await waitForHandleToBeReady(handle);
 
             const cursor = Collection.find({context}, );
-            cursor.observeChanges({
+            const observer =cursor.observeChanges({
                 changed(docId, doc) {
                     assert.equal(docId, _id2);
                     assert.equal(doc.number, 30);
                 },
                 removed(docId) {
                     assert.equal(docId, _id3);
+                    observer.stop();
+                    handle.stop();
                     done();
                 }
             });
@@ -590,6 +592,49 @@ _.each(Collections, (Collection, key) => {
             updateSync({_id: _id3}, {
                 $set: {context: 'limit-sort-test-invalidate'}
             });
+        })
+
+        it('Should work with _ids direct processing and other filters present', async function(done) {
+            const context = 'ids-process-test';
+            const ids = await createSync([
+                {context, number: 5},
+                {context, number: 5},
+                {context, number: 5},
+            ]);
+
+            const handle = subscribe({
+                _id: {$in: ids},
+                number: 5
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            let cursor = Collection.find({context});
+            const data = cursor.fetch();
+            assert.lengthOf(data, 3);
+
+            const observer = cursor.observeChanges({
+                removed(docId) {
+                    assert.equal(docId, ids[0]);
+                    updateSync(ids[0], {
+                        $set: {number: 5}
+                    })
+                },
+                added(docId) {
+                    if (docId == ids[0]) {
+                        assert.equal(docId, ids[0]);
+                        if (observer) {
+                            observer.stop();
+                            handle.stop();
+                            done();
+                        }
+                    }
+                }
+            });
+
+            updateSync(ids[0], {
+                $set: {number: 10}
+            })
         })
     });
 });
