@@ -613,6 +613,7 @@ _.each(Collections, (Collection, key) => {
             const data = cursor.fetch();
             assert.lengthOf(data, 3);
 
+            let initialAdd = true;
             const observer = cursor.observeChanges({
                 removed(docId) {
                     assert.equal(docId, ids[0]);
@@ -620,14 +621,16 @@ _.each(Collections, (Collection, key) => {
                         $set: {number: 5}
                     })
                 },
-                added(docId) {
+                added(docId, doc) {
                     if (docId == ids[0]) {
-                        assert.equal(docId, ids[0]);
-                        if (observer) {
-                            observer.stop();
-                            handle.stop();
-                            done();
+                        if (initialAdd) {
+                            initialAdd = false;
+                            return;
                         }
+                        assert.equal(docId, ids[0]);
+                        observer.stop();
+                        handle.stop();
+                        done();
                     }
                 }
             });
