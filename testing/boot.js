@@ -59,6 +59,9 @@ if (Meteor.isServer) {
 
                 return Collection.insert(item, opts[key]);
             },
+            [`fetch.${config[key].suffix}`](selector = {}, options = {}) {
+                return Collection.find(selector, options).fetch();
+            },
             [`update.${config[key].suffix}`](selectors, modifier, options) {
                 return Collection.update(selectors, modifier, _.extend({}, opts[key], options));
             },

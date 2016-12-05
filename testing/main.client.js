@@ -1,6 +1,7 @@
 import {Collections, config} from './boot';
 import {_} from 'meteor/underscore';
 import './synthetic_mutators';
+import './client_side_mutators';
 import helperGenerator from './lib/helpers';
 
 _.each(Collections, (Collection, key) => {
@@ -323,41 +324,6 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        // it('Should detect a removal from client side', function (done) {
-        //     create({
-        //         game: 'chess',
-        //         title: 'E'
-        //     }, (err, _id) => {
-        //         Collection.remove({ _id }, (err) => {
-        //           done(err)
-        //         });
-        //     });
-        // });
-
-        it('Should detect an insert from client side', function (done) {
-            Collection.insert({
-                game: 'backgammon',
-                title: 'E'
-            }, (err, _id) => {
-                if (err) return done(err);
-                remove({_id}, done);
-            });
-        });
-
-        it('Should detect an update from client side', function (done) {
-            create({
-                game: 'chess',
-                title: 'E'
-            }, (err, _id) => {
-                Collection.update({_id}, {
-                    $set: {score: Math.random()}
-                }, (e) => {
-                    if (e) return done(e);
-                    remove({_id}, done);
-                });
-            });
-        });
-
         ['server', 'client'].forEach(context => {
             it('Should work with $and operators: ' + context, async function (done) {
                 let _id = await createSync({
@@ -539,7 +505,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it ('Should work with the $pull and $set in combination', async function (done) {
+        it('Should work with the $pull and $set in combination', async function (done) {
             let _id = await createSync(
                 {test_pull_and_set_combo: true, connections: [1], number: 10},
             );
@@ -578,6 +544,97 @@ _.each(Collections, (Collection, key) => {
                     number: 20
                 }
             });
+        });
+
+        it('Should work properly with limit-sort kind of queries', async function (done) {
+            const context = 'limit-sort-test';
+            const ids = await createSync([
+                {context, number: 5, text: 'T - 1'},
+                {context, number: 10, text: 'T - 2'},
+                {context, number: 15, text: 'T - 3'},
+                {context, number: 20, text: 'T - 4'},
+                {context, number: 25, text: 'T - 5'},
+            ]);
+            const [_id1, _id2, _id3, _id4, _id5] = ids;
+
+            const handle = subscribe({
+                context: 'limit-sort-test',
+            }, {
+                sort: {number: -1}
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context}, );
+            const observer =cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id2);
+                    assert.equal(doc.number, 30);
+                },
+                removed(docId) {
+                    assert.equal(docId, _id3);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            const data = cursor.fetch();
+
+            assert.lengthOf(data, 5);
+            ids.forEach((_id, idx) => {
+                assert.equal(data[5-1-idx]._id, _id);
+            });
+
+            updateSync({_id: _id2}, {
+                $set: {number: 30}
+            });
+            updateSync({_id: _id3}, {
+                $set: {context: 'limit-sort-test-invalidate'}
+            });
+        })
+
+        it('Should work with _ids direct processing and other filters present', async function(done) {
+            const context = 'ids-process-test';
+            const ids = await createSync([
+                {context, number: 5},
+                {context, number: 5},
+                {context, number: 5},
+            ]);
+
+            const handle = subscribe({
+                _id: {$in: ids},
+                number: 5
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            let cursor = Collection.find({context});
+            const data = cursor.fetch();
+            assert.lengthOf(data, 3);
+
+            const observer = cursor.observeChanges({
+                removed(docId) {
+                    assert.equal(docId, ids[0]);
+                    updateSync(ids[0], {
+                        $set: {number: 5}
+                    })
+                },
+                added(docId) {
+                    if (docId == ids[0]) {
+                        assert.equal(docId, ids[0]);
+                        if (observer) {
+                            observer.stop();
+                            handle.stop();
+                            done();
+                        }
+                    }
+                }
+            });
+
+            updateSync(ids[0], {
+                $set: {number: 10}
+            })
         })
     });
 });

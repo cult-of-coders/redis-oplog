@@ -9,8 +9,12 @@ describe('It should work with collection:hooks', function () {
         {namespace: 'xxx'}
     ];
 
+    let idx = 1;
+
     opts.forEach(options => {
-        const Collection = new Mongo.Collection('test_redis_collection_hooks' + Random.id());
+        const Collection = new Mongo.Collection('test_redis_collection_hooks_' + idx++);
+        Collection.remove({});
+
         it('Should detect all types of changes: ' + JSON.stringify(options), function () {
             let updates = {
                 'before.insert': false,

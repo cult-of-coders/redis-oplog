@@ -17,6 +17,14 @@ export default (suffix) => {
         return callWithPromise(`create.${suffix}`, ...args);
     };
 
+    const fetch = (...args) => {
+        Meteor.call(`fetch.${suffix}`, ...args);
+    };
+
+    const fetchSync = (...args) => {
+        return callWithPromise(`fetch.${suffix}`, ...args);
+    };
+
     const remove = (...args) => {
         Meteor.call(`remove.${suffix}`, ...args);
     };
@@ -63,6 +71,8 @@ export default (suffix) => {
         createSync,
         update,
         updateSync,
+        fetch,
+        fetchSync,
         remove,
         removeSync,
         subscribe,
