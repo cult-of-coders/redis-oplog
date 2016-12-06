@@ -597,7 +597,7 @@ _.each(Collections, (Collection, key) => {
         it('Should work with _ids direct processing and other filters present', async function(done) {
             const context = 'ids-process-test';
             const ids = await createSync([
-                {context, meta: {student: true}},
+                {context, meta: {student: false}},
                 {context, meta: {student: true}},
                 {context, meta: {student: true}},
             ]);
@@ -611,32 +611,27 @@ _.each(Collections, (Collection, key) => {
 
             let cursor = Collection.find({context});
             const data = cursor.fetch();
-            assert.lengthOf(data, 3);
 
-            let initialAdd = true;
             const observer = cursor.observeChanges({
                 removed(docId) {
                     assert.equal(docId, ids[0]);
-                    updateSync(ids[0], {
-                        $set: {'meta.student': true}
-                    })
+
+                    observer.stop();
+                    handle.stop();
+                    done();
                 },
                 added(docId, doc) {
                     if (docId == ids[0]) {
-                        if (initialAdd) {
-                            initialAdd = false;
-                            return;
-                        }
                         assert.equal(docId, ids[0]);
-                        observer.stop();
-                        handle.stop();
-                        done();
+                        update(ids[0], {
+                            $set: {'meta.student': false}
+                        })
                     }
                 }
             });
 
             updateSync(ids[0], {
-                $set: {'meta.student': false}
+                $set: {'meta.student': true}
             })
         });
 
