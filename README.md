@@ -1,7 +1,10 @@
 Welcome to Redis Oplog
 ======================
 
+### LICENSE: MIT
+
 [![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog)
+
 
 ## What ?
 
@@ -14,7 +17,6 @@ Incrementally adoptable & works with your current Meteor project.
 
 - No support for upsert
 - No support for callbacks on mutations like .insert/.update/.remove
-- Not reliable to display the correct sort when new changes come in, and the sort options are not present in the fields. Because we do not make use of observe-sequence, so addedAt, movedAt, etc will not be called.
 
 ## Install
 
@@ -25,7 +27,7 @@ meteor add disable-oplog
 
 ## Usage
 
-Import this before anything else server-side.
+Import this before anything else server-side. This is very important.
 
 ```js
 // in startup server file (ex: /imports/startup/server/redis.js)
@@ -34,16 +36,15 @@ import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 // simple usage
 RedisOplog.init() // will work with 127.0.0.1:6379, the default
 
-// sets up the configuration parameters
+// sets up the configuration parameters:
 // https://github.com/luin/ioredis#connect-to-redis
-// you can use Meteor.settings here as well.
 RedisOplog.init({
     redis: {
         port: 6379,          // Redis port
         host: '127.0.0.1',   // Redis host
     },
     debug: false, // default is false,
-    overridePublishFunction: false // if true, replaces .publish with .publishWithRedis
+    overridePublishFunction: true // replaces .publish with .publishWithRedis, leave false if you don't want to override it
 });
 ```
 
@@ -67,51 +68,113 @@ Messages.remove(_id)
 // upsert not supported for reactivity
 ```
 
-## Stopping Reactivity
+## How it works
 
-We extend the mutators `insert`, `update` and `remove` to allow an extra argument. (Note: if you use callbacks it will still work if you put these options after the callback)
+### Sending changes
+
+This package will allow you to use Redis pub/sub system to trigger changes. So what we'll basically have here is a dual-write system.
+
+We override the mutators from the Collection: `insert`, `update` and `remove` to publish the changes to redis immediately after they have been
+sent to the database.
+
+Let's take an example:
+```
+const Messages = new Mongo.Collection('messages')
+Messages.insert({text: 'Hello'})
+```
+
+After the insert is done into the database, we will publish to Redis channel "messages" (same name as the collection name) the fact
+that we did an insert, and the document we inserted.
+
+For an update, things get a bit interesting in the back:
+```
+Messages.update(messageId, {
+    $set: { text: 'Hello World!' }
+})
+```
+
+This will publish the update event to "messages" channel in Redis but also to "messages::messageId". The reason we do this will be explored
+later in this document.
+
+If you choose to update based on a selector:
+```
+Messages.update({read: false}, {
+    $set: {read: true}
+}, {multi: true})
+```
+
+In the back it will fetch the ids (N length) that have {read: false}, it will perform the update, then it will send N messages to "messages" channel,
+and another N messages to "message:messageId" channels with information regarding the update.
+
+All the publications sent to redis are run in a fiber in the background, so it will not have impact on the. 
+
+Removing something is almost the same concept as updates, except ofcourse the event sent is "REMOVE" instead of "UPDATE"
+
+### Listening to changes
+
+When you create a publication in Meteor you return a cursor or an array of cursors. For example:
 
 ```
-// inserting data without reactivity
-Messages.insert(message, {pushToRedis: false})
-Messages.update(_id, message, {pushToRedis: false})
-Messages.remove(_id, {pushToRedis: false})
+Meteor.publishWithRedis('my_messages', function () {
+    return Messages.find({userId: this.userId});
+})
+```
+
+It will subscribe to the channel "messages", and all incoming events will be processed to see if it affects the query, and it will send
+proper changes to the observer (the client)
+
+We re-use publications that are the same, and redis channels that are the same. So processing is done as little as possible.
+
+### Direct Processing
+
+There is another special use-case for listening to changes, and it is related to cursor that are filtered by _ids. We call this "Direct Processing"
+
+```
+Meteor.publishWithRedis('items', function () {
+    return Items.find({_id: {$in: ids}});
+    // this has the same behavior when you have a selector like {_id: 'XXX'}
+})
+```
+
+In this case we won't listen to "items" channel at all. We will, instead, listen to multiple channels:
+- items::ids[0]
+- items::ids[1]
+- ...
+
+Where ids[0] represents the actual _id.
+
+This is one of the most efficient ways to catch changes and process them.
+
+## Stopping Reactivity
+
+We extend the mutators `insert`, `update` and `remove` to allow an extra argument. For various reasons, this why we break 
+the ability to have callbacks. We believe that this isn't a big draw-back since they are not so used.
+
+```
+// no changes will be published to any redis channels
+Collection.insert(document, {pushToRedis: false})
+Collection.update(selector, document, {pushToRedis: false})
+Collection.remove(selector, {pushToRedis: false})
 ```
 
 ## Fine-Tuning
 
-We introduce several concepts when it comes to making live-data truly scalable.
-By default when you do insert and update, depending on the collection's name, we push
-to `collectionName` channel in redis and also to `collectionName::_id` for _id represents
-the affected document.
-
-### Direct Processing
-
-If you return a cursor, or an array of cursors, that have as filters `_id` or `_id: {$in: ids}` then it overrides
-everything and will only listen to changes for those separate channels only. This will be very performant.
-
-WARNING!
-
-Direct processing overrides any custom channels or namespaces that you specify. Because it is the most efficient type of query-ing
-by listening to separate channels like "collection::{id}"
-
 ### Custom Channels
 
 You can create publications that listen to a certain channel or channels:
+
 ```js
 Meteor.publishWithRedis('messages_by_thread', function (threadId) {
     // perform additional security checks here
 
     return Messages.find(selector, {
-        channel: 'threads::' + threadId + '::messages';
+        channel: 'threads::' + threadId + '::messages' // you can use anny conventions that you like
     }),
 })
-
-// you can use any string convetion you like for naming your channels.
 ```
 
 Now if you insert into Messages like you are used to, you will not see any changes. Because
-the default channel it will push to is 'messages', but we are listening to `threads::${threadId}::messages`, so
+the default channel it will push to is "messages", but we are listening to `threads::${threadId}::messages`, so
 the solution is this:
 
 ```js
@@ -121,14 +184,15 @@ Messages.insert(data, {
 // works the same with update/remove
 ```
 
-By doing this you have a very specific layer of reactivity.
+By doing this you have a very focused layer of reactivity.
 
-Note: Even if you use channel, making a change to an _id will still push to `messages::$id`
+Note: Even if you use channel, making a change to an _id will still push to `messages::$id`, so it will still do 2 publications to Redis.
 
 ### Namespacing
 
 Namespacing is a concept a bit different from channels. Because it will be collection aware. And it's purpose is to enable
-multi-tenant systems.
+multi-tenant systems. For example you have multiple companies that use the same app and share the same database. You can
+easily laser-focus the reactivity for them by using this concept.
 
 ```js
 Meteor.publishWithRedis('users', function () {
@@ -144,9 +208,9 @@ Users.insert(data, {
 })
 ```
 
-The channel to which redis will push is: `users::${companyId}`.
+The channel to which redis will push is: `company::${companyId}::users`.
 
-Note: Even if you use namespace, making a change (update/remove) to an _id will still push to `users::${id}`
+Note: Even if you use namespace, making a change (update/remove) it will still push to `users::${id}`, to enable direct processing to work.
 
 ### Allowed Options For Cursors
 
@@ -172,13 +236,10 @@ Note: Even if you use namespace, making a change (update/remove) to an _id will 
 }
 ```
 
-`channel`, `channels`, `namespace`, `namespaces` are also allowed as options when you return a cursor.
-
 ### Fallback to polling
 
-If you chosen to override the default behavior "publish"
 ```js
-Meteor.publish('users', function () {
+Meteor.publishWithRedis('users', function () {
     // get the company for this.userId
 
     return Users.find({
@@ -220,6 +281,8 @@ SyntheticMutator.insert(channel, data);
 SyntheticMutator.remove(channel, _id);
 ```
 
+The allowed modifiers for SyntheticMutator can be found here: https://www.npmjs.com/package/mongo-query
+
 Warning! If your publication contains "fields" options.
 ```
 {
@@ -230,12 +293,11 @@ Warning! If your publication contains "fields" options.
 Even if the fields don't actually exist in the db. The reason we do it like this, is to allow control over access in the synthetic events.
 For some people you may want to see them, others you do not, depending on their role.
 
-## Publish Composite
+### Publish Composite
 
 It works with [publish composite package](https://github.com/englue/meteor-publish-composite) out of the box, you just need to install it and that's it. It will use Redis as the oplog.
 
-## Merging scenarios
+### Merging scenarios
 
 https://docs.google.com/document/d/1Cx-J7xwP9IlbEa54RiT_34GK4o8M6XpPieRvNPI_aUE/edit?usp=sharing
 
-## LICENSE: MIT
