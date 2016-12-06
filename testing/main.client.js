@@ -29,19 +29,22 @@ _.each(Collections, (Collection, key) => {
             var _id;
 
             let observeChangesHandle = cursor.observeChanges({
-                removed(docId) {
-                    if (docId == _id) {
-                        observeChangesHandle.stop();
-                        handle.stop();
-                        done();
+                added(docId, doc) {
+                    if (docId === _id) {
+                        remove({_id});
                     }
+                },
+                removed(docId) {
+                    assert.equal(docId, _id);
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    done();
                 }
             });
 
             await waitForHandleToBeReady(handle);
 
             _id = await createSync({game: 'chess', title: 'E'});
-            remove({_id});
         });
 
         it('Should detect an insert', async function (done) {
