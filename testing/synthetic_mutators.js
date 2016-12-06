@@ -144,5 +144,32 @@ _.each(Collections, (Collection, key) => {
 
             synthetic('remove', _id)
         })
+
+
+        it ('Should work with update with _id', async function (done) {
+            const context = 'synth-with-id';
+
+            let _id = await createSync({context});
+            let handle = subscribe({
+                _id: {$in: [_id]}
+            });
+
+            const cursor = Collection.find();
+            await waitForHandleToBeReady(handle);
+
+            let observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.equal(doc.isPlaying, true);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            synthetic('update', _id, {
+                isPlaying: true
+            }, `${Collection._name}::${_id}`)
+        });
     });
 });
