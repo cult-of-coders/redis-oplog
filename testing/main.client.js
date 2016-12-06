@@ -638,6 +638,48 @@ _.each(Collections, (Collection, key) => {
             updateSync(ids[0], {
                 $set: {number: 10}
             })
+        });
+
+        it('Should detect an insert with the default processor', async function (done) {
+            const context = 'insert-default-processing';
+            const handle = subscribe({context});
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.equal(doc.context, context);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            create({context});
+        });
+
+        it('Should detect an update with string publication that should be id', async function (done) {
+            const context = 'string-filters';
+            let _id = await createSync({context});
+            const handle = subscribe(_id);
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.equal(doc.number, 10);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            update(_id, {$set: {number: 10}});
         })
     });
 });
