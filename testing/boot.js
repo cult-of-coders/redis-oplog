@@ -68,8 +68,8 @@ if (Meteor.isServer) {
             [`remove.${config[key].suffix}`](selectors) {
                 return Collection.remove(selectors, opts[key]);
             },
-            [`synthetic.${config[key].suffix}`](method, ...args) {
-                return SyntheticMutator[method].call(null, config[key].channel, ...args);
+            [`synthetic.${config[key].suffix}`](method, _id, mutation, channel) {
+                return SyntheticMutator[method].call(null, channel || config[key].channel, _id, mutation);
             }
         })
     });

@@ -597,44 +597,84 @@ _.each(Collections, (Collection, key) => {
         it('Should work with _ids direct processing and other filters present', async function(done) {
             const context = 'ids-process-test';
             const ids = await createSync([
-                {context, number: 5},
-                {context, number: 5},
-                {context, number: 5},
+                {context, meta: {student: false}},
+                {context, meta: {student: true}},
+                {context, meta: {student: true}},
             ]);
 
             const handle = subscribe({
                 _id: {$in: ids},
-                number: 5
+                'meta.student': true
             });
 
             await waitForHandleToBeReady(handle);
 
             let cursor = Collection.find({context});
             const data = cursor.fetch();
-            assert.lengthOf(data, 3);
 
             const observer = cursor.observeChanges({
                 removed(docId) {
                     assert.equal(docId, ids[0]);
-                    updateSync(ids[0], {
-                        $set: {number: 5}
-                    })
+
+                    observer.stop();
+                    handle.stop();
+                    done();
                 },
-                added(docId) {
+                added(docId, doc) {
                     if (docId == ids[0]) {
                         assert.equal(docId, ids[0]);
-                        if (observer) {
-                            observer.stop();
-                            handle.stop();
-                            done();
-                        }
+                        update(ids[0], {
+                            $set: {'meta.student': false}
+                        })
                     }
                 }
             });
 
             updateSync(ids[0], {
-                $set: {number: 10}
+                $set: {'meta.student': true}
             })
+        });
+
+        it('Should detect an insert with the default processor', async function (done) {
+            const context = 'insert-default-processing';
+            const handle = subscribe({context});
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.equal(doc.context, context);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            create({context});
+        });
+
+        it('Should detect an update with string publication that should be id', async function (done) {
+            const context = 'string-filters';
+            let _id = await createSync({context});
+            const handle = subscribe(_id);
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.equal(doc.number, 10);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            update(_id, {$set: {number: 10}});
         })
     });
 });
