@@ -597,14 +597,14 @@ _.each(Collections, (Collection, key) => {
         it('Should work with _ids direct processing and other filters present', async function(done) {
             const context = 'ids-process-test';
             const ids = await createSync([
-                {context, number: 5},
-                {context, number: 5},
-                {context, number: 5},
+                {context, meta: {student: true}},
+                {context, meta: {student: true}},
+                {context, meta: {student: true}},
             ]);
 
             const handle = subscribe({
                 _id: {$in: ids},
-                number: 5
+                'meta.student': true
             });
 
             await waitForHandleToBeReady(handle);
@@ -618,7 +618,7 @@ _.each(Collections, (Collection, key) => {
                 removed(docId) {
                     assert.equal(docId, ids[0]);
                     updateSync(ids[0], {
-                        $set: {number: 5}
+                        $set: {'meta.student': true}
                     })
                 },
                 added(docId, doc) {
@@ -636,7 +636,7 @@ _.each(Collections, (Collection, key) => {
             });
 
             updateSync(ids[0], {
-                $set: {number: 10}
+                $set: {'meta.student': false}
             })
         });
 
