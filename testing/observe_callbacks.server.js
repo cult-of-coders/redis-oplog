@@ -46,7 +46,7 @@ describe('Observe callbacks should work with added()', function () {
             handler.stop();
 
             done();
-        }, 100)
+        }, 300)
     });
 
     it ('Should not be triggered if no changes are detected', function (done) {
