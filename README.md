@@ -9,14 +9,19 @@ Welcome to Redis Oplog
 ## What ?
 
 A full re-implementation of the Meteor's MongoDB oplog tailing. This time, reactivity is controlled by the app, opening a new world
-into building reactive applications, highly performant chat apps, games, reactivity for non-persistent data.
+into building reactive applications, highly scalable chat apps, games, and added reactivity for non-persistent data.
 
 Incrementally adoptable & works with your current Meteor project.
+
+It will make sense to use this once you have at least 50 online users. 
+Until then, MongoDB oplog can do the job without too much hassle.
+Use the right tool for the right job!
 
 ## Current Limitations
 
 - No support for upsert
 - No support for callbacks on mutations like .insert/.update/.remove
+- Requires *aldeed:collection2* package. We did not add it as dependency due to possible version constraints
 
 ## Install
 
@@ -220,7 +225,6 @@ Note: Even if you use namespace, making a change (update/remove) it will still p
     channels: [] // array of strings, it will listen to those
     namespace: 'namespaceString' // it will listen to namespaceString::collectionName
     namespaces: [] // same as above
-    protectFromRaceCondition: true // by default this is false, if you have super-critical data, it's best that you set this to true, the cost for this lies in extra DB + Network traffic to always fetch the updated fields from the db
 }
 ```
 

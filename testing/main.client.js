@@ -29,19 +29,22 @@ _.each(Collections, (Collection, key) => {
             var _id;
 
             let observeChangesHandle = cursor.observeChanges({
-                removed(docId) {
-                    if (docId == _id) {
-                        observeChangesHandle.stop();
-                        handle.stop();
-                        done();
+                added(docId, doc) {
+                    if (docId === _id) {
+                        remove({_id});
                     }
+                },
+                removed(docId) {
+                    assert.equal(docId, _id);
+                    observeChangesHandle.stop();
+                    handle.stop();
+                    done();
                 }
             });
 
             await waitForHandleToBeReady(handle);
 
             _id = await createSync({game: 'chess', title: 'E'});
-            remove({_id});
         });
 
         it('Should detect an insert', async function (done) {
@@ -177,36 +180,34 @@ _.each(Collections, (Collection, key) => {
             update({game: 'monopoly'}, {$set: {score: Math.random()}});
         });
 
-        // TODO: fix this test
         it('Should update multiple documents if specified', async function (done) {
-            let handle = subscribe({game: 'monopoly2'});
-
+            const context = 'multi-update';
             [_id1, id2] = await createSync([
-                {game: 'monopoly2', title: 'test'},
-                {game: 'monopoly2', title: 'test2'}
+                {context, title: 'test'},
+                {context, title: 'test2'}
             ]);
 
-            const cursor = Collection.find({game: 'monopoly2'});
+            let handle = subscribe({context});
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
 
             let changes = 0;
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId) {
-                    changes += 1
+                    changes += 1;
+
+                    if (changes === 2) {
+                        observeChangesHandle.stop();
+                        handle.stop();
+                        done();
+                    }
                 }
             });
 
-            Tracker.autorun((c) => {
-                if (!handle.ready()) return;
-                c.stop();
-                update({game: 'monopoly2'}, {
-                    $set: {score: Math.random()}
-                }, {multi: true}, (err, result) => {
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    remove({game: 'monopoly2'});
-                    done(changes !== 2 && 'expected multiple changes');
-                });
-            });
+            update({context}, {
+                $set: {score: Math.random()}
+            }, {multi: true});
         });
 
         it('Should detect an update of a non published document', async function (done) {
@@ -675,6 +676,40 @@ _.each(Collections, (Collection, key) => {
             });
 
             update(_id, {$set: {number: 10}});
+        });
+
+        it('Should work with deep nest specified fields', async function (done) {
+            const context = 'edge-case-001';
+
+            let _id = await createSync({
+                context,
+                passengers: []
+            });
+            const handle = subscribe(_id, {
+                fields: {
+                    context: 1,
+                    'passengers.name': 1
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(docId, _id);
+                    assert.lengthOf(doc.passengers, 1);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            update(_id, {
+                $addToSet: {
+                    passengers: { _id: 'y2MECXDgr9ggiP5D4', name: 'Marlee Nielsen', phone: '' }
+                }
+            });
         })
     });
 });
