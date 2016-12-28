@@ -53,7 +53,6 @@ export default (suffix) => {
         return Meteor.subscribe(`publication.${suffix}`, ...args);
     };
 
-
     const waitForHandleToBeReady = (handle) => {
         return new Promise((resolve, reject) => {
             Tracker.autorun(c => {

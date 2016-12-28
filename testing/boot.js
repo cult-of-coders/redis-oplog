@@ -8,27 +8,24 @@ if (Meteor.isServer) {
             port: 6379,          // Redis port
             host: '127.0.0.1',   // Redis host
         },
-        debug: false
+        debug: true
     });
 }
 
 const Standard = new Mongo.Collection('test_redis_collection');
 const Channel = new Mongo.Collection('test_redis_collection_channel');
 const Namespace = new Mongo.Collection('test_redis_collection_namespace');
-const RaceCondition = new Mongo.Collection('test_redis_collection_race_condition');
 
-const Collections = {Standard, Channel, Namespace, RaceCondition};
+const Collections = {Standard, Channel, Namespace};
 const opts = {
     Standard: {},
     Channel: {channel: 'some_channel'},
     Namespace: {namespace: 'some_namespace'},
-    RaceCondition: {protectFromRaceCondition: true}
 };
 const config = {
     Standard: {suffix: 'standard', channel: 'test_redis_collection'},
     Channel: {suffix: 'channeled', channel: 'some_channel'},
     Namespace: {suffix: 'namespaced', channel: 'some_namespace::test_redis_collection_namespace'},
-    RaceCondition: {suffix: 'race_condition', channel: 'test_redis_collection_race_condition'}
 };
 
 export { Collections, opts, config };
