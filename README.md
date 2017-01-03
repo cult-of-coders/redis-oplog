@@ -213,7 +213,14 @@ Users.insert(data, {
 })
 ```
 
-The channel to which redis will push is: `company::${companyId}::users`.
+The channel to which redis will push is: `users::${companyId}`.
+But if we want to match the namespace in the publication right above we would need to do:
+
+```js
+Users.insert(data, {
+    namespace: 'company::companyId'
+})
+```
 
 Note: Even if you use namespace, making a change (update/remove) it will still push to `users::${id}`, to enable direct processing to work.
 
