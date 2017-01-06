@@ -2,13 +2,18 @@ import { Mongo } from 'meteor/mongo';
 
 const Collection = new Mongo.Collection('test_observe_callbacks');
 
-describe('Observe callbacks should work with added()', function () {
+describe('Observe callbacks should work', function () {
     it('Should work', function (done) {
         Collection.remove({});
 
         let _id;
+        let inAdded = false;
         const handler = Collection.find().observe({
             added(newDoc) {
+                if (inAdded) {
+                    return;
+                }
+                inAdded = true;
                 assert.isObject(newDoc);
                 assert.equal(newDoc.number, 10);
                 Collection.update(newDoc._id, {
