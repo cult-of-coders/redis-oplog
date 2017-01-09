@@ -19,9 +19,14 @@ describe('Client-side Mutators', function () {
 
         cursor = Collection.find({ client_side_mutators: true });
 
-        let testDocId, inChanged = false;
+        let testDocId, inChanged = false, inAdded = false, inRemoved = false;
         const observer = cursor.observeChanges({
             added(docId, doc) {
+                if (inAdded) {
+                    return;
+                }
+                inAdded = true;
+
                 testDocId = docId;
                 assert.equal(doc.number, 5);
 
@@ -53,15 +58,12 @@ describe('Client-side Mutators', function () {
                 }, 100);
             },
             removed(docId) {
+                if (inRemoved) {
+                    return;
+                }
+                inRemoved = true;
                 assert.equal(docId, testDocId);
-
-                setTimeout(async () => {
-                    const result = await fetchSync({ _id: docId });
-                    assert.lengthOf(result, 0);
-                    observer.stop();
-                    handle.stop();
-                    done();
-                }, 100);
+                done();
             }
         });
 

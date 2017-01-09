@@ -2,6 +2,7 @@ import {Collections, config} from './boot';
 import {_} from 'meteor/underscore';
 import './synthetic_mutators';
 import './client_side_mutators';
+import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
 
 _.each(Collections, (Collection, key) => {
@@ -10,6 +11,8 @@ _.each(Collections, (Collection, key) => {
         createSync,
         update,
         updateSync,
+        upsert,
+        upsertSync,
         remove,
         removeSync,
         subscribe,
@@ -55,7 +58,7 @@ _.each(Collections, (Collection, key) => {
                 limit: 5
             });
 
-            const cursor = Collection.find();
+            const cursor = Collection.find({game: 'chess'});
 
             let observeChangesHandle = cursor.observeChanges({
                 added(docId, doc) {
@@ -709,6 +712,34 @@ _.each(Collections, (Collection, key) => {
                 $addToSet: {
                     passengers: { _id: 'y2MECXDgr9ggiP5D4', name: 'Marlee Nielsen', phone: '' }
                 }
+            });
+        });
+
+        it('Should work with upsert', async function (done) {
+            const context = 'upsertion' + Random.id();
+            const handle = subscribe({context});
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.equal(doc.number, 10);
+                    upsert({context}, {
+                        $set: {
+                            number: 20
+                        }
+                    });
+                },
+                changed(docId, doc) {
+                    assert.equal(doc.number, 20);
+                    done();
+                }
+            });
+
+            upsert({context}, {
+                context,
+                number: 10
             });
         })
     });

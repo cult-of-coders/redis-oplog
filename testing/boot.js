@@ -62,6 +62,9 @@ if (Meteor.isServer) {
             [`update.${config[key].suffix}`](selectors, modifier, options) {
                 return Collection.update(selectors, modifier, _.extend({}, opts[key], options));
             },
+            [`upsert.${config[key].suffix}`](selectors, modifier, options) {
+                return Collection.upsert(selectors, modifier, _.extend({}, opts[key], options));
+            },
             [`remove.${config[key].suffix}`](selectors) {
                 return Collection.remove(selectors, opts[key]);
             },
