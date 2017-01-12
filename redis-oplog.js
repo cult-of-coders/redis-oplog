@@ -8,6 +8,7 @@
 
 import publishWithRedis from './lib/publishWithRedis';
 import { RedisPipe, Events } from './lib/constants';
+import { Meteor } from 'meteor/meteor';
 
 import init from './lib/init';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
@@ -22,4 +23,8 @@ export {
     publishWithRedis,
     RedisPipe,
     Events
+}
+
+if (Meteor.settings.redisOplog) {
+    init(Meteor.settings.redisOplog);
 }
