@@ -17,12 +17,6 @@ It will make sense to use this once you have at least 50 online users.
 Until then, MongoDB oplog can do the job without too much hassle.
 Use the right tool for the right job!
 
-## Current Limitations
-
-- No support for upsert
-- No support for callbacks on mutations like .insert/.update/.remove
-- Requires *aldeed:collection2* package. We did not add it as dependency due to possible version constraints
-
 ## Install
 
 ```bash
@@ -49,7 +43,7 @@ RedisOplog.init({
         host: '127.0.0.1',   // Redis host
     },
     debug: false, // default is false,
-    overridePublishFunction: true // replaces .publish with .publishWithRedis, leave false if you don't want to override it
+    overridePublishFunction: true // default is true, replaces .publish with .publishWithRedis, set to false if you don't want to override it
 });
 ```
 
