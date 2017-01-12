@@ -63,9 +63,12 @@ Meteor.publishWithRedis('name', function (args) {
 Messages.insert(message)
 Messages.update(_id, message)
 Messages.remove(_id)
-
-// upsert not supported for reactivity
+Messages.upsert(selector, modifier) 
 ```
+
+Warning! Upsert is prone to race-conditions when it comes to dispatching the changed data. This race-condition can rarely happen,
+and only happens in a very busy collection, however it can happen. Therefore if you want 100% consistency of real-time updates, we suggest
+to avoid it.
 
 ## How it works
 

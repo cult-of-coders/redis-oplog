@@ -733,6 +733,8 @@ _.each(Collections, (Collection, key) => {
                 },
                 changed(docId, doc) {
                     assert.equal(doc.number, 20);
+                    observer.stop();
+                    handle.stop();
                     done();
                 }
             });
@@ -741,6 +743,208 @@ _.each(Collections, (Collection, key) => {
                 context,
                 number: 10
             });
+        });
+
+        it('Should not detect a change if pushToRedis is false', async function (done) {
+            const context = 'pushToRedis:false';
+            const handle = subscribe({context});
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+            let _id;
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    if (docId === _id) {
+                        done('Should not be in added');
+                    }
+                },
+                changed(docId, doc) {
+                    if (docId === _id) {
+                        done('Should not be in changed');
+                    }
+                },
+                removed(docId) {
+                    if (docId === _id) {
+                        done('Should not be in changed');
+                    }
+                }
+            });
+
+            _id = await createSync({
+                context
+            }, {pushToRedis: false});
+
+            update({ _id }, {
+                $set: {number: 10}
+            }, {pushToRedis: false}, (err, res) => {
+                remove({ _id }, {pushToRedis: false})
+            });
+
+            setTimeout(() => {
+                observer.stop();
+                handle.stop();
+                done();
+            }, 200)
+        });
+
+        it('Should work correctly when disallowed fields are specified', async function (done) {
+            const context = 'disallowed-fields';
+            const handle = subscribe({context}, {
+                fields: {
+                    'profile': 0,
+                    'address.city': 0,
+                    'fullname': 0
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.equal(doc.other, 'Public');
+                    assert.isUndefined(doc.profile);
+                    assert.isObject(doc.address);
+                    assert.isString(doc.address.country);
+                    assert.isUndefined(doc.address.city);
+                    assert.isUndefined(doc.fullname);
+
+                    update({_id: docId}, {
+                        $set: {
+                            'address.country': 'Testing',
+                            fullname: 'Testing',
+                            other: 'Publico',
+                            newField: 'public',
+                            'profile.firstName': 'John'
+                        }
+                    })
+                },
+                changed(docId, doc) {
+                    assert.equal(doc.other, 'Publico');
+                    assert.isUndefined(doc.profile);
+                    assert.isObject(doc.address);
+                    assert.equal(doc.address.country, 'Testing');
+                    assert.equal(doc.newField, 'public');
+                    assert.isUndefined(doc.address.city);
+                    assert.isUndefined(doc.fullname);
+
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            create({
+                context,
+                profile: {
+                    'name': 'Secret'
+                },
+                address: {
+                    country: 'Country',
+                    city: 'Secret',
+                },
+                fullname: 'Secret',
+                other: 'Public'
+            })
+        });
+
+        it('Should work correctly with the allowed fields only specified', async function () {
+            const context = 'allowed-fields';
+            const handle = subscribe({context}, {
+                fields: {
+                    'profile': 1,
+                    'address.city': 1,
+                    'fullname': 1
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.isUndefined(doc.other);
+                    assert.isObject(doc.profile);
+                    assert.isObject(doc.address);
+                    assert.isString(doc.address.city);
+                    assert.isUndefined(doc.address.country);
+                    assert.isString(doc.fullname);
+
+                    update({_id: docId}, {
+                        $set: {
+                            'address.country': 'Testing',
+                            fullname: 'Testing',
+                            other: 'Publico',
+                            newField: 'public',
+                            'profile.firstName': 'John'
+                        }
+                    })
+                },
+                changed(docId, doc) {
+                    assert.isUndefined(doc.other);
+                    assert.isObject(doc.profile);
+                    assert.equal(doc.profile.firstName, 'John');
+                    assert.isObject(doc.address);
+                    assert.isUndefined(doc.address.country);
+                    assert.isUndefined(doc.newField);
+                    assert.isString(doc.address.city);
+                    assert.equal(doc.fullname, 'Testing');
+
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            create({
+                context,
+                profile: {
+                    'name': 'Public'
+                },
+                address: {
+                    country: 'Country',
+                    city: 'Public',
+                },
+                fullname: 'Public',
+                other: 'Secret'
+            })
+        });
+
+        it('Should work with limit-sort when only _id is specified', async function () {
+            const context = 'limit-sort-with-id-only';
+            const handle = subscribe({context}, {
+                fields: {
+                    _id: 1
+                },
+                sort: { context: 1 },
+                limit: 20
+            });
+
+            await waitForHandleToBeReady(handle);
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.isTrue(_.keys(doc).length == 1);
+                    update({_id: docId}, {
+                        $set: {
+                            'something': false
+                        }
+                    })
+                },
+                changed(docId, doc) {
+                    assert.isTrue(_.keys(doc).length == 1);
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            create({
+                context,
+                'something': true
+            })
         })
     });
 });
