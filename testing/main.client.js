@@ -285,7 +285,10 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should update properly a nested field when a positional parameter is used', async function (done) {
+            const context = 'positional-paramter';
+
             let _id = await createSync({
+                context,
                 "bom": [{
                     stockId: 1,
                     quantity: 1
@@ -298,11 +301,14 @@ _.each(Collections, (Collection, key) => {
                 }]
             });
 
-            let handle = subscribe({}, {
-                fields: {bom: 1}
+            let handle = subscribe({context}, {
+                fields: {
+                    context: 1,
+                    bom: 1
+                }
             });
 
-            const cursor = Collection.find();
+            const cursor = Collection.find({context});
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId, doc) {
                     assert.equal(docId, _id);
@@ -802,8 +808,11 @@ _.each(Collections, (Collection, key) => {
 
             const cursor = Collection.find({context});
 
+            let _id;
             const observer = cursor.observeChanges({
                 added(docId, doc) {
+                    if (docId !== _id) return;
+
                     assert.equal(doc.other, 'Public');
                     assert.isUndefined(doc.profile);
                     assert.isObject(doc.address);
@@ -822,6 +831,8 @@ _.each(Collections, (Collection, key) => {
                     })
                 },
                 changed(docId, doc) {
+                    if (docId !== _id) return;
+
                     assert.equal(doc.other, 'Publico');
                     assert.isUndefined(doc.profile);
                     assert.isObject(doc.address);
@@ -836,7 +847,7 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            create({
+            _id = await createSync({
                 context,
                 profile: {
                     'name': 'Secret'
@@ -850,10 +861,11 @@ _.each(Collections, (Collection, key) => {
             })
         });
 
-        it('Should work correctly with the allowed fields only specified', async function () {
+        it('Should work correctly with the allowed fields only specified', async function (done) {
             const context = 'allowed-fields';
             const handle = subscribe({context}, {
                 fields: {
+                    context: 1,
                     'profile': 1,
                     'address.city': 1,
                     'fullname': 1
@@ -876,8 +888,8 @@ _.each(Collections, (Collection, key) => {
                         $set: {
                             'address.country': 'Testing',
                             fullname: 'Testing',
-                            other: 'Publico',
-                            newField: 'public',
+                            other: 'secret',
+                            newField: 'secret',
                             'profile.firstName': 'John'
                         }
                     })
@@ -886,10 +898,7 @@ _.each(Collections, (Collection, key) => {
                     assert.isUndefined(doc.other);
                     assert.isObject(doc.profile);
                     assert.equal(doc.profile.firstName, 'John');
-                    assert.isObject(doc.address);
-                    assert.isUndefined(doc.address.country);
                     assert.isUndefined(doc.newField);
-                    assert.isString(doc.address.city);
                     assert.equal(doc.fullname, 'Testing');
 
                     observer.stop();
@@ -898,7 +907,7 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            create({
+            let _id = await createSync({
                 context,
                 profile: {
                     'name': 'Public'
@@ -909,13 +918,14 @@ _.each(Collections, (Collection, key) => {
                 },
                 fullname: 'Public',
                 other: 'Secret'
-            })
+            });
         });
 
-        it('Should work with limit-sort when only _id is specified', async function () {
+        it('Should work with limit-sort when only _id is specified', async function (done) {
             const context = 'limit-sort-with-id-only';
             const handle = subscribe({context}, {
                 fields: {
+                    context: 1,
                     _id: 1
                 },
                 sort: { context: 1 },
@@ -924,17 +934,50 @@ _.each(Collections, (Collection, key) => {
 
             await waitForHandleToBeReady(handle);
 
+            const cursor = Collection.find({context});
             const observer = cursor.observeChanges({
                 added(docId, doc) {
+                    assert.isUndefined(doc.something);
                     assert.isTrue(_.keys(doc).length == 1);
                     update({_id: docId}, {
                         $set: {
                             'something': false
                         }
+                    });
+
+                    done();
+                },
+                changed(docId, doc) {
+                    done('Should not be in changed event because nothing changed');
+                }
+            });
+
+            create({
+                context,
+                'something': true
+            })
+        });
+
+        it('Should work properly with $unset', async function (done) {
+            const context = 'test-$unset';
+            const handle = subscribe({context});
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({context});
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.isTrue(doc.something);
+
+                    update({_id: docId}, {
+                        $unset: {
+                            'something': ""
+                        }
                     })
                 },
                 changed(docId, doc) {
-                    assert.isTrue(_.keys(doc).length == 1);
+                    assert.isTrue('something' in doc);
+                    assert.isUndefined(doc.something);
                     observer.stop();
                     handle.stop();
                     done();
@@ -945,6 +988,7 @@ _.each(Collections, (Collection, key) => {
                 context,
                 'something': true
             })
-        })
+        });
     });
 });
+
