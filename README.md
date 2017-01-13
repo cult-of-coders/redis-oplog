@@ -26,7 +26,24 @@ meteor add disable-oplog
 
 ## Usage
 
-Import this before anything else server-side. This is very important.
+
+You can either configure it through Meteor settings:
+
+```
+// settings.json
+{
+    redisOplog: {
+        redis: {
+            port: 6379,          // Redis port
+            host: '127.0.0.1',   // Redis host
+        },
+        debug: false, // default is false,
+        overridePublishFunction: true // default is true, replaces .publish with .publishWithRedis, set to false if you don't want to override it
+    }
+}
+```
+
+Or import this before anything else server-side. (It is very important that this is the first thing you load)
 
 ```js
 // in startup server file (ex: /imports/startup/server/redis.js)
@@ -43,7 +60,7 @@ RedisOplog.init({
         host: '127.0.0.1',   // Redis host
     },
     debug: false, // default is false,
-    overridePublishFunction: true // default is true, replaces .publish with .publishWithRedis, set to false if you don't want to override it
+    overridePublishFunction: false // default is true, replaces .publish with .publishWithRedis, set to false if you don't want to override it
 });
 ```
 
@@ -68,15 +85,15 @@ Messages.upsert(selector, modifier)
 
 Warning! Upsert is prone to race-conditions when it comes to dispatching the changed data. This race-condition can rarely happen,
 and only happens in a very busy collection, however it can happen. Therefore if you want 100% consistency of real-time updates, we suggest
-to avoid it.
+to avoid it. Until we find a way to fix this.
 
 ## How it works
 
 ### Sending changes
 
-This package will allow you to use Redis pub/sub system to trigger changes. So what we'll basically have here is a dual-write system.
+This package will allow you to use Redis pub/sub system to trigger changes.
 
-We override the mutators from the Collection: `insert`, `update` and `remove` to publish the changes to redis immediately after they have been
+We override the mutators from the Collection: `insert`, `update`, `upsert` and `remove` to publish the changes to redis immediately after they have been
 sent to the database.
 
 Let's take an example:
@@ -86,7 +103,7 @@ Messages.insert({text: 'Hello'})
 ```
 
 After the insert is done into the database, we will publish to Redis channel "messages" (same name as the collection name) the fact
-that we did an insert, and the document we inserted.
+that we did an insert, and the id of the document we inserted.
 
 For an update, things get a bit interesting in the back:
 ```
@@ -97,6 +114,8 @@ Messages.update(messageId, {
 
 This will publish the update event to "messages" channel in Redis but also to "messages::messageId". The reason we do this will be explored
 later in this document.
+
+We send the document id and the fields that have been changed.
 
 If you choose to update based on a selector:
 ```
