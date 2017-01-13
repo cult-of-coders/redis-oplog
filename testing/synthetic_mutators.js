@@ -115,7 +115,9 @@ _.each(Collections, (Collection, key) => {
             assert.isString(_id);
 
             synthetic('update', _id, {
-                isPlaying: true
+                $set: {
+                    isPlaying: true
+                }
             })
         });
 
@@ -168,7 +170,9 @@ _.each(Collections, (Collection, key) => {
             });
 
             synthetic('update', _id, {
-                isPlaying: true
+                $set: {
+                    isPlaying: true
+                }
             }, `${Collection._name}::${_id}`)
         });
     });

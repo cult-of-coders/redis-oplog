@@ -7,7 +7,7 @@ import '../lib/redis/testing';
 import './initial_add';
 import './collection_hooks.server';
 import './observe_callbacks.server';
-// import './mutation_callbacks'
+import './mutation_callbacks'
 import { _ } from 'meteor/underscore';
 
 _.each(Collections, (Collection) => {

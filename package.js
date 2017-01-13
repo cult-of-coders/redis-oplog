@@ -1,6 +1,6 @@
 Package.describe({
     name: 'cultofcoders:redis-oplog',
-    version: '1.1.5',
+    version: '1.1.6',
     // Brief, one-line summary of the package.
     summary: 'Replacement for Meteor\'s MongoDB oplog implementation',
     // URL to the Git repository containing the source code for this package.
@@ -15,13 +15,12 @@ Npm.depends({
     'deep-diff': '0.3.4',
     'dot-object': '1.5.4',
     'redis': '2.6.3',
-    'mongo-query': '0.5.7',
     'lodash.clonedeep': '4.5.0',
     'deep-extend': '0.4.1'
 });
 
 Package.onUse(function (api) {
-    api.versionsFrom('1.4');
+    api.versionsFrom('1.3');
     api.use([
         'underscore',
         'ecmascript',

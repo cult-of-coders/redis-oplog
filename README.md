@@ -13,16 +13,6 @@ into building reactive applications, highly scalable chat apps, games, and added
 
 Incrementally adoptable & works with your current Meteor project.
 
-It will make sense to use this once you have at least 50 online users. 
-Until then, MongoDB oplog can do the job without too much hassle.
-Use the right tool for the right job!
-
-## Current Limitations
-
-- No support for upsert
-- No support for callbacks on mutations like .insert/.update/.remove
-- Requires *aldeed:collection2* package. We did not add it as dependency due to possible version constraints
-
 ## Install
 
 ```bash
@@ -32,7 +22,24 @@ meteor add disable-oplog
 
 ## Usage
 
-Import this before anything else server-side. This is very important.
+
+You can either configure it through Meteor settings:
+
+```
+// settings.json
+{
+    redisOplog: {
+        redis: {
+            port: 6379,          // Redis port
+            host: '127.0.0.1',   // Redis host
+        },
+        debug: false, // default is false,
+        overridePublishFunction: true // default is true, replaces .publish with .publishWithRedis, set to false if you don't want to override it
+    }
+}
+```
+
+Or import this before anything else server-side. (It is very important that this is the first thing you load)
 
 ```js
 // in startup server file (ex: /imports/startup/server/redis.js)
@@ -49,7 +56,7 @@ RedisOplog.init({
         host: '127.0.0.1',   // Redis host
     },
     debug: false, // default is false,
-    overridePublishFunction: true // replaces .publish with .publishWithRedis, leave false if you don't want to override it
+    overridePublishFunction: false // default is true, replaces .publish with .publishWithRedis, set to false if you don't want to override it
 });
 ```
 
@@ -69,17 +76,20 @@ Meteor.publishWithRedis('name', function (args) {
 Messages.insert(message)
 Messages.update(_id, message)
 Messages.remove(_id)
-
-// upsert not supported for reactivity
+Messages.upsert(selector, modifier) 
 ```
+
+Warning! Upsert is prone to race-conditions when it comes to dispatching the changed data. This race-condition can rarely happen,
+and only happens in a very busy collection, however it can happen. Therefore if you want 100% consistency of real-time updates, we suggest
+to avoid it. Until we find a way to fix this.
 
 ## How it works
 
 ### Sending changes
 
-This package will allow you to use Redis pub/sub system to trigger changes. So what we'll basically have here is a dual-write system.
+This package will allow you to use Redis pub/sub system to trigger changes.
 
-We override the mutators from the Collection: `insert`, `update` and `remove` to publish the changes to redis immediately after they have been
+We override the mutators from the Collection: `insert`, `update`, `upsert` and `remove` to publish the changes to redis immediately after they have been
 sent to the database.
 
 Let's take an example:
@@ -89,7 +99,7 @@ Messages.insert({text: 'Hello'})
 ```
 
 After the insert is done into the database, we will publish to Redis channel "messages" (same name as the collection name) the fact
-that we did an insert, and the document we inserted.
+that we did an insert, and the id of the document we inserted.
 
 For an update, things get a bit interesting in the back:
 ```
@@ -100,6 +110,8 @@ Messages.update(messageId, {
 
 This will publish the update event to "messages" channel in Redis but also to "messages::messageId". The reason we do this will be explored
 later in this document.
+
+We send the document id and the fields that have been changed.
 
 If you choose to update based on a selector:
 ```
@@ -213,7 +225,14 @@ Users.insert(data, {
 })
 ```
 
-The channel to which redis will push is: `company::${companyId}::users`.
+The channel to which redis will push is: `users::${companyId}`.
+But if we want to match the namespace in the publication right above we would need to do:
+
+```js
+Users.insert(data, {
+    namespace: 'company::companyId'
+})
+```
 
 Note: Even if you use namespace, making a change (update/remove) it will still push to `users::${id}`, to enable direct processing to work.
 
@@ -269,8 +288,10 @@ The limit of using synthetic mutations is bound only to your imagination, it ena
 import { SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
 
 SyntheticMutator.update(channelString, messageId, {
-    someField: {
-        deepMerging: 'willHappen'
+    $set: { // you can use any modifier supported by minimongo
+        selection: {
+            value: 10
+        }
     }
 })
 
@@ -284,8 +305,6 @@ SyntheticMutator.update(channelString, messageId, {
 SyntheticMutator.insert(channel, data);
 SyntheticMutator.remove(channel, _id);
 ```
-
-The allowed modifiers for SyntheticMutator can be found here: https://www.npmjs.com/package/mongo-query
 
 Warning! If your publication contains "fields" options.
 ```

@@ -41,6 +41,14 @@ export default (suffix) => {
         return callWithPromise(`update.${suffix}`, ...args);
     };
 
+    const upsert = (...args) => {
+        Meteor.call(`upsert.${suffix}`, ...args);
+    };
+
+    const upsertSync = (...args) => {
+        return callWithPromise(`upsert.${suffix}`, ...args);
+    };
+
     const synthetic = (...args) => {
         Meteor.call(`synthetic.${suffix}`, ...args);
     };
@@ -70,6 +78,8 @@ export default (suffix) => {
         createSync,
         update,
         updateSync,
+        upsert,
+        upsertSync,
         fetch,
         fetchSync,
         remove,
