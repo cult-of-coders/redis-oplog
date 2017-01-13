@@ -423,7 +423,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it ('Should work with the $addToSet', async function (done) {
+        it('Should work with the $addToSet', async function (done) {
             let _id = await createSync(
                 {operators: true, connections: [1, 2], number: 10},
             );
@@ -445,14 +445,14 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            await updateSync({ _id }, {
+            await updateSync({_id}, {
                 $addToSet: {
                     connections: 3
                 }
             });
         });
 
-        it ('Should work with the $pull', async function (done) {
+        it('Should work with the $pull', async function (done) {
             let _id = await createSync(
                 {operators: true, connections: [1, 2], number: 10},
             );
@@ -473,7 +473,7 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            await updateSync({ _id }, {
+            await updateSync({_id}, {
                 $pull: {
                     connections: 2
                 }
@@ -558,6 +558,8 @@ _.each(Collections, (Collection, key) => {
 
         it('Should work properly with limit-sort kind of queries', async function (done) {
             const context = 'limit-sort-test';
+            await removeSync({context});
+
             const ids = await createSync([
                 {context, number: 5, text: 'T - 1'},
                 {context, number: 10, text: 'T - 2'},
@@ -565,6 +567,7 @@ _.each(Collections, (Collection, key) => {
                 {context, number: 20, text: 'T - 4'},
                 {context, number: 25, text: 'T - 5'},
             ]);
+
             const [_id1, _id2, _id3, _id4, _id5] = ids;
 
             const handle = subscribe({
@@ -575,8 +578,8 @@ _.each(Collections, (Collection, key) => {
 
             await waitForHandleToBeReady(handle);
 
-            const cursor = Collection.find({context}, );
-            const observer =cursor.observeChanges({
+            const cursor = Collection.find({context},);
+            const observer = cursor.observeChanges({
                 changed(docId, doc) {
                     assert.equal(docId, _id2);
                     assert.equal(doc.number, 30);
@@ -593,7 +596,7 @@ _.each(Collections, (Collection, key) => {
 
             assert.lengthOf(data, 5);
             ids.forEach((_id, idx) => {
-                assert.equal(data[5-1-idx]._id, _id);
+                assert.equal(data[5 - 1 - idx]._id, _id);
             });
 
             updateSync({_id: _id2}, {
@@ -604,7 +607,7 @@ _.each(Collections, (Collection, key) => {
             });
         })
 
-        it('Should work with _ids direct processing and other filters present', async function(done) {
+        it('Should work with _ids direct processing and other filters present', async function (done) {
             const context = 'ids-process-test';
             const ids = await createSync([
                 {context, meta: {student: false}},
@@ -716,7 +719,7 @@ _.each(Collections, (Collection, key) => {
 
             update(_id, {
                 $addToSet: {
-                    passengers: { _id: 'y2MECXDgr9ggiP5D4', name: 'Marlee Nielsen', phone: '' }
+                    passengers: {_id: 'y2MECXDgr9ggiP5D4', name: 'Marlee Nielsen', phone: ''}
                 }
             });
         });
@@ -781,10 +784,10 @@ _.each(Collections, (Collection, key) => {
                 context
             }, {pushToRedis: false});
 
-            update({ _id }, {
+            update({_id}, {
                 $set: {number: 10}
             }, {pushToRedis: false}, (err, res) => {
-                remove({ _id }, {pushToRedis: false})
+                remove({_id}, {pushToRedis: false})
             });
 
             setTimeout(() => {
@@ -928,7 +931,7 @@ _.each(Collections, (Collection, key) => {
                     context: 1,
                     _id: 1
                 },
-                sort: { context: 1 },
+                sort: {context: 1},
                 limit: 20
             });
 
@@ -989,6 +992,106 @@ _.each(Collections, (Collection, key) => {
                 'something': true
             })
         });
+
+        it('Should work when updating deep array when it is specified as a field', async function (done) {
+            const context = 'deep-array-objects';
+
+            let handle = subscribe({context}, {
+                fields: {
+                    context: 1,
+                    'deep.deep.array': 1
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.isArray(doc.deep.deep.array);
+                    assert.lengthOf(doc.deep.deep.array, 6);
+                    update({
+                        _id: docId,
+                        'deep.deep.array': 6
+                    }, {
+                        $set: {
+                            'deep.deep.array.$': 20
+                        }
+                    })
+                },
+                changed(docId, doc) {
+                    assert.isArray(doc.deep.deep.array);
+                    assert.lengthOf(doc.deep.deep.array, 6);
+                    doc.deep.deep.array.forEach(number => {
+                        assert.isNumber(number);
+                    });
+                    assert.isTrue(_.contains(doc.deep.deep.array, 20));
+
+                    observer.stop();
+                    handle.stop();
+                    done();
+                }
+            });
+
+            create({
+                context,
+                deep: {
+                    deep: {
+                        array: [
+                            1, 2, 3, 4, 5, 6
+                        ]
+                    }
+                }
+            });
+        });
+
+        it('Should work when updating a specific element in an array', async function (done) {
+            const context = 'update-specific-in-arrays';
+
+            let handle = subscribe({context}, {
+                fields: {
+                    context: 1,
+                    passengers: 1
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+            const cursor = Collection.find({context});
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    update({_id: docId}, {
+                        $set: {
+                            'passengers.1.phone': 'ZZZ'
+                        }
+                    })
+                },
+                changed(docId, doc) {
+                    doc.passengers.forEach(passenger => {
+                        if (passenger.previous === 'YYY') {
+                            assert.equal(passenger.phone, 'ZZZ');
+                            observer.stop();
+                            handle.stop();
+                            done();
+                        }
+                    });
+                }
+            });
+
+            create({
+                context,
+                passengers: [
+                    {
+                        previous: 'XXX',
+                        phone: 'XXX'
+                    },
+                    {
+                        previous: 'YYY',
+                        phone: 'YYY',
+                    }
+                ]
+            });
+        })
     });
 });
 
