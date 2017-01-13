@@ -13,10 +13,6 @@ into building reactive applications, highly scalable chat apps, games, and added
 
 Incrementally adoptable & works with your current Meteor project.
 
-It will make sense to use this once you have at least 50 online users. 
-Until then, MongoDB oplog can do the job without too much hassle.
-Use the right tool for the right job!
-
 ## Install
 
 ```bash
@@ -292,8 +288,10 @@ The limit of using synthetic mutations is bound only to your imagination, it ena
 import { SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
 
 SyntheticMutator.update(channelString, messageId, {
-    someField: {
-        deepMerging: 'willHappen'
+    $set: { // you can use any modifier supported by minimongo
+        selection: {
+            value: 10
+        }
     }
 })
 
@@ -307,8 +305,6 @@ SyntheticMutator.update(channelString, messageId, {
 SyntheticMutator.insert(channel, data);
 SyntheticMutator.remove(channel, _id);
 ```
-
-The allowed modifiers for SyntheticMutator can be found here: https://www.npmjs.com/package/mongo-query
 
 Warning! If your publication contains "fields" options.
 ```
