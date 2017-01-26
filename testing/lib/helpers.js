@@ -1,12 +1,4 @@
-const callWithPromise = (method, ...args) => {
-    return new Promise((resolve, reject) => {
-        Meteor.call(method, ...args, (err, res) => {
-            if (err) reject(err.reason || 'Something went wrong.');
-
-            resolve(res);
-        });
-    });
-};
+import {waitForHandleToBeReady, callWithPromise} from './sync_utils';
 
 export default (suffix) => {
     const create = (...args) => {
@@ -59,18 +51,6 @@ export default (suffix) => {
 
     const subscribe = (...args) => {
         return Meteor.subscribe(`publication.${suffix}`, ...args);
-    };
-
-    const waitForHandleToBeReady = (handle) => {
-        return new Promise((resolve, reject) => {
-            Tracker.autorun(c => {
-                if (handle.ready()) {
-                    c.stop();
-
-                    resolve();
-                }
-            })
-        })
     };
 
     return {

@@ -2,6 +2,7 @@ import {Collections, config} from './boot';
 import {_} from 'meteor/underscore';
 import './synthetic_mutators';
 import './client_side_mutators';
+import './publishComposite/client.test';
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
 
@@ -28,13 +29,14 @@ _.each(Collections, (Collection, key) => {
                 limit: 5
             });
 
+            const randomTitle = Random.id();
             const cursor = Collection.find();
-            var _id;
+            let _id;
 
             let observeChangesHandle = cursor.observeChanges({
                 added(docId, doc) {
-                    if (docId === _id) {
-                        remove({_id});
+                    if (doc.title === randomTitle) {
+                        remove({_id: docId});
                     }
                 },
                 removed(docId) {
@@ -47,7 +49,7 @@ _.each(Collections, (Collection, key) => {
 
             await waitForHandleToBeReady(handle);
 
-            _id = await createSync({game: 'chess', title: 'E'});
+            _id = await createSync({game: 'chess', title: randomTitle});
         });
 
         it('Should detect an insert', async function (done) {
@@ -798,7 +800,7 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should work correctly when disallowed fields are specified', async function (done) {
-            const context = 'disallowed-fields';
+            const context = 'disallowed-fields-' + Random.id();
             const handle = subscribe({context}, {
                 fields: {
                     'profile': 0,
@@ -814,7 +816,7 @@ _.each(Collections, (Collection, key) => {
             let _id;
             const observer = cursor.observeChanges({
                 added(docId, doc) {
-                    if (docId !== _id) return;
+                    if (doc.context !== context) return;
 
                     assert.equal(doc.other, 'Public');
                     assert.isUndefined(doc.profile);
@@ -834,8 +836,6 @@ _.each(Collections, (Collection, key) => {
                     })
                 },
                 changed(docId, doc) {
-                    if (docId !== _id) return;
-
                     assert.equal(doc.other, 'Publico');
                     assert.isUndefined(doc.profile);
                     assert.isObject(doc.address);
