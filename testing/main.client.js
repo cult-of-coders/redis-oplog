@@ -2,6 +2,7 @@ import {Collections, config} from './boot';
 import {_} from 'meteor/underscore';
 import './synthetic_mutators';
 import './client_side_mutators';
+import './publishComposite/client.test';
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
 
