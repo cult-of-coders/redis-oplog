@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
 import { RedisOplog, SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
+import { DDP } from 'meteor/ddp-client';
 
 if (Meteor.isServer) {
     RedisOplog.init({
@@ -66,6 +67,8 @@ if (Meteor.isServer) {
                 return Collection.upsert(selectors, modifier, _.extend({}, opts[key], options));
             },
             [`remove.${config[key].suffix}`](selectors, options = {}) {
+                console.log(this.connection.id);
+                console.log(DDP._CurrentInvocation.get().connection.id);
                 return Collection.remove(selectors, _.extend(options, opts[key]));
             },
             [`synthetic.${config[key].suffix}`](method, _id, mutation, channel) {
