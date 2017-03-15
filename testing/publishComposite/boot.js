@@ -2,9 +2,6 @@ import { Items, Children } from './collections';
 import loadFixtures from './loadFixtures';
 
 if (Meteor.isServer) {
-    Items.remove({});
-    Children.remove({});
-
     Items.allow({
         insert: () => true,
         update: () => true,
@@ -19,7 +16,7 @@ if (Meteor.isServer) {
 
     loadFixtures();
 
-    Meteor.publishComposite.enableDebugLogging();
+    // Meteor.publishComposite.enableDebugLogging();
 
     Meteor.publishComposite('items_publish_composite', {
         find() {
@@ -32,7 +29,7 @@ if (Meteor.isServer) {
                 }
             }
         ]
-    })
+    });
 
     Meteor.methods({
         'publish_composite.items.insert'(...args) {
