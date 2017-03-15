@@ -1,6 +1,6 @@
 Package.describe({
     name: 'cultofcoders:redis-oplog',
-    version: '1.1.7',
+    version: '1.1.8',
     // Brief, one-line summary of the package.
     summary: 'Replacement for Meteor\'s MongoDB oplog implementation',
     // URL to the Git repository containing the source code for this package.
@@ -50,5 +50,8 @@ Package.onTest(function (api) {
     api.use('practicalmeteor:chai');
 
     api.mainModule('testing/main.server.js', 'server');
+    api.addFiles('testing/publishComposite/boot.js', 'server');
+    api.addFiles('testing/optimistic-ui/boot.js', 'server');
+
     api.mainModule('testing/main.client.js', 'client');
 });

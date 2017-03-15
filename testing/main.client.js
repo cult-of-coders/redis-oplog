@@ -3,6 +3,7 @@ import {_} from 'meteor/underscore';
 import './synthetic_mutators';
 import './client_side_mutators';
 import './publishComposite/client.test';
+import './optimistic-ui/client.test';
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
 
@@ -658,7 +659,8 @@ _.each(Collections, (Collection, key) => {
 
             const cursor = Collection.find({context});
 
-            const observer = cursor.observeChanges({
+            let observer;
+            observer = cursor.observeChanges({
                 added(docId, doc) {
                     assert.equal(doc.context, context);
                     observer.stop();

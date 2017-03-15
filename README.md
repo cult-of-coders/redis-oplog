@@ -295,26 +295,18 @@ SyntheticMutator.update(channelString, messageId, {
     }
 })
 
+// It can also work with the actual Mongo.Collection object
+
 // added support for mongo operators
-SyntheticMutator.update(channelString, messageId, {
+SyntheticMutator.update(MessagesCollection, messageId, {
     $push: {
         someField: someValue
     }
 })
 
-SyntheticMutator.insert(channel, data);
-SyntheticMutator.remove(channel, _id);
+SyntheticMutator.insert(MessagesCollection, data); // it will try and generate a Random.id()
+SyntheticMutator.remove(MessagesCollection, _id);
 ```
-
-Warning! If your publication contains "fields" options.
-```
-{
-    fields: { text: 1, typing: 1 }
-}
-```
-
-Even if the fields don't actually exist in the db. The reason we do it like this, is to allow control over access in the synthetic events.
-For some people you may want to see them, others you do not, depending on their role.
 
 ### Publish Composite
 
