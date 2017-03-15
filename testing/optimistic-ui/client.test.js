@@ -9,7 +9,7 @@ describe('Optimistic UI', () => {
 
         const itemId = await callWithPromise('optimistic_ui.items.insert', {
             context,
-            liked: []
+            liked: ['YYY']
         });
 
         const handle = Meteor.subscribe('optimistic_ui.items', {_id: itemId});
@@ -25,6 +25,8 @@ describe('Optimistic UI', () => {
                 }
                 alreadyIn = true;
 
+                assert.lengthOf(doc.liked, 2);
+                assert.isTrue(_.contains(doc.liked, 'XXX'));
                 done();
 
                 setTimeout(() => {
@@ -51,7 +53,7 @@ describe('Optimistic UI', () => {
 
         const itemId = Items.insert({
             context,
-            liked: []
+            liked: ['YYY']
         });
 
         const handle = Meteor.subscribe('optimistic_ui.items', {_id: itemId});
@@ -67,6 +69,8 @@ describe('Optimistic UI', () => {
                 }
                 alreadyIn = true;
 
+                assert.lengthOf(doc.liked, 2);
+                assert.isTrue(_.contains(doc.liked, 'XXX'));
                 done();
                 setTimeout(() => {
                     handle.stop();
