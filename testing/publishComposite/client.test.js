@@ -25,8 +25,6 @@ describe('Publish Composite', () => {
         const item = _.first(cursor.fetch());
         assert.isObject(item);
 
-        console.log(item);
-
         const childCursor = Children.find({itemId: item._id});
         const childObserver = childCursor.observeChanges({
             changed(docId, doc) {
