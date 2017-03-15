@@ -4,6 +4,8 @@ import {waitForHandleToBeReady, callWithPromise} from '../lib/sync_utils';
 
 describe('Publish Composite', () => {
     it('Should be able to detect updates on parent element', async function (done) {
+        await callWithPromise('publish_composite.load_fixtures');
+
         const handle = Meteor.subscribe('items_publish_composite');
         await waitForHandleToBeReady(handle);
 
@@ -22,6 +24,8 @@ describe('Publish Composite', () => {
 
         const item = _.first(cursor.fetch());
         assert.isObject(item);
+
+        console.log(item);
 
         const childCursor = Children.find({itemId: item._id});
         const childObserver = childCursor.observeChanges({

@@ -49,6 +49,8 @@ Package.onTest(function (api) {
     api.use('practicalmeteor:mocha');
     api.use('practicalmeteor:chai');
 
+    api.addFiles('testing/publishComposite/boot.js', 'server');
+
     api.mainModule('testing/main.server.js', 'server');
     api.mainModule('testing/main.client.js', 'client');
 });
