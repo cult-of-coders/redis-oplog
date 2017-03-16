@@ -164,8 +164,8 @@ This is one of the most efficient ways to catch changes and process them.
 
 ## Stopping Reactivity
 
-We extend the mutators `insert`, `update` and `remove` to allow an extra argument. For various reasons, this why we break 
-the ability to have callbacks. We believe that this isn't a big draw-back since they are not so used.
+We extend the mutators `insert`, `update` and `remove` to allow an extra argument the configuration. If you use callbacks,
+this would work as expected.
 
 ```
 // no changes will be published to any redis channels
@@ -255,6 +255,8 @@ Note: Even if you use namespace, making a change (update/remove) it will still p
     channels: [] // will reach all cursors that listen to any of these channels
     namespace: '' 
     namespaces: [] 
+    optimistic: false // default is false. This is wether or not to do the diff computation in sync so latency compensation works
+    // Keep in mind, for updates made from client, it is not necessary to use this, however if you write a method that is both client and server, in the server side method you need to pass {optimistic: true}
     pushToRedis: true // default is true, use false if you don't want reactivity at all. Useful when doing large batch inserts/updates.
 }
 ```
