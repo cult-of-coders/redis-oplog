@@ -16,12 +16,12 @@ Items.allow({
 
 Meteor.methods({
     'optimistic_ui.items.insert'(...args) {
-        return Items.insert(...args)
+        return Items.insert(...args, {optimistic: true})
     },
     'optimistic_ui.items.update'(...args) {
-        return Items.update(...args)
+        return Items.update(...args, {optimistic: true})
     },
     'optimistic_ui.items.remove'(...args) {
-        return Items.remove(...args)
+        return Items.remove(...args, {optimistic: true})
     }
 });

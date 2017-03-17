@@ -17,21 +17,21 @@ describe('Optimistic UI', () => {
 
         const cursor = Items.find({ _id: itemId });
 
-        let alreadyIn = false;
+        let alreadyIn = 0;
         const observer = cursor.observeChanges({
             changed(docId, doc) {
-                if (alreadyIn) {
-                    throw 'A flicker was caused.';
+                alreadyIn++;
+                if (alreadyIn > 1) {
+                    done('A flicker was caused.');
                 }
-                alreadyIn = true;
 
                 assert.lengthOf(doc.liked, 2);
                 assert.isTrue(_.contains(doc.liked, 'XXX'));
-                done();
 
                 setTimeout(() => {
                     handle.stop();
                     observer.stop();
+                    done();
                 }, 200);
             }
         });
@@ -47,8 +47,6 @@ describe('Optimistic UI', () => {
     });
 
     it('Should not cause a flicker with isomorphic calls', async function (done) {
-        return done();
-
         const context = Random.id();
 
         const itemId = Items.insert({
@@ -61,21 +59,22 @@ describe('Optimistic UI', () => {
 
         const cursor = Items.find({_id: itemId});
 
-        let alreadyIn = false;
+        let alreadyIn = 0;
         const observer = cursor.observeChanges({
             changed(docId, doc) {
-                if (alreadyIn) {
-                    throw 'A flicker was caused.';
+                alreadyIn++;
+                if (alreadyIn > 1) {
+                    done('A flicker was caused.');
                 }
-                alreadyIn = true;
 
                 assert.lengthOf(doc.liked, 2);
                 assert.isTrue(_.contains(doc.liked, 'XXX'));
-                done();
+
                 setTimeout(() => {
                     handle.stop();
                     observer.stop();
-                }, 200)
+                    done();
+                }, 200);
             }
         });
 
