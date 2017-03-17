@@ -116,7 +116,6 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should detect an update deeply nested', async function (done) {
-            let handle = subscribe({game: 'chess'});
 
             let docId = await createSync({
                 game: 'chess',
@@ -129,7 +128,8 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            const cursor = Collection.find();
+            let handle = subscribe({_id: docId});
+            const cursor = Collection.find({ _id: docId });
 
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId, doc) {
@@ -663,9 +663,11 @@ _.each(Collections, (Collection, key) => {
             observer = cursor.observeChanges({
                 added(docId, doc) {
                     assert.equal(doc.context, context);
-                    observer.stop();
-                    handle.stop();
-                    done();
+                    setTimeout(() => {
+                        observer.stop();
+                        handle.stop();
+                        done();
+                    }, 50)
                 }
             });
 
@@ -974,15 +976,18 @@ _.each(Collections, (Collection, key) => {
                 added(docId, doc) {
                     assert.isTrue(doc.something);
 
-                    update({_id: docId}, {
-                        $unset: {
-                            'something': ""
-                        }
-                    })
+                    setTimeout(() => {
+                        update({_id: docId}, {
+                            $unset: {
+                                'something': ""
+                            }
+                        })
+                    }, 50);
                 },
                 changed(docId, doc) {
                     assert.isTrue('something' in doc);
                     assert.isUndefined(doc.something);
+                    remove({ _id: docId });
                     observer.stop();
                     handle.stop();
                     done();
