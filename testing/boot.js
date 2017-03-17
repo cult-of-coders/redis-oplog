@@ -9,7 +9,7 @@ if (Meteor.isServer) {
             host: '127.0.0.1',   // Redis host
         },
         // overridePublishFunction: true
-        debug: true
+        // debug: true
     });
 }
 
