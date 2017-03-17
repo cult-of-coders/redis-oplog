@@ -174,6 +174,23 @@ Collection.update(selector, document, {pushToRedis: false})
 Collection.remove(selector, {pushToRedis: false})
 ```
 
+## Optimistic UI
+
+Optimistic UI is a bit expensive in the sense that it will cause some delays to a method's yield.
+By default optimistic-ui is disabled, meaning if you have a method stub, it will not work accordingly unless
+you pass the option ```{optimistic: true}```
+
+If you are using client-side inserts like doing from client (not within a method on client):
+```
+Messages.insert({title: "Hello"})
+```
+
+You don't need to do anything extra, it will work out-of-the-box.
+
+Please note that if you are using publish-composite, use ```cultofcoders:publish-composite``` instead which is a fork
+of the original, the only difference is that it passes the connection.id along so redis-oplog can smartly identify
+where to send the changes first so the method call has minimum response time.
+
 ## Fine-Tuning
 
 ### Custom Channels
@@ -314,7 +331,7 @@ SyntheticMutator.remove(MessagesCollection, _id);
 
 It works with [publish composite package](https://github.com/englue/meteor-publish-composite) out of the box, you just need to install it and that's it. It will use Redis as the oplog.
 
-### Merging scenarios
+### Merging scenarios (old but gold)
 
 https://docs.google.com/document/d/1Cx-J7xwP9IlbEa54RiT_34GK4o8M6XpPieRvNPI_aUE/edit?usp=sharing
 
