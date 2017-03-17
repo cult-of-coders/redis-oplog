@@ -54,7 +54,11 @@ meteor run --settings settings.json
 Or import this before anything else server-side. (It is very important that this is the first thing you load)
 Make sure that if you use packages that initialize collections, even local ones, *cultofcoders:redis-oplog* needs to be loaded before them.
 
+Note: Does not work with *insecure* package. Remove it and specify *allow* or *deny* for each collection. Thank you!
+
 ## Basic Usage
+
+It's the SAME!
 
 ```js
 // or Meteor.publishWithRedis if you chose overridePublishFunction as false
