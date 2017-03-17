@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 1.2.0
+- Optimistic UI fixes
+- Performance gains for methods
+- Fixes for publishComposite
+- Other bugs and code quality improvements
+
 ### 1.0.5 - 1.0.15
 - Bug fixes and improvements
 
