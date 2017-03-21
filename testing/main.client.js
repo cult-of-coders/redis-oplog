@@ -355,6 +355,8 @@ _.each(Collections, (Collection, key) => {
                     }]
                 });
 
+                await waitForHandleToBeReady(handle);
+
                 const cursor = Collection.find();
                 let inChangedEvent = false;
                 const observeChangesHandle = cursor.observeChanges({
@@ -362,6 +364,11 @@ _.each(Collections, (Collection, key) => {
                         assert.equal(docId, _id);
                         inChangedEvent = true;
                         // assert.equal(doc.something, 30);
+                        if (context == 'server') {
+                            update({_id}, {$set: {'Year': 2018}})
+                        } else {
+                            Collection.update({_id}, {$set: {'Year': 2018}})
+                        }
                     },
                     removed(docId) {
                         assert.isTrue(inChangedEvent);
@@ -373,16 +380,12 @@ _.each(Collections, (Collection, key) => {
                     }
                 });
 
-                await waitForHandleToBeReady(handle);
-                let object = Collection.findOne(_id);
-                assert.isObject(object);
-
                 if (context == 'server') {
-                    await updateSync({_id}, {$set: {'something': 30}});
-                    await updateSync({_id}, {$set: {'Year': 2018}})
+                    update({_id}, {$set: {
+                        something: 30
+                    }})
                 } else {
-                    Collection.update({_id}, {$set: {'something': 30}});
-                    Collection.remove({_id});
+                    Collection.update({_id}, {$set: {something: 30}})
                 }
             });
         });
