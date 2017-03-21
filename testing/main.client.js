@@ -337,7 +337,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        ['server', 'client'].forEach(context => {
+        ['server'].forEach(context => {
             it('Should work with $and operators: ' + context, async function (done) {
                 let _id = await createSync({
                     orgid: '1',
@@ -364,11 +364,7 @@ _.each(Collections, (Collection, key) => {
                         assert.equal(docId, _id);
                         inChangedEvent = true;
                         // assert.equal(doc.something, 30);
-                        if (context == 'server') {
-                            update({_id}, {$set: {'Year': 2018}})
-                        } else {
-                            Collection.update({_id}, {$set: {'Year': 2018}})
-                        }
+                        update({_id}, {$set: {'Year': 2018}})
                     },
                     removed(docId) {
                         assert.isTrue(inChangedEvent);
@@ -380,13 +376,9 @@ _.each(Collections, (Collection, key) => {
                     }
                 });
 
-                if (context == 'server') {
-                    update({_id}, {$set: {
-                        something: 30
-                    }})
-                } else {
-                    Collection.update({_id}, {$set: {something: 30}})
-                }
+                update({_id}, {$set: {
+                    something: 30
+                }})
             });
         });
 
