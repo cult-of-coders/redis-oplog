@@ -22,19 +22,24 @@ meteor add disable-oplog
 
 ## Usage
 
-You can either configure it through Meteor settings:
+Configure it via meteor settings:
 
 ```
-// settings.json
+// settings.json these are the defaults
 {
   ...
   "redisOplog": {
     "redis": {
+        // all the options available can be found here: https://github.com/NodeRedis/node_redis#options-object-properties
       "port": 6379,          // Redis port
       "host": "127.0.0.1"   // Redis host
     },
-    "debug": false, // default is false,
-    "overridePublishFunction": true // default is true, Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
+    "mutationDefaults": {
+        "optimistic": false, // Does not to a sync processing on the diffs
+        "pushToRedis": true // Pushes to redis the changes
+    }
+    "debug": false, // Will show timestamp and activity of redis-oplog.
+    "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
   }
 }
 ```
@@ -354,6 +359,21 @@ Meteor.methods({
 
 SyntheticMutator.insert(MessagesCollection, data); // it will generate a Random.id() as _id, that you can later update
 SyntheticMutator.remove(MessagesCollection, _id); // only works with _id's
+```
+
+## Failsafe
+
+If redis server fails, it will `console.error` this fact, and it will keep retrying to connect every 30 seconds.
+
+## Stats
+
+If you are interested in viewing how many observers are registered or memory consumption:
+```
+meteor shell
+import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
+
+// works only server-side
+RedisOplog.stats()
 ```
 
 ### Merging scenarios (old but gold)
