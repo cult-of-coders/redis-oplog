@@ -162,26 +162,27 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should not update multiple documents if not specified (multi:true)', async function (done) {
-            let handle = subscribe({game: 'monopoly'});
-
-            [_id1, id2] = await createSync([
+            [_id1, _id2] = await createSync([
                 {game: 'monopoly', title: 'test'},
                 {game: 'monopoly', title: 'test2'}
             ]);
 
-            const cursor = Collection.find({game: 'monopoly'});
+            let handle = subscribe({game: 'monopoly'});
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({_id: {$in: [_id1, _id2]}});
 
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId) {
                     assert.equal(docId, _id1);
-                    remove({game: 'monopoly'});
                     observeChangesHandle.stop();
                     handle.stop();
                     done();
+
+                    remove({game: 'monopoly'});
                 }
             });
 
-            await waitForHandleToBeReady(handle);
 
             update({game: 'monopoly'}, {$set: {score: Math.random()}});
         });
