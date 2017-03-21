@@ -15,20 +15,10 @@
       "resolved": "https://registry.npmjs.org/commander/-/commander-2.9.0.tgz",
       "from": "commander@>=2.9.0 <3.0.0"
     },
-    "component-type": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/component-type/-/component-type-1.1.0.tgz",
-      "from": "component-type@1.1.0"
-    },
     "concat-map": {
       "version": "0.0.1",
       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
       "from": "concat-map@0.0.1"
-    },
-    "debug": {
-      "version": "2.3.3",
-      "resolved": "https://registry.npmjs.org/debug/-/debug-2.3.3.tgz",
-      "from": "debug@*"
     },
     "deep-diff": {
       "version": "0.3.4",
@@ -39,11 +29,6 @@
       "version": "0.4.1",
       "resolved": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.4.1.tgz",
       "from": "deep-extend@0.4.1"
-    },
-    "dot-component": {
-      "version": "0.1.1",
-      "resolved": "https://registry.npmjs.org/dot-component/-/dot-component-0.1.1.tgz",
-      "from": "dot-component@0.1.1"
     },
     "dot-object": {
       "version": "1.5.4",
@@ -90,25 +75,10 @@
       "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.3.tgz",
       "from": "minimatch@>=3.0.2 <4.0.0"
     },
-    "mongo-eql": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/mongo-eql/-/mongo-eql-1.0.0.tgz",
-      "from": "mongo-eql@1.0.0"
-    },
-    "mongo-query": {
-      "version": "0.5.7",
-      "resolved": "https://registry.npmjs.org/mongo-query/-/mongo-query-0.5.7.tgz",
-      "from": "mongo-query@0.5.7"
-    },
-    "ms": {
-      "version": "0.7.2",
-      "resolved": "https://registry.npmjs.org/ms/-/ms-0.7.2.tgz",
-      "from": "ms@0.7.2"
-    },
-    "object-component": {
-      "version": "0.0.3",
-      "resolved": "https://registry.npmjs.org/object-component/-/object-component-0.0.3.tgz",
-      "from": "object-component@0.0.3"
+    "object-sizeof": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/object-sizeof/-/object-sizeof-1.1.1.tgz",
+      "from": "object-sizeof@1.1.1"
     },
     "once": {
       "version": "1.4.0",
@@ -121,29 +91,24 @@
       "from": "path-is-absolute@>=1.0.0 <2.0.0"
     },
     "redis": {
-      "version": "2.6.3",
-      "resolved": "https://registry.npmjs.org/redis/-/redis-2.6.3.tgz",
-      "from": "redis@2.6.3"
+      "version": "2.7.1",
+      "resolved": "https://registry.npmjs.org/redis/-/redis-2.7.1.tgz",
+      "from": "redis@2.7.1"
     },
     "redis-commands": {
-      "version": "1.3.0",
-      "resolved": "https://registry.npmjs.org/redis-commands/-/redis-commands-1.3.0.tgz",
+      "version": "1.3.1",
+      "resolved": "https://registry.npmjs.org/redis-commands/-/redis-commands-1.3.1.tgz",
       "from": "redis-commands@>=1.2.0 <2.0.0"
     },
     "redis-parser": {
-      "version": "2.3.0",
-      "resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-2.3.0.tgz",
-      "from": "redis-parser@>=2.0.0 <3.0.0"
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-2.5.0.tgz",
+      "from": "redis-parser@>=2.5.0 <3.0.0"
     },
     "sift": {
-      "version": "3.2.6",
-      "resolved": "https://registry.npmjs.org/sift/-/sift-3.2.6.tgz",
-      "from": "sift@3.2.6"
-    },
-    "type-component": {
-      "version": "0.0.1",
-      "resolved": "https://registry.npmjs.org/type-component/-/type-component-0.0.1.tgz",
-      "from": "type-component@*"
+      "version": "3.2.7",
+      "resolved": "https://registry.npmjs.org/sift/-/sift-3.2.7.tgz",
+      "from": "sift@3.2.7"
     },
     "wrappy": {
       "version": "1.0.2",

@@ -116,7 +116,6 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should detect an update deeply nested', async function (done) {
-            let handle = subscribe({game: 'chess'});
 
             let docId = await createSync({
                 game: 'chess',
@@ -129,7 +128,8 @@ _.each(Collections, (Collection, key) => {
                 }
             });
 
-            const cursor = Collection.find();
+            let handle = subscribe({_id: docId});
+            const cursor = Collection.find({ _id: docId });
 
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId, doc) {
@@ -162,26 +162,27 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should not update multiple documents if not specified (multi:true)', async function (done) {
-            let handle = subscribe({game: 'monopoly'});
-
-            [_id1, id2] = await createSync([
+            [_id1, _id2] = await createSync([
                 {game: 'monopoly', title: 'test'},
                 {game: 'monopoly', title: 'test2'}
             ]);
 
-            const cursor = Collection.find({game: 'monopoly'});
+            let handle = subscribe({game: 'monopoly'});
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({_id: {$in: [_id1, _id2]}});
 
             const observeChangesHandle = cursor.observeChanges({
                 changed(docId) {
                     assert.equal(docId, _id1);
-                    remove({game: 'monopoly'});
                     observeChangesHandle.stop();
                     handle.stop();
                     done();
+
+                    remove({game: 'monopoly'});
                 }
             });
 
-            await waitForHandleToBeReady(handle);
 
             update({game: 'monopoly'}, {$set: {score: Math.random()}});
         });
@@ -337,7 +338,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        ['server', 'client'].forEach(context => {
+        ['server'].forEach(context => {
             it('Should work with $and operators: ' + context, async function (done) {
                 let _id = await createSync({
                     orgid: '1',
@@ -355,6 +356,8 @@ _.each(Collections, (Collection, key) => {
                     }]
                 });
 
+                await waitForHandleToBeReady(handle);
+
                 const cursor = Collection.find();
                 let inChangedEvent = false;
                 const observeChangesHandle = cursor.observeChanges({
@@ -362,6 +365,7 @@ _.each(Collections, (Collection, key) => {
                         assert.equal(docId, _id);
                         inChangedEvent = true;
                         // assert.equal(doc.something, 30);
+                        update({_id}, {$set: {'Year': 2018}})
                     },
                     removed(docId) {
                         assert.isTrue(inChangedEvent);
@@ -373,17 +377,9 @@ _.each(Collections, (Collection, key) => {
                     }
                 });
 
-                await waitForHandleToBeReady(handle);
-                let object = Collection.findOne(_id);
-                assert.isObject(object);
-
-                if (context == 'server') {
-                    await updateSync({_id}, {$set: {'something': 30}});
-                    await updateSync({_id}, {$set: {'Year': 2018}})
-                } else {
-                    Collection.update({_id}, {$set: {'something': 30}});
-                    Collection.remove({_id});
-                }
+                update({_id}, {$set: {
+                    something: 30
+                }})
             });
         });
 
@@ -663,9 +659,11 @@ _.each(Collections, (Collection, key) => {
             observer = cursor.observeChanges({
                 added(docId, doc) {
                     assert.equal(doc.context, context);
-                    observer.stop();
-                    handle.stop();
-                    done();
+                    setTimeout(() => {
+                        observer.stop();
+                        handle.stop();
+                        done();
+                    }, 50)
                 }
             });
 
@@ -974,15 +972,18 @@ _.each(Collections, (Collection, key) => {
                 added(docId, doc) {
                     assert.isTrue(doc.something);
 
-                    update({_id: docId}, {
-                        $unset: {
-                            'something': ""
-                        }
-                    })
+                    setTimeout(() => {
+                        update({_id: docId}, {
+                            $unset: {
+                                'something': ""
+                            }
+                        })
+                    }, 50);
                 },
                 changed(docId, doc) {
                     assert.isTrue('something' in doc);
                     assert.isUndefined(doc.something);
+                    remove({ _id: docId });
                     observer.stop();
                     handle.stop();
                     done();
