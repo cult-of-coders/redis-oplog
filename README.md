@@ -90,9 +90,9 @@ If you are using optimistic ui in your application, you should give this a read.
 
 ### [How It Works](docs/how_it_works.md)
 
-Find out what RedisOplog does behind the scenes
+Find out what Redis Oplog does behind the scenes
 
 ### [Fine Tuning](docs/finetuning.md)
 
-Find out how you can use the advantages of RedisOplog to make your app very performant.
+Find out how you can use the advantages of Redis Oplog to make your app very performant.
 
