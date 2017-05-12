@@ -17,7 +17,8 @@ Npm.depends({
     'redis': '2.7.1',
     'lodash.clonedeep': '4.5.0',
     'deep-extend': '0.4.1',
-    'object-sizeof': '1.1.1'
+    'object-sizeof': '1.1.1',
+    'mingo': '1.1.2'
 });
 
 Package.onUse(function (api) {
