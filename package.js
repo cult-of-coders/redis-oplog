@@ -11,7 +11,6 @@ Package.describe({
 });
 
 Npm.depends({
-    'sift': '3.2.7',
     'deep-diff': '0.3.4',
     'dot-object': '1.5.4',
     'redis': '2.7.1',

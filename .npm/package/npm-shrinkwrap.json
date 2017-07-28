@@ -1,18 +1,18 @@
 {
   "dependencies": {
     "balanced-match": {
-      "version": "0.4.2",
-      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-0.4.2.tgz",
-      "from": "balanced-match@>=0.4.1 <0.5.0"
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.0.tgz",
+      "from": "balanced-match@>=1.0.0 <2.0.0"
     },
     "brace-expansion": {
-      "version": "1.1.6",
-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.6.tgz",
-      "from": "brace-expansion@>=1.0.0 <2.0.0"
+      "version": "1.1.8",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.8.tgz",
+      "from": "brace-expansion@>=1.1.7 <2.0.0"
     },
     "commander": {
-      "version": "2.9.0",
-      "resolved": "https://registry.npmjs.org/commander/-/commander-2.9.0.tgz",
+      "version": "2.11.0",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-2.11.0.tgz",
       "from": "commander@>=2.9.0 <3.0.0"
     },
     "concat-map": {
@@ -46,14 +46,9 @@
       "from": "fs.realpath@>=1.0.0 <2.0.0"
     },
     "glob": {
-      "version": "7.1.1",
-      "resolved": "https://registry.npmjs.org/glob/-/glob-7.1.1.tgz",
+      "version": "7.1.2",
+      "resolved": "https://registry.npmjs.org/glob/-/glob-7.1.2.tgz",
       "from": "glob@>=7.0.5 <8.0.0"
-    },
-    "graceful-readlink": {
-      "version": "1.0.1",
-      "resolved": "https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz",
-      "from": "graceful-readlink@>=1.0.0"
     },
     "inflight": {
       "version": "1.0.6",
@@ -71,9 +66,9 @@
       "from": "lodash.clonedeep@4.5.0"
     },
     "minimatch": {
-      "version": "3.0.3",
-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.3.tgz",
-      "from": "minimatch@>=3.0.2 <4.0.0"
+      "version": "3.0.4",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz",
+      "from": "minimatch@>=3.0.4 <4.0.0"
     },
     "object-sizeof": {
       "version": "1.1.1",
@@ -101,14 +96,9 @@
       "from": "redis-commands@>=1.2.0 <2.0.0"
     },
     "redis-parser": {
-      "version": "2.5.0",
-      "resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-2.5.0.tgz",
+      "version": "2.6.0",
+      "resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-2.6.0.tgz",
       "from": "redis-parser@>=2.5.0 <3.0.0"
-    },
-    "sift": {
-      "version": "3.2.7",
-      "resolved": "https://registry.npmjs.org/sift/-/sift-3.2.7.tgz",
-      "from": "sift@3.2.7"
     },
     "wrappy": {
       "version": "1.0.2",
