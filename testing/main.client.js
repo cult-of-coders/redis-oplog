@@ -162,9 +162,10 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should not update multiple documents if not specified (multi:true)', async function (done) {
+            const context = Random.id();
             [_id1, _id2] = await createSync([
-                {game: 'monopoly', title: 'test'},
-                {game: 'monopoly', title: 'test2'}
+                {context, game: 'monopoly', title: 'test'},
+                {context, game: 'monopoly', title: 'test2'}
             ]);
 
             let handle = subscribe({game: 'monopoly'});
@@ -179,12 +180,12 @@ _.each(Collections, (Collection, key) => {
                     handle.stop();
                     done();
 
-                    remove({game: 'monopoly'});
+                    remove({context, game: 'monopoly'});
                 }
             });
 
 
-            update({game: 'monopoly'}, {$set: {score: Math.random()}});
+            update({context, game: 'monopoly'}, {$set: {score: Math.random()}});
         });
 
         it('Should update multiple documents if specified', async function (done) {
