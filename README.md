@@ -1,15 +1,15 @@
 Redis Oplog for Meteor
 ======================
 
-**Redis Oplog is complete re-implementation of LiveQuery (commonly referred to as  oplog tailing).** Redis Oplog enables your application to control it's reactive queries through Redis - rather than just respond to MongoDB's operation logs. It opens a new world into building fast, scalable, and reactive applications.
+**Redis Oplog is complete re-implementation of LiveQuery (commonly referred to as  oplog tailing).** Redis Oplog enables your application to control its reactive queries through Redis - rather than just respond to MongoDB's operation logs. It opens a new world into building fast, scalable, and reactive applications.
 
-**Redis Oplog is backwards compatible with LiveQuery**, so there won't be any change in how you use Meteor. It also enables you to fine-tune your reactive queries to achieve absolute performance. Finally, Redis Oplog is incrementally adoptable and should work flawlessly with your current setup.
+**Redis Oplog is backwards compatible with LiveQuery**, so there won't be any change in how you use Meteor. It's also  incrementally adoptable and should work flawlessly with-in your current setup. 
 
-**Redis Oplog is intended for applications that are scaling to 1000 concurrent clients and beyond.** However, it can also be beneficial for smaller applications, as it could trim CPU usage and save you hosting expenses.
+**Redis Oplog is intended for applications that are scaling to 1000 concurrent clients and beyond.** However, it can also be beneficial for smaller applications, as it could trim CPU usage, save you hosting expenses, and enable you to fine-tune your reactive queries.
 
 To summarize, Redis Oplog helps you: 
  - scale Meteor's reactive queries horizontally
- - control your reactive queries performance
+ - control how your reactive queries perform
  - save costs by lowering CPU usage 
  
 ## How to Use
