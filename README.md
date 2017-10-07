@@ -1,98 +1,79 @@
-Welcome to Redis Oplog
+Redis Oplog for Meteor
 ======================
 
-### LICENSE: MIT
+**Redis Oplog is complete re-implementation of LiveQuery (commonly referred to as  oplog tailing).** Redis Oplog enables your application to control its reactive queries through Redis - rather than just respond to MongoDB's operation logs. It opens a new world into building fast, scalable, and reactive applications.
 
-[![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog)
+**Redis Oplog is backwards compatible with LiveQuery**, so there won't be any change in how you use Meteor. It's also  incrementally adoptable and should work flawlessly with-in your current setup. 
 
-## RedisOplog
+**Redis Oplog is intended for applications that are scaling to 1000 concurrent clients and beyond.** However, it can also be beneficial for smaller applications, as it could trim CPU usage, save you hosting expenses, and enable you to fine-tune your reactive queries.
 
-A full re-implementation of the Meteor's MongoDB oplog tailing. This time, reactivity is controlled by the app, opening a new world
-into building reactive applications, highly scalable chat apps, games, and added reactivity for non-persistent data.
+To summarize, Redis Oplog: 
+ - is backwards compatible with LiveQuery
+ - can be incrementally adopted alongside LiveQuery
+ - scales Meteor's reactive queries horizontally
+ - lets you control your reactive queries
+ - saves costs by lowering CPU usage
+ 
+## How to Use
 
-Incrementally adoptable & works with your current Meteor project.
-
-## Installation
+First, add Redis Oplog to your app:
 
 ```bash
-meteor add cultofcoders:redis-oplog
+meteor remove insecure
 meteor add disable-oplog
+meteor add cultofcoders:redis-oplog
 ```
 
-Configure it via meteor settings:
+Second, configure the package via settings.json:
 
-```
-// settings.json these are the defaults
+```javascript
 {
-  ...
+  // ...
   "redisOplog": {
     "redis": {
-        // all the options available can be found here: https://github.com/NodeRedis/node_redis#options-object-properties
-      "port": 6379,          // Redis port
-      "host": "127.0.0.1"   // Redis host
+      "port": 6379,
+      "host": "127.0.0.1"
     },
     "mutationDefaults": {
         "optimistic": false, // Does not to a sync processing on the diffs
-        "pushToRedis": true // Pushes to redis the changes
+        "pushToRedis": true  // Pushes to Redis the changes
     }
-    "debug": false, // Will show timestamp and activity of redis-oplog.
-    "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
+    "debug": false,                 // Will show timestamp and activity of redis-oplog.
+    "overridePublishFunction": true // Will patch Meteor.publish to become Meteor.publishWithRedis
   }
 }
 ```
 
-```
-// or simpler it will apply the defaults above
-{
-    ...
-    "redisOplog": {}
-}
-```
+Finally, run your application: 
 
 ```bash
 meteor run --settings settings.json
 ```
 
-Make sure that if you use packages that initialize collections, even local ones, *cultofcoders:redis-oplog* needs to be loaded before them.
+Note: If you use any packages that initialize collections, including local ones, make sure that `cultofcoders:redis-oplog` loads first. See the [Load Order](docs/load_order.md) document for more information.
 
-You also have the ability to load them in JavaScript. The rule here is to do it, before anything else:
-```
-import { RedisOplog } from 'meteor/cultofcoders:redis-oplog'
-RedisOplog.init(config);
-```
+## Further Reading
 
-## Notes
+- [How It Works](docs/how_it_works.md)<br>
+  Find out what Redis Oplog does behind the scenes
 
-RedisOplog does not work with *insecure* package. Remove it and specify *allow* or *deny* for each collection. Thank you!
+- [Incremental Adoption](docs/incremental_adoption.md)<br>
+  Learn how to use Redis Oplog alongside LiveQuery
 
-RedisOplog is fully backwards compatible, so there won't be any change in how you use Meteor, unless you want to fine-tune your application for absolute performance.
+- [Optimistic UI](docs/optimistic_ui.md)<br>
+  Learn how Redis Oplog works with Optimistic UI
 
+- [Fine Tuning](docs/finetuning.md)<br>
+  Find out how you can tune Redis Oplog to optimize your app performance
 
-## Redis Unavailability
+- [Monitoring](docs/stats.md)<br>
+See how much memory is being used and how many observers are registered
 
-If redis server fails, it will `console.error` this fact, and it will keep retrying to connect every 30 seconds. Once connection is resumed
-reactivity will be resumed. However, changes that happened while Redis was down will not be visible. In future we will treat this scenario.
+- [Redis Unavailability](docs/redis_unavailability.md)<br>
+Learn how Redis Oplog works if/when Redis becomes unavailable
 
-## Stats
+- [Package Load Order](docs/load_order.md) <br>
+Helpful for ensuring Redis Oplog runs smoothly
 
-If you are interested in viewing how many observers are registered or memory consumption:
-```
-meteor shell
-import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
-
-// works only server-side
-RedisOplog.stats()
-```
-
-### [Optimistic UI](docs/optimistic_ui.md)
-
-If you are using optimistic ui in your application, you should give this a read.
-
-### [How It Works](docs/how_it_works.md)
-
-Find out what Redis Oplog does behind the scenes
-
-### [Fine Tuning](docs/finetuning.md)
-
-Find out how you can use the advantages of Redis Oplog to make your app very performant.
-
+- <a href="https://github.com/NodeRedis/node_redis#options-object-properties">node_redis Documentation</a><br>
+Redis Oplog uses the node_redis NPM package to interact with Redis. For more options on configuration, refer to the package documentation
