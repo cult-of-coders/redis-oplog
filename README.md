@@ -7,14 +7,16 @@ Redis Oplog for Meteor
 
 **Redis Oplog is intended for applications that are scaling to 1000 concurrent clients and beyond.** However, it can also be beneficial for smaller applications, as it could trim CPU usage, save you hosting expenses, and enable you to fine-tune your reactive queries.
 
-To summarize, Redis Oplog helps you: 
- - scale Meteor's reactive queries horizontally
- - control how your reactive queries perform
- - save costs by lowering CPU usage 
+To summarize, Redis Oplog: 
+ - is backwards compatible with LiveQuery
+ - can be incrementally adopted alongside LiveQuery
+ - scales Meteor's reactive queries horizontally
+ - lets you control your reactive queries
+ - saves costs by lowering CPU usage
  
 ## How to Use
 
-First, integrate Redis Oplog into your app:
+First, add Redis Oplog to your app:
 
 ```bash
 meteor remove insecure
@@ -26,7 +28,7 @@ Second, configure the package via settings.json:
 
 ```javascript
 {
-  ...
+  // ...
   "redisOplog": {
     "redis": {
       "port": 6379,
