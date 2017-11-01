@@ -9,6 +9,8 @@ import './collection_hooks.server';
 import './observe_callbacks.server';
 import './mutation_callbacks';
 import './collection_transform';
+import './server-autorun/server';
+
 import { _ } from 'meteor/underscore';
 
 _.each(Collections, (Collection) => {

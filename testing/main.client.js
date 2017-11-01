@@ -4,6 +4,8 @@ import './synthetic_mutators';
 import './client_side_mutators';
 import './publishComposite/client.test';
 import './optimistic-ui/client.test';
+import './server-autorun/client';
+
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
 

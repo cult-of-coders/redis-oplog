@@ -1,5 +1,8 @@
 ## CHANGELOG
 
+### 1.2.1
+- Bug fixes
+
 ### 1.2.0
 - Optimistic UI fixes
 - Performance gains for methods
