@@ -50,7 +50,7 @@ multi-tenant systems. For example you have multiple companies that use the same 
 easily laser-focus the reactivity for them by using this concept.
 
 ```js
-Meteor.publish('users', function () {
+Meteor.publish('users', function (companyId) {
     // get the company for this.userId
 
     return Users.find({companyId}, {namespace: 'company::' + companyId})
