@@ -3,11 +3,11 @@ services:
   - redis-server
 language: node_js
 node_js:
-  - "4.4.7"
+  - "8.3.0"
  
 before_install:
-  - curl https://install.meteor.com/?release=1.4.1.3 | /bin/sh
+  - curl https://install.meteor.com/?release=1.6.0 | /bin/sh
   - export PATH="$HOME/.meteor:$PATH"
 
 script:
-  - meteor --once test-packages --driver-package dispatch:mocha-phantomjs ./
+  - meteor --once test-packages --driver-package meteortesting:mocha ./
