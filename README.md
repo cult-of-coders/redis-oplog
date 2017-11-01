@@ -27,13 +27,19 @@ meteor add disable-oplog
 Configure it via Meteor settings:
 
 ```
-// settings.json these are the defaults
+// settings.json 
+{
+    ...
+    "redisOplog": {}
+}
+
+// default full configuration
 {
   ...
   "redisOplog": {
     "redis": {
-      "port": 6379,          // Redis port
-      "host": "127.0.0.1"   // Redis host
+      "port": 6379, // Redis port
+      "host": "127.0.0.1" // Redis host
     },
     "mutationDefaults": {
         "optimistic": false, // Does not to a sync processing on the diffs
@@ -42,14 +48,6 @@ Configure it via Meteor settings:
     "debug": false, // Will show timestamp and activity of redis-oplog.
     "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
   }
-}
-```
-
-```
-// or simpler it will apply the defaults above
-{
-    ...
-    "redisOplog": {}
 }
 ```
 
