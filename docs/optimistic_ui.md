@@ -40,7 +40,3 @@ If you are using client-side inserts, not within a method, no changes are requir
 // client-side
 Messages.insert({title: "Hello"})
 ```
-
-Please note that if you are using Optimistic-UI and publish-composite, use `cultofcoders:publish-composite` instead which is a fork
-of the original, the only difference is that it passes the connection.id along so RedisOplog can smartly identify
-where to send the changes first so the method call has minimum response time, and no "flickers" will be experienced.

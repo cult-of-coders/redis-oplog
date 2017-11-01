@@ -19,7 +19,10 @@ meteor add cultofcoders:redis-oplog
 meteor add disable-oplog
 ```
 
-Configure it via meteor settings:
+To make sure it is compatible with other packages which extend the `Mongo.Collection` methods, make sure you go to `.meteor/packages`
+and put `cultofcoders:redis-oplog` as the first option.
+
+Configure it via Meteor settings:
 
 ```
 // settings.json these are the defaults
@@ -27,7 +30,6 @@ Configure it via meteor settings:
   ...
   "redisOplog": {
     "redis": {
-        // all the options available can be found here: https://github.com/NodeRedis/node_redis#options-object-properties
       "port": 6379,          // Redis port
       "host": "127.0.0.1"   // Redis host
     },
