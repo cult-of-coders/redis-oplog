@@ -12,15 +12,17 @@ into building reactive applications, highly scalable chat apps, games, and added
 
 Incrementally adoptable & works with your current Meteor project.
 
+## Premium Support
+
+If you are looking to scale your business using this package and you need to have your back covered. We are here to help. Feel free to contact-us
+at contact@cultofcoders.com.
+
 ## Installation
 
 ```bash
 meteor add cultofcoders:redis-oplog
 meteor add disable-oplog
 ```
-
-To make sure it is compatible with other packages which extend the `Mongo.Collection` methods, make sure you go to `.meteor/packages`
-and put `cultofcoders:redis-oplog` as the first option.
 
 Configure it via Meteor settings:
 
@@ -35,7 +37,7 @@ Configure it via Meteor settings:
     },
     "mutationDefaults": {
         "optimistic": false, // Does not to a sync processing on the diffs
-        "pushToRedis": true // Pushes to redis the changes
+        "pushToRedis": true // Pushes to redis the changes by default
     }
     "debug": false, // Will show timestamp and activity of redis-oplog.
     "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
@@ -55,19 +57,14 @@ Configure it via Meteor settings:
 meteor run --settings settings.json
 ```
 
-Make sure that if you use packages that initialize collections, even local ones, *cultofcoders:redis-oplog* needs to be loaded before them.
-
-You also have the ability to load them in JavaScript. The rule here is to do it, before anything else:
-```
-import { RedisOplog } from 'meteor/cultofcoders:redis-oplog'
-RedisOplog.init(config);
-```
-
 ## Notes
 
-RedisOplog does not work with *insecure* package. Remove it and specify *allow* or *deny* for each collection. Thank you!
-
 RedisOplog is fully backwards compatible, so there won't be any change in how you use Meteor, unless you want to fine-tune your application for absolute performance.
+
+To make sure it is compatible with other packages which extend the `Mongo.Collection` methods, make sure you go to `.meteor/packages`
+and put `cultofcoders:redis-oplog` as the first option.
+
+RedisOplog does not work with *insecure* package, which is used for bootstrapping your app.
 
 
 ## Redis Unavailability
