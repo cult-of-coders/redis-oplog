@@ -10,6 +10,13 @@ const RedisOplog = {
     stats
 };
 
+// Warnings
+Meteor.startup(function () {
+    if (Package['insecure']) {
+        console.log("RedisOplog does not support the insecure package.")
+    }
+});
+
 export {
     RedisOplog,
     SyntheticMutator,
