@@ -37,7 +37,7 @@ Package.onUse(function (api) {
 Package.onTest(function (api) {
     api.use('cultofcoders:redis-oplog');
     api.use('aldeed:collection2@2.10.0');
-    api.use('reywood:publish-composite@1.4.2');
+    api.use('reywood:publish-composite@1.5.2');
     api.use('peerlibrary:reactive-publish@0.5.0');
 
     api.use('ecmascript');

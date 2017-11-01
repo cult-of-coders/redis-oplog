@@ -10,6 +10,7 @@ import './observe_callbacks.server';
 import './mutation_callbacks';
 import './collection_transform';
 import './server-autorun/server';
+import './transformations/server';
 
 import { _ } from 'meteor/underscore';
 
