@@ -62,6 +62,8 @@ describe('Optimistic UI', () => {
         let alreadyIn = 0;
         const observer = cursor.observeChanges({
             changed(docId, doc) {
+                console.log(docId, doc);
+
                 alreadyIn++;
                 if (alreadyIn > 1) {
                     done('A flicker was caused.');

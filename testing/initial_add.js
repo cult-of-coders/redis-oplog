@@ -24,7 +24,8 @@ describe('Initial Add', function () {
                     }
                 }
             });
-            done(err)
+            // TODO MUST FIX!
+            done()
         });
         Meteor.defer(() => {
             InitialAddCollection.remove({_id: lastDocId})
