@@ -89,7 +89,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should detect an update', async function (done) {
+        it('Should detect an update simple', async function (done) {
             let handle = subscribe({
                 game: 'chess',
             }, {
