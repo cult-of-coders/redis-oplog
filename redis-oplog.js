@@ -3,6 +3,7 @@ import { RedisPipe, Events } from './lib/constants';
 import { Meteor } from 'meteor/meteor';
 import stats from './lib/utils/stats';
 import init from './lib/init';
+import Config from './lib/config';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
 
 const RedisOplog = {
@@ -22,6 +23,7 @@ export {
     SyntheticMutator,
     publishWithRedis,
     RedisPipe,
+    Config,
     Events
 }
 

@@ -12,6 +12,7 @@ import './collection_transform';
 import './server-autorun/server';
 import './transformations/server';
 import './publish-counts/server';
+import './custom-publications/server';
 
 import { _ } from 'meteor/underscore';
 

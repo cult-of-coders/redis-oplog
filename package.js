@@ -13,7 +13,7 @@ Package.describe({
 Npm.depends({
     'deep-diff': '0.3.4',
     'dot-object': '1.5.4',
-    'redis': '2.7.1',
+    'redis': '2.8.0',
     'deep-extend': '0.4.1',
     'object-sizeof': '1.1.1',
     'lodash.clonedeep': '4.5.0',

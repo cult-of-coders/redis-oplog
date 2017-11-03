@@ -41,6 +41,7 @@ Configure it via Meteor settings:
       "port": 6379, // Redis port
       "host": "127.0.0.1" // Redis host
     },
+    "retryIntervalMs": 10000, // retries in 10 seconds to reconnect to redis if it fails
     "mutationDefaults": {
         "optimistic": false, // Does not to a sync processing on the diffs
         "pushToRedis": true // Pushes to redis the changes by default
@@ -63,12 +64,6 @@ To make sure it is compatible with other packages which extend the `Mongo.Collec
 and put `cultofcoders:redis-oplog` as the first option.
 
 RedisOplog does not work with *insecure* package, which is used for bootstrapping your app.
-
-
-## Redis Unavailability
-
-If redis server fails, it will `console.error` this fact, and it will keep retrying to connect every 30 seconds. Once connection is resumed
-reactivity will be resumed. However, changes that happened while Redis was down will not be visible. In future we will treat this scenario.
 
 ## Stats
 
@@ -93,3 +88,6 @@ Find out what Redis Oplog does behind the scenes
 
 Find out how you can use the advantages of Redis Oplog to make your app very performant.
 
+### [Control Redis Failover](docs/failover.md)
+
+Find out how you can hook into redis events to customize, when it fails
