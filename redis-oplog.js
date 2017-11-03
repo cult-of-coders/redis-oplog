@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import stats from './lib/utils/stats';
 import init from './lib/init';
 import Config from './lib/config';
+import { getRedisListener, getRedisPusher } from './lib/redis/getRedisClient';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
 
 const RedisOplog = {
@@ -21,10 +22,12 @@ Meteor.startup(function () {
 export {
     RedisOplog,
     SyntheticMutator,
-    publishWithRedis,
     RedisPipe,
     Config,
-    Events
+    Events,
+    publishWithRedis,
+    getRedisListener,
+    getRedisPusher,
 }
 
 if (Meteor.settings.redisOplog) {

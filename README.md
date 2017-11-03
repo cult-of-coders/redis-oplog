@@ -88,6 +88,6 @@ Find out what Redis Oplog does behind the scenes
 
 Find out how you can use the advantages of Redis Oplog to make your app very performant.
 
-### [Control Redis Failover](docs/failover.md)
+### [Redis Failover](docs/failover.md)
 
-Find out how you can hook into redis events to customize, when it fails
+Find out how you can hook into redis events to customize, when it fails.
