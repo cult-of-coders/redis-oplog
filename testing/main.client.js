@@ -6,6 +6,7 @@ import './publishComposite/client.test';
 import './optimistic-ui/client.test';
 import './server-autorun/client';
 import './transformations/client';
+import './publish-counts/client';
 
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';

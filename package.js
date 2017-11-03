@@ -40,6 +40,7 @@ Package.onTest(function (api) {
     api.use('aldeed:collection2@2.10.0');
     api.use('reywood:publish-composite@1.5.2');
     api.use('peerlibrary:reactive-publish@0.5.0');
+    api.use('natestrauser:publish-performant-counts@0.1.2');
 
     api.use('ecmascript');
     api.use('tracker');
