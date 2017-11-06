@@ -6,6 +6,7 @@ import init from './lib/init';
 import Config from './lib/config';
 import { getRedisListener, getRedisPusher } from './lib/redis/getRedisClient';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
+import Vent from './lib/vent/Vent';
 
 const RedisOplog = {
     init,
@@ -25,6 +26,7 @@ export {
     RedisPipe,
     Config,
     Events,
+    Vent,
     publishWithRedis,
     getRedisListener,
     getRedisPusher,

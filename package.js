@@ -27,12 +27,14 @@ Package.onUse(function (api) {
         'ejson',
         'dburles:mongo-collection-instances@0.3.5',
         'peerlibrary:publish-context@0.5.0',
+        'peerlibrary:control-mergebox@0.3.0',
         'minimongo',
         'mongo',
         'random'
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
+    api.mainModule('redis-oplog.client.js', 'client');
 });
 
 Package.onTest(function (api) {

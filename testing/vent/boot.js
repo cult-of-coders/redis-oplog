@@ -1,0 +1,22 @@
+import {Vent} from 'meteor/cultofcoders:redis-oplog';
+import {Meteor} from 'meteor/meteor';
+
+Vent.publish({
+    'threadMessage'({channel, shouldReturn = true}) {
+        if (!channel) {
+            throw new Meteor.Error('invalid-arguments', 'Please supply a valid channel');
+        }
+
+        this.on(channel, (object) => {
+            if (shouldReturn) {
+                return object;
+            }
+        });
+    }
+});
+
+Meteor.methods({
+    'vent_emit'({channel, object}) {
+        Vent.emit(channel, object)
+    }
+});

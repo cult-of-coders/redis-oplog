@@ -8,6 +8,7 @@ import './server-autorun/client';
 import './transformations/client';
 import './publish-counts/client';
 import './custom-publications/client';
+import './vent/client';
 
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
