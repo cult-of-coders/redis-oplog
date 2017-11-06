@@ -37,6 +37,8 @@ Package.onUse(function (api) {
 
 Package.onTest(function (api) {
     api.use('cultofcoders:redis-oplog');
+
+    // extensions
     api.use('aldeed:collection2@2.10.0');
     api.use('reywood:publish-composite@1.5.2');
     api.use('peerlibrary:reactive-publish@0.5.0');
@@ -48,8 +50,11 @@ Package.onTest(function (api) {
     api.use('random');
     api.use('matb33:collection-hooks');
 
-    api.use('practicalmeteor:mocha');
-    api.use('practicalmeteor:chai');
+    api.use([
+        'coffeescript@1.12.7_3',
+        'practicalmeteor:mocha@2.4.5_6',
+        'practicalmeteor:chai'
+    ]);
 
     api.mainModule('testing/main.server.js', 'server');
     api.addFiles('testing/publishComposite/boot.js', 'server');

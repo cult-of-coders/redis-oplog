@@ -150,7 +150,7 @@ SyntheticMutator.remove(MessagesCollection, _id);
 // If you perform an update to a channeled, namespaced collection
 SyntheticMutator.update(`company::{companyId}::threads`, threadId, {});
 
-// This will not work if you listen to channel by _id, you will have to do it manually yourself:
+// This will not work if you listen to a document by _id, you will have to specify direct processing channel:
 SyntheticMutator.update([`company::{companyId}::threads`, `threads::${threadId}`], threadId, {});
 
 // If you pass-in the collection instance as argument, this will be automatically done.
