@@ -1,6 +1,6 @@
 Package.describe({
     name: 'cultofcoders:redis-oplog',
-    version: '1.2.2_1',
+    version: '1.2.3',
     // Brief, one-line summary of the package.
     summary: 'Replacement for Meteor\'s MongoDB oplog implementation',
     // URL to the Git repository containing the source code for this package.
@@ -13,7 +13,7 @@ Package.describe({
 Npm.depends({
     'deep-diff': '0.3.4',
     'dot-object': '1.5.4',
-    'redis': '2.7.1',
+    'redis': '2.8.0',
     'deep-extend': '0.4.1',
     'object-sizeof': '1.1.1',
     'lodash.clonedeep': '4.5.0',
@@ -37,6 +37,8 @@ Package.onUse(function (api) {
 
 Package.onTest(function (api) {
     api.use('cultofcoders:redis-oplog');
+
+    // extensions
     api.use('aldeed:collection2@2.10.0');
     api.use('reywood:publish-composite@1.5.2');
     api.use('peerlibrary:reactive-publish@0.5.0');
@@ -48,8 +50,11 @@ Package.onTest(function (api) {
     api.use('random');
     api.use('matb33:collection-hooks');
 
-    api.use('practicalmeteor:mocha');
-    api.use('practicalmeteor:chai');
+    api.use([
+        'coffeescript@1.12.7_3',
+        'practicalmeteor:mocha@2.4.5_6',
+        'practicalmeteor:chai'
+    ]);
 
     api.mainModule('testing/main.server.js', 'server');
     api.addFiles('testing/publishComposite/boot.js', 'server');

@@ -7,6 +7,7 @@ import './optimistic-ui/client.test';
 import './server-autorun/client';
 import './transformations/client';
 import './publish-counts/client';
+import './custom-publications/client';
 
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
@@ -641,6 +642,13 @@ _.each(Collections, (Collection, key) => {
                     if (docId == ids[0]) {
                         assert.equal(docId, ids[0]);
                         update(ids[0], {
+                            $set: {'meta.changing': true}
+                        })
+                    }
+                },
+                changed(docId, doc) {
+                    if (docId == ids[0]) {
+                        update(ids[0], {
                             $set: {'meta.student': false}
                         })
                     }
@@ -653,7 +661,7 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should detect an insert with the default processor', async function (done) {
-            const context = 'insert-default-processing';
+            const context = 'insert-default-processing' + Random.id();
             const handle = subscribe({context});
 
             await waitForHandleToBeReady(handle);
@@ -930,7 +938,7 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should work with limit-sort when only _id is specified', async function (done) {
-            const context = 'limit-sort-with-id-only';
+            const context = Random.id();
             const handle = subscribe({context}, {
                 fields: {
                     context: 1,

@@ -1,7 +1,16 @@
 ## CHANGELOG
 
+### 1.2.3
+- Redis connection failover handling
+- Refetching the up to date collection when Redis connection resumes
+- Bug fixes and improvements
+
+### 1.2.2
+- Ability to merge db requests by channel
+- Bug fixes and improvements
+
 ### 1.2.1
-- Bug fixes
+- Bug fixes and improvements
 
 ### 1.2.0
 - Optimistic UI fixes

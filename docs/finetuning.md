@@ -92,9 +92,9 @@ optimistic: Boolean // default is false. This is wether or not to do the diff co
 pushToRedis: Boolean // default is true, use false if you don't want reactivity at all. Useful when doing large batch inserts/updates.
 ```
 
-### Fallback to polling
+### Polling with RedisOplog
 
-If you like to go back to polling, it's no problem. It's the same API as Meteor uses.
+If you like to go back to polling, it's no problem. It's the same API as Meteor uses:
 
 ```js
 Meteor.publish('users', function (companyId) {
@@ -122,32 +122,36 @@ You don't need to store `isTyping` in the database to do this.
 ```js
 import { SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
 
-SyntheticMutator.update(channelName, messageId, { // only works with specific _id
-    $set: { 
-        isTyping: true // you can use any modifier supported by minimongo
-    }
-})
-
-// for the example above where we have fine-tuned chat by thread, the synthetic mutation needs to look like this
-SyntheticMutator.update('threads::' + messageId + '::messages', messageId, {
-    $set: { // you can use any modifier supported by minimongo
-        selection: {
-            value: 10
-        }
-    }
-})
-
 // If you put the Mongo.Collection object as first argument, it will transform itself to "messages" (the collection name)
 Meteor.methods({
-    'messages.start_typing'(messageId) {
-        SyntheticMutator.update(MessagesCollection, messageId, {
+    'messages.start_typing'(threadId) {
+        // you can use any modifier supported by minimongo
+        // only works with specific _id's, not selectors!
+        SyntheticMutator.update(ThreadsCollection, threadId, {
             $addToSet: {
-                typers: this.userId
+                currentlyTyping: this.userId
             }
         })
     }
 });
 
-SyntheticMutator.insert(MessagesCollection, data); // it will generate a Random.id() as _id, that you can later update
-SyntheticMutator.remove(MessagesCollection, _id); // only works with _id's
+// And in the client, you will instantly get access to the updated `doc.currentlyTyping`
+// Even if it's not stored in the database, imagine the potential of this in real-time games.
+
+// if data does not have an '_id' set, it will generate it with a Random.id() 
+SyntheticMutator.insert(MessagesCollection, data); 
+
+// synthetic deletion, like update, only works with specific _ids
+SyntheticMutator.remove(MessagesCollection, _id); 
+```
+
+```js
+// Be very careful here!
+// If you perform an update to a channeled, namespaced collection
+SyntheticMutator.update(`company::{companyId}::threads`, threadId, {});
+
+// This will not work if you listen to a document by _id, you will have to specify direct processing channel:
+SyntheticMutator.update([`company::{companyId}::threads`, `threads::${threadId}`], threadId, {});
+
+// If you pass-in the collection instance as argument, this will be automatically done.
 ```
