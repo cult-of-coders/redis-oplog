@@ -3,17 +3,19 @@
 ### API
 ```js
 // server
-Vent.listeners({
+Vent.publish({
     'threadMessage'({threadId}) {
         // check permissions, you have access to userId
         
         // registers listeners on redis
-        this.on(`messages::${threadId}::new`, ({message}) => {
+        this.on(`threads::${threadId}::new_message`, ({message}) => {
             return {message};
         });
         // access to publication context
     }    
 })
+
+// Vent.publish('threadMessage', {threadId}) also works
 
 // some other part server
 Meteor.methods({
@@ -24,7 +26,7 @@ Meteor.methods({
         });
         
         // dispatches event to redis
-        Vent.emit(`messages::${threadId}::new`, {message});
+        Vent.emit(`threads::${threadId}::new_message`, {message});
     }
 })
 
@@ -42,3 +44,4 @@ handler.stop();
 
 ### Behind the scenes
 
+Vent creates a unique local collection for every subscription.  

@@ -54,5 +54,54 @@ describe('Vent', function () {
             channel,
             object: {text: 'Hello!'}
         })
-    })
+    });
+
+
+    it('Should handle event bombarding and not losing anything along the way', async function (done) {
+        const threadId = Random.id();
+        const channel = `threads::${threadId}::new_message`;
+
+        const handle = Vent.subscribe('threadMessage', {
+            channel
+        });
+
+        let count = 0;
+        handle.listen(function (message) {
+            count++;
+            if (count === 100) {
+                done();
+            }
+        });
+
+        Meteor.call('vent_emit', {
+            channel,
+            object: {text: 'Hello!'},
+            times: 100
+        })
+    });
+
+
+    it('Should not receive the event if handler is stopped', async function (done) {
+        const threadId = Random.id();
+        const channel = `threads::${threadId}::new_message`;
+
+        const handle = Vent.subscribe('threadMessage', {
+            channel
+        });
+
+        handle.listen(function (message) {
+            done('Should not be here');
+        });
+
+        handle.stop();
+
+        Meteor.call('vent_emit', {
+            channel,
+            object: {text: 'Hello!'}
+        });
+
+        setTimeout(function () {
+            done();
+        }, 200);
+    });
 });

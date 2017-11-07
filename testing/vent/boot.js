@@ -16,7 +16,9 @@ Vent.publish({
 });
 
 Meteor.methods({
-    'vent_emit'({channel, object}) {
-        Vent.emit(channel, object)
+    'vent_emit'({channel, object, times = 1}) {
+        for (let i = 0; i < times; i++) {
+            Vent.emit(channel, object)
+        }
     }
 });
