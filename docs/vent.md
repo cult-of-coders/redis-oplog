@@ -1,15 +1,15 @@
 ## Redis Vent
 
 The Redis Vent allows you to send custom events from the server to the clients that subscribe to it.
-It also will bypasses Meteor's mergebox, meaning all events sent out, will not be stored on the server.
+It also will bypasses Meteor's mergebox, meaning all events sent out will not be stored on the server.
 
 You may need this if you want absolute control over the reactivity.
 
-It uses Redis ofcourse to communicate events to all instances in your infrastructure that talk share the same Redis Connection.
+It uses Redis ofcourse to communicate events to all instances in your infrastructure that share the same Redis connection.
 
 What this means:
-1. You can implement a very efficient and scalable chat application
-2. You can emulate reactivity with other databases other than mongo.
+1. You can implement a very efficient and scalable chat application, at the expense of writing more code to achieve this, which is normal.
+2. You can emulate reactivity with other databases/apis other than mongo.
 
 ### API
 
