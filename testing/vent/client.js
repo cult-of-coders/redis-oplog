@@ -14,6 +14,7 @@ describe('Vent', function () {
         handle.listen(function (message) {
             assert.isObject(message);
             assert.equal('Hello!', message.text);
+            handle.stop();
             done();
         });
 
@@ -36,6 +37,8 @@ describe('Vent', function () {
             inHandle1 = true;
 
             if (inHandle2) {
+                handle1.stop();
+                handle2.stop();
                 done();
             }
         });
@@ -46,6 +49,8 @@ describe('Vent', function () {
             inHandle2 = true;
 
             if (inHandle1) {
+                handle1.stop();
+                handle2.stop();
                 done();
             }
         });
@@ -69,6 +74,7 @@ describe('Vent', function () {
         handle.listen(function (message) {
             count++;
             if (count === 100) {
+                handle.stop();
                 done();
             }
         });
