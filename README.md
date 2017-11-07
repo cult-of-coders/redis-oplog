@@ -52,6 +52,9 @@ Configure it via Meteor settings:
 }
 ```
 
+To see what you can configure under `"redis": {}` take a look here:
+https://www.npmjs.com/package/redis#options-object-properties
+
 ```bash
 meteor run --settings settings.json
 ```
@@ -76,6 +79,11 @@ import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
 RedisOplog.stats()
 ```
 
+### The levels of scaling reactivity
+1. Just add RedisOplog, you will already see big performance improvements
+2. Fine-tune your reactivity by using custom namespaces and channels
+3. Implement your own custom reactivity by using Redis Vent
+
 ### [Optimistic UI](docs/optimistic_ui.md)
 
 If you are using optimistic ui in your application, you should give this a read.
@@ -91,3 +99,7 @@ Find out how you can use the advantages of Redis Oplog to make your app very per
 ### [Redis Failover](docs/failover.md)
 
 Find out how you can hook into redis events to customize, when it fails.
+
+### [Redis Vent](docs/vent.md)
+
+Find out how you can customize your reactivity and enable it across multiple languages/microservices with ease.
