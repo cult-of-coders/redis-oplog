@@ -1112,7 +1112,7 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should work with $elemMatch query selector', async function (done) {
-            const context = 'work-with-elemMatch';
+            const context = 'work-with-elemMatch-' + Random.id();
 
             let handle = subscribe({
                 context,
