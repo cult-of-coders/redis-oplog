@@ -9,6 +9,7 @@ import './transformations/client';
 import './publish-counts/client';
 import './custom-publications/client';
 import './vent/client';
+import './accounts/client';
 
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
@@ -1143,7 +1144,7 @@ _.each(Collections, (Collection, key) => {
                     address: 'x@x.com'
                 }]
             });
-        })
+        });
     });
 });
 

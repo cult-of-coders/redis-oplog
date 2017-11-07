@@ -14,6 +14,7 @@ import './transformations/server';
 import './publish-counts/server';
 import './custom-publications/server';
 import './vent/server';
+import './accounts/server';
 
 import { _ } from 'meteor/underscore';
 

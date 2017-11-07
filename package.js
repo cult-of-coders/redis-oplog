@@ -50,7 +50,9 @@ Package.onTest(function (api) {
     api.use('tracker');
     api.use('mongo');
     api.use('random');
+    api.use('accounts-password');
     api.use('matb33:collection-hooks');
+    api.use('alanning:roles@1.2.16');
 
     api.use([
         'coffeescript@1.12.7_3',
