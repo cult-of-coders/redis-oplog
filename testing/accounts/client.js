@@ -1,4 +1,5 @@
 import {Meteor} from 'meteor/meteor';
+import { DDP } from 'meteor/ddp-client';
 
 describe('Testing accounts functionality', function () {
     it('Should properly subscribe and login', function (done) {
@@ -15,6 +16,7 @@ describe('Testing accounts functionality', function () {
             ],
         };
 
+        Meteor.subscribe('accounts_usersAssoc');
         const handle = Meteor.subscribe('accounts_userData', {
             limit: 1,
             sort: {
@@ -46,6 +48,8 @@ describe('Testing accounts functionality', function () {
 
                         observer.stop();
                         handle.stop();
+
+                        console.log(Meteor);
 
                         Meteor.logout(function () {
                             done();
