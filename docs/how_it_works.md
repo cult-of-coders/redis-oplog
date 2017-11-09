@@ -83,7 +83,7 @@ This is one of the most efficient ways to catch changes and process them. The co
 
 ## Stopping Reactivity
 
-We extend the mutators `insert`, `update` and `remove` to allow an extra argument the configuration.
+We extend the mutators `insert`, `update` and `remove` to allow an extra argument that configures the mutation.
 
 ```
 // no changes will be published to any redis channels

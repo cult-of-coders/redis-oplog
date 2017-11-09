@@ -8,6 +8,8 @@ import './server-autorun/client';
 import './transformations/client';
 import './publish-counts/client';
 import './custom-publications/client';
+import './vent/client';
+import './accounts/client';
 
 import {Random} from 'meteor/random';
 import helperGenerator from './lib/helpers';
@@ -1107,7 +1109,42 @@ _.each(Collections, (Collection, key) => {
                     }
                 ]
             });
-        })
+        });
+
+        it('Should work with $elemMatch query selector', async function (done) {
+            const context = 'work-with-elemMatch-' + Random.id();
+
+            let handle = subscribe({
+                context,
+                emails: {
+                    $elemMatch: {
+                        address: 'x@x.com'
+                    }
+                }
+            });
+
+            await waitForHandleToBeReady(handle);
+            const cursor = Collection.find({
+                context
+            });
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    assert.isArray(doc.emails);
+                    assert.equal('x@x.com', doc.emails[0].address);
+                    handle.stop();
+                    observer.stop();
+                    done();
+                }
+            });
+
+            create({
+                context,
+                emails: [{
+                    address: 'x@x.com'
+                }]
+            });
+        });
     });
 });
 

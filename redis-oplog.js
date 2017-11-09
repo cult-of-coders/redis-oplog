@@ -6,6 +6,8 @@ import init from './lib/init';
 import Config from './lib/config';
 import { getRedisListener, getRedisPusher } from './lib/redis/getRedisClient';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
+import ObservableCollection from './lib/cache/ObservableCollection';
+import Vent from './lib/vent/Vent';
 
 const RedisOplog = {
     init,
@@ -22,9 +24,11 @@ Meteor.startup(function () {
 export {
     RedisOplog,
     SyntheticMutator,
+    ObservableCollection,
     RedisPipe,
     Config,
     Events,
+    Vent,
     publishWithRedis,
     getRedisListener,
     getRedisPusher,
