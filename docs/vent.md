@@ -1,7 +1,7 @@
 ## Redis Vent
 
 The Redis Vent allows you to send custom events from the server to the clients that subscribe to it.
-It also will bypasses Meteor's mergebox, meaning all events sent out will not be stored on the server.
+It also will bypass Meteor's mergebox, meaning all events sent out will not be stored on the server.
 
 You may need this if you want absolute control over the reactivity.
 
@@ -55,7 +55,7 @@ On the client:
 import {Vent} from 'meteor/cultofcoders:redis-oplog';
 
 // same handler from Meteor.subscribe, extended with a listen() function
-const handler = Vent.subscribe('onNewMessage', {threadId});
+const handler = Vent.subscribe('threadMessage', {threadId});
 
 handler.listen(function ({message}) {
     // handle it
@@ -125,19 +125,22 @@ that you have the flexibility of doing what you need.
 
 ### Behind the scenes
 
-Vent hooks into DDP and listens very efficiently to events sent out. Then calls the correct listeners.
+Vent hooks into DDP client and listens very efficiently to events sent out. Then calls the attached listeners.
  
 Each Vent subscription is unique, meaning you can have multiple subscriptions to the same publication end-point,
 for example:
 
 ```js
-const handler_1 = Vent.subscribe('onNewMessage', {threadId_1});
-const handler_2 = Vent.subscribe('onNewMessage', {threadId_2});
+const handler_1 = Vent.subscribe('threadMessage', {threadId: threadId_1});
+const handler_2 = Vent.subscribe('threadMessage', {threadId: threadId_2});
 ```
 
 And their listeners are going to be unique as well, working as you expect it to work.
 
-The way it does it, it creates a unique collection name and when subscribing sends it as the first parameter.
+The way it does it, it creates a unique collection name and when subscribing, it sends that unique collection name as a parameter.
 This way the server knows where to send the changed events.
 
-By doing this, we don't actually create any LocalCollection per subscription, we do not need it.
+Initially the server will send an .added event with an `_id: 'id'`, then the events will be sent via .changed event for `_id: 'id'` along with the `{event}` object
+
+We don't create any LocalCollection per subscription, as you expect, because it hooks into all the messages incomming from DDP,
+does a quick check to see if it's a `vent` and calls the attached listener.
