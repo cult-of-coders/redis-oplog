@@ -1,7 +1,7 @@
 ## Redis Vent
 
 The Redis Vent allows you to send custom events from the server to the clients that subscribe to it.
-It also will bypass Meteor's mergebox, meaning all events sent out will not be stored on the server.
+These messages will not be stored in any way on the server.
 
 You may need this if you want absolute control over the reactivity.
 
