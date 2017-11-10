@@ -38,7 +38,7 @@ Configure it via Meteor settings:
     },
     "retryIntervalMs": 10000, // Retries in 10 seconds to reconnect to redis if the connection failed
     "mutationDefaults": {
-        "optimistic": false, // Does not do a sync processing on the diffs. But it works by default with client-side mutations.
+        "optimistic": true, // Does not do a sync processing on the diffs. But it works by default with client-side mutations.
         "pushToRedis": true // Pushes to redis the changes by default
     }
     "debug": false, // Will show timestamp and activity of redis-oplog.

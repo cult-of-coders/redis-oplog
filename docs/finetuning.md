@@ -88,7 +88,7 @@ channel: String // will only reach the cursors that listen to this channel
 channels: [String] // will reach all cursors that listen to any of these channels
 namespace: String
 namespaces: [String] 
-optimistic: Boolean // default is false. This is wether or not to do the diff computation in sync so latency compensation works
+optimistic: Boolean // default is true. This is wether or not to do the diff computation in sync so latency compensation works
 pushToRedis: Boolean // default is true, use false if you don't want reactivity at all. Useful when doing large batch inserts/updates.
 ```
 
