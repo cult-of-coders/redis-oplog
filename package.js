@@ -31,6 +31,8 @@ Package.onUse(function (api) {
         'random'
     ]);
 
+    api.use('aldeed:collection2-core', {weak: true});
+
     api.mainModule('redis-oplog.js', 'server');
     api.mainModule('redis-oplog.client.js', 'client');
 });
