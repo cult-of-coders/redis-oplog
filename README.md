@@ -99,7 +99,7 @@ Find out how you can hook into redis events to customize, when it fails.
 
 Find out how you can customize your reactivity and enable it across multiple languages/microservices with ease.
 
-### [Outside Mutations](docs/vent.md)
+### [Outside Mutations](docs/outside_mutations.md)
 
 If you have different workers/services that perform updates to mongo and they exist outside Meteor, you can still trigger
 reactivity for the Meteor instances with a few lines of code.
