@@ -1145,6 +1145,43 @@ _.each(Collections, (Collection, key) => {
                 }]
             });
         });
+
+        it('Should detect 3rd level nesting changes', async function (done) {
+            const context = 'deep-level-nesting-' + Random.id();
+
+            let handle = subscribe({
+                context,
+            });
+
+            await waitForHandleToBeReady(handle);
+            const cursor = Collection.find({
+                context
+            });
+
+            const observer = cursor.observeChanges({
+                added(docId, doc) {
+                    update(docId, {
+                        $set: {
+                            'item.profile.name': 'Elena Smith'
+                        }
+                    })
+                },
+                changed(docId, doc) {
+                    assert.isObject(doc.item);
+                    assert.equal('Elena Smith', doc.item.profile.name);
+                    done();
+                }
+            });
+
+            create({
+                context,
+                item: {
+                    profile: {
+                        name: 'John Smith'
+                    }
+                }
+            });
+        });
     });
 });
 
