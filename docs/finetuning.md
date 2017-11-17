@@ -148,16 +148,16 @@ so you have to manage the situation in which you have multiple namespace configu
 Inside the `mutation()` configuration function, in the `mutationObject` (the second parameter) you receive
 data based on the event for example:
 
-For insert: `{event, doc}`, where event equals `Events.INSERT`
-For update/upsert: `{event, selector, modifier}`, where event equals `Events.UPDATE`
-For remove: `{event, selector}`, where event equals `Events.REMOVE`
+- For insert: `{event, doc}`, where event equals `Events.INSERT`
+- For update/upsert: `{event, selector, modifier}`, where event equals `Events.UPDATE`
+- For remove: `{event, selector}`, where event equals `Events.REMOVE`
 
 The `Events` object can be imported like this:
 ```js
 import {Events} from 'meteor/cultofcoders:redis-oplog';
 ```
 
-This mutation() function is called before the actual mutation takes place.
+The mutation() function is called before the actual mutation takes place.
 
 To illustrate this better, if you have a collection where you don't need reactivity:
 ```js
@@ -179,16 +179,10 @@ Messages.configureRedisOplog({
             threadId = doc.threadId;
         }
         if (event === Events.REMOVE) {
-            threadId = options.threadId;
-            // And you do Messages.remove({_id: messageId}, {threadId})
-            // Or you extract the thread based on selector
             // If it performs a remove by _id (which is the most usual)
             threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
         }
         if (event === Events.UPDATE) {
-            threadId = options.threadId;
-            // And you do Messages.update({_id: messageId}, {}, {threadId})
-            // Or you extract the thread based on selector
             // If it performs an update by _id (which is the most usual)
             threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
         }
@@ -203,8 +197,8 @@ Messages.configureRedisOplog({
 })
 ```
 
-Using this may be much more complicated than just specifying namespaces wherever you do finds, mutations, however, this can be very well suited, when you
-have a multi-tenant system, many places in which you perform updates, you want to easily disable reactivity for a collection,
+Using this may be much more complicated than just specifying namespaces wherever you do finds, mutations, however, this can be very well suited when you
+have a multi-tenant system, many places in which you perform updates, or you want to easily disable reactivity for a collection,
 or you want to fine-tune redis-oplog with in a non-instrusive way inside your existing publications or methods.
 
 ### Synthetic Mutation
