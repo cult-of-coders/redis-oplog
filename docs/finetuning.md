@@ -109,6 +109,104 @@ Meteor.publish('users', function (companyId) {
 })
 ```
 
+### Configuration at collection level
+
+You may want to configure reactivity at the collection level.
+This can have several applications, for example you have collections that don't require reactivity,
+or you have a multi-tenant system, and you want to laser-focus reactivity per tenant.
+
+```js
+const Tasks = new Mongo.Collection('tasks');
+
+Tasks.configureRedisOplog({
+    mutation(options, {event, selector, modifier, doc}) { 
+        // if you do this inside a method it can work
+        const userId = Meteor.userId(); 
+        // if not, you can pass it as an option in your mutation, and read it from options
+        const companyId = getCompany(userId);
+        Object.assign(options, {
+              namespace: `company::${companyId}`
+        });
+    },
+    cursor(options, selector) {
+        // you have access to publication context in here
+        // meaning you can do `this.userId`
+        const companyId = getCompany(this.userId);
+        
+        // note that if you are doing Tasks.observeChanges({}) server-side, you will have to manually pass the userId
+        // Task.observeChanges({ changed(), added(), removed(), userId })
+        Object.assign(options, { 
+            namespace: `company::${companyId}` 
+        });
+    }
+})
+```
+
+These configurations are applied last, they are the final configuration extension point,
+so you have to manage the situation in which you have multiple namespace configurations.
+
+Inside the `mutation()` configuration function, in the `mutationObject` (the second parameter) you receive
+data based on the event for example:
+
+For insert: `{event, doc}`, where event equals `Events.INSERT`
+For update/upsert: `{event, selector, modifier}`, where event equals `Events.UPDATE`
+For remove: `{event, selector}`, where event equals `Events.REMOVE`
+
+The `Events` object can be imported like this:
+```js
+import {Events} from 'meteor/cultofcoders:redis-oplog';
+```
+
+This mutation() function is called before the actual mutation takes place.
+
+To illustrate this better, if you have a collection where you don't need reactivity:
+```js
+const Tasks = new Mongo.Collection('tasks');
+
+Tasks.configureRedisOplog({
+    mutation(options) { 
+        options.pushToRedis = false;
+    }
+})
+```
+
+If, for example, you don't have a multi-tenant system and you may want to laser-focus messages inside a thread this can work:
+```js
+Messages.configureRedisOplog({
+    mutation(options, {event, selector, modifier, doc}) { 
+        let threadId;
+        if (event === Events.INSERT && doc.threadId) {
+            threadId = doc.threadId;
+        }
+        if (event === Events.REMOVE) {
+            threadId = options.threadId;
+            // And you do Messages.remove({_id: messageId}, {threadId})
+            // Or you extract the thread based on selector
+            // If it performs a remove by _id (which is the most usual)
+            threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
+        }
+        if (event === Events.UPDATE) {
+            threadId = options.threadId;
+            // And you do Messages.update({_id: messageId}, {}, {threadId})
+            // Or you extract the thread based on selector
+            // If it performs an update by _id (which is the most usual)
+            threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
+        }
+        
+        options.namespace = `threads::${threadId}`;
+    },
+    cursor(options, selector) {
+        if (selector.threadId) {
+            options.namespace = `threads::${selector.threadId}`; 
+        }
+    }
+})
+```
+
+Using this may be much more complicated than just specifying namespaces wherever you do finds, mutations, however, this can be very well suited, when you
+have a multi-tenant system, many places in which you perform updates, you want to easily disable reactivity for a collection,
+or you want to fine-tune redis-oplog with in a non-instrusive way inside your existing publications or methods.
+
 ### Synthetic Mutation
 
 This is to emulate a write to the database that you don't actually need persisted. Basically,

@@ -49,8 +49,6 @@ describe('Testing accounts functionality', function () {
                         observer.stop();
                         handle.stop();
 
-                        console.log(Meteor);
-
                         Meteor.logout(function () {
                             done();
                         });

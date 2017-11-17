@@ -81,3 +81,16 @@ redis.publish('tasks', JSON.stringify({
 }))
 ```
 
+If you are using `.rawCollection()` to perform some MongoDB specific operations, then you have to manually push things to Redis,
+using the same strategies specified above:
+
+```js
+import {getRedisPusher, Events, RedisPipe} from 'meteor/cultofcoders:redis-oplog';
+
+getRedisPusher.publish('tasks', EJSON.stringify({
+    [RedisPipe.DOC]: {_id: taskId},
+    [RedisPipe.EVENT]: Events.UPDATE,
+    [RedisPipe.FIELDS]: ['status']
+});
+```
+
