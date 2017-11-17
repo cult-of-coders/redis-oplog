@@ -111,6 +111,7 @@ Meteor.publish('users', function (companyId) {
 
 ### Configuration at collection level
 
+You may want to configure reactivity at the collection level.
 This can have several applications, for example you have collections that don't require reactivity,
 or you have a multi-tenant system, and you want to laser-focus reactivity per tenant.
 
@@ -156,6 +157,8 @@ The `Events` object can be imported like this:
 import {Events} from 'meteor/cultofcoders:redis-oplog';
 ```
 
+This mutation() function is called before the actual mutation takes place.
+
 To illustrate this better, if you have a collection where you don't need reactivity:
 ```js
 const Tasks = new Mongo.Collection('tasks');
@@ -178,6 +181,9 @@ Messages.configureRedisOplog({
         if (event === Events.REMOVE) {
             threadId = options.threadId;
             // And you do Messages.remove({_id: messageId}, {threadId})
+            // Or you extract the thread based on selector
+            // If it performs a remove by _id (which is the most usual)
+            threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
         }
         if (event === Events.UPDATE) {
             threadId = options.threadId;
