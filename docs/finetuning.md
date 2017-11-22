@@ -219,7 +219,7 @@ Meteor.methods({
     'messages.start_typing'(threadId) {
         // you can use any modifier supported by minimongo
         // only works with specific _id's, not selectors!
-        SyntheticMutator.update(ThreadsCollection, threadId, {
+        SyntheticMutator.update(MessagesCollection, threadId, {
             $addToSet: {
                 currentlyTyping: this.userId
             }
