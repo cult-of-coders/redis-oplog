@@ -8,6 +8,7 @@ import { getRedisListener, getRedisPusher } from './lib/redis/getRedisClient';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
 import ObservableCollection from './lib/cache/ObservableCollection';
 import Vent from './lib/vent/Vent';
+import PublicationFactory from './lib/cache/PublicationFactory';
 
 const RedisOplog = {
     init,
@@ -32,6 +33,7 @@ export {
     publishWithRedis,
     getRedisListener,
     getRedisPusher,
+    PublicationFactory,
 }
 
 if (Meteor.settings.redisOplog) {
