@@ -40,7 +40,7 @@ Configure it via Meteor settings:
     "mutationDefaults": {
         "optimistic": true, // Does not do a sync processing on the diffs. But it works by default with client-side mutations.
         "pushToRedis": true // Pushes to redis the changes by default
-    }
+    },
     "debug": false, // Will show timestamp and activity of redis-oplog.
     "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
   }
