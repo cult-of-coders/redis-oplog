@@ -1,3 +1,5 @@
+import './lib/mongo//mongoCollectionNames';
+
 import publishWithRedis from './lib/publishWithRedis';
 import { RedisPipe, Events } from './lib/constants';
 import { Meteor } from 'meteor/meteor';

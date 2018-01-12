@@ -24,7 +24,6 @@ Package.onUse(function (api) {
         'underscore',
         'ecmascript',
         'ejson',
-        'dburles:mongo-collection-instances@0.3.5',
         'peerlibrary:publish-context@0.5.0',
         'minimongo',
         'mongo',
