@@ -12,6 +12,7 @@ import './collection-defaults/client';
 import './vent/client';
 import './accounts/client';
 import './polling/client';
+import './object-id/client';
 
 import { Random } from 'meteor/random';
 import helperGenerator from './lib/helpers';
