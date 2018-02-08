@@ -11,10 +11,10 @@ Package.describe({
 });
 
 Npm.depends({
-    'deep-diff': '0.3.4',
+    'deep-diff': '0.3.8',
     redis: '2.8.0',
-    'deep-extend': '0.4.1',
-    'object-sizeof': '1.1.1',
+    'deep-extend': '0.5.0',
+    'object-sizeof': '1.2.0',
     'lodash.clonedeep': '4.5.0'
 });
 
@@ -37,7 +37,7 @@ Package.onTest(function(api) {
     api.use('cultofcoders:redis-oplog');
 
     // extensions
-    api.use('aldeed:collection2@2.10.0');
+    api.use('aldeed:collection2@3.0.0');
     api.use('reywood:publish-composite@1.5.2');
     api.use('natestrauser:publish-performant-counts@0.1.2');
     api.use('socialize:user-presence@0.4.0');
