@@ -9,7 +9,7 @@ import './collection_hooks.server';
 import './observe_callbacks.server';
 import './mutation_callbacks';
 import './collection_transform';
-import './server-autorun/server';
+// import './server-autorun/server';
 import './transformations/server';
 import './publish-counts/server';
 import './custom-publications/server';
@@ -19,7 +19,7 @@ import './collection-defaults/server';
 
 import { _ } from 'meteor/underscore';
 
-_.each(Collections, (Collection) => {
+_.each(Collections, Collection => {
     Collection.remove({});
 
     Collection.insert({
