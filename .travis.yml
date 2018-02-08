@@ -10,4 +10,5 @@ before_install:
   - export PATH="$HOME/.meteor:$PATH"
 
 script:
+  - meteor npm i -g simpl-schema
   - meteor --once test-packages --driver-package meteortesting:mocha ./
