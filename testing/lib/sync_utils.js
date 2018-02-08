@@ -8,8 +8,9 @@ const callWithPromise = (method, ...args) => {
     });
 };
 
+Meteor.callWithPromise = callWithPromise;
 
-const waitForHandleToBeReady = (handle) => {
+const waitForHandleToBeReady = handle => {
     return new Promise((resolve, reject) => {
         Tracker.autorun(c => {
             if (handle.ready()) {
@@ -17,11 +18,8 @@ const waitForHandleToBeReady = (handle) => {
 
                 resolve();
             }
-        })
-    })
+        });
+    });
 };
 
-export {
-    callWithPromise,
-    waitForHandleToBeReady
-}
+export { callWithPromise, waitForHandleToBeReady };
