@@ -16,6 +16,7 @@ import './custom-publications/server';
 import './vent/server';
 import './accounts/server';
 import './collection-defaults/server';
+import './polling/server';
 
 import { _ } from 'meteor/underscore';
 
