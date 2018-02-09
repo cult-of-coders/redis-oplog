@@ -11,7 +11,7 @@ node_js:
   - "8.9.1"
 
 before_install:
-  - curl https://install.meteor.com | /bin/sh
+  - curl https://install.meteor.com/?release=1.6 | /bin/sh
   - export PATH="$HOME/.meteor:$PATH"
 
 cache:
