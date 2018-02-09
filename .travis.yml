@@ -1,14 +1,31 @@
 sudo: false
-services:
-  - redis-server
+
+addons:
+  chrome: stable
+
 language: node_js
+
 node_js:
-  - "8.3.0"
- 
+  - "8.9.1"
+
 before_install:
   - curl https://install.meteor.com | /bin/sh
   - export PATH="$HOME/.meteor:$PATH"
 
+cache:
+  directories:
+    - ~/.npm
+    - "node_modules"
+
+notifications:
+  email: false
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
 script:
-  - meteor npm i -g simpl-schema
-  - meteor --once test-packages --driver-package meteortesting:mocha ./
+  - meteor create --bare test
+  - cd test
+  - meteor npm i --save selenium-webdriver chromedriver simpl-schema
+  - METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=chrome meteor --once test-packages --driver-package meteortesting:mocha ../
