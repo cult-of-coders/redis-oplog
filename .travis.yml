@@ -1,5 +1,7 @@
 sudo: false
-
+services:
+  - redis-server
+  
 addons:
   chrome: stable
 
