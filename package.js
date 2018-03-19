@@ -28,6 +28,7 @@ Package.onUse(function(api) {
         'mongo',
         'random',
         'ddp-server',
+        'diff-sequence',
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
