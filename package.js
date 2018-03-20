@@ -27,6 +27,7 @@ Package.onUse(function(api) {
         'minimongo',
         'mongo',
         'random',
+        'ddp-server',
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
