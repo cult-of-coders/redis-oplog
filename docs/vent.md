@@ -5,7 +5,7 @@ These messages will not be stored in any way on the server.
 
 You may need this if you want absolute control over the reactivity.
 
-It uses Redis ofcourse to communicate events to all instances in your infrastructure that share the same Redis connection.
+It uses Redis of course to communicate events to all instances in your infrastructure that share the same Redis connection.
 
 What this means:
 1. You can implement a very efficient and scalable chat application, at the expense of writing more code to achieve this, which is normal.
@@ -24,7 +24,9 @@ Vent.publish({
         
         // registers listeners on redis
         // a listener gets a message and returns an event to be sent
-        // if you return a falsey value, it will not be sent (like return undefined | null)
+        // if you return a falsey value, it will not be sent (like return undefined | null | 0 | false)
+        // so if you need to send a Number that can reach zero or a Boolean as your message make sure
+        // to wrap it in an object
         this.on(`threads::${threadId}::new_message`, ({message}) => {
             return {message};
         });
