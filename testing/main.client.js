@@ -12,7 +12,7 @@ import './collection-defaults/client';
 import './vent/client';
 import './accounts/client';
 import './polling/client';
-// import './object-id/client';
+import './object-id/client';
 
 import { Random } from 'meteor/random';
 import helperGenerator from './lib/helpers';
@@ -28,18 +28,18 @@ _.each(Collections, (Collection, key) => {
         remove,
         removeSync,
         subscribe,
-        waitForHandleToBeReady
+        waitForHandleToBeReady,
     } = helperGenerator(config[key].suffix);
 
     describe('It should work with: ' + key, function() {
         it('Should detect a removal', async function(done) {
             let handle = subscribe(
                 {
-                    game: 'chess'
+                    game: 'chess',
                 },
                 {
                     sort: { score: -1 },
-                    limit: 5
+                    limit: 5,
                 }
             );
 
@@ -58,7 +58,7 @@ _.each(Collections, (Collection, key) => {
                     observeChangesHandle.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -69,11 +69,11 @@ _.each(Collections, (Collection, key) => {
         it('Should detect an insert', async function(done) {
             let handle = subscribe(
                 {
-                    game: 'chess'
+                    game: 'chess',
                 },
                 {
                     sort: { score: -1 },
-                    limit: 5
+                    limit: 5,
                 }
             );
 
@@ -88,7 +88,7 @@ _.each(Collections, (Collection, key) => {
                             done();
                         });
                     }
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -98,18 +98,18 @@ _.each(Collections, (Collection, key) => {
 
             create({
                 game: 'chess',
-                title: 'E'
+                title: 'E',
             });
         });
 
         it('Should detect an update simple', async function(done) {
             let handle = subscribe(
                 {
-                    game: 'chess'
+                    game: 'chess',
                 },
                 {
                     sort: { score: -1 },
-                    limit: 5
+                    limit: 5,
                 }
             );
 
@@ -120,7 +120,7 @@ _.each(Collections, (Collection, key) => {
                     observeChangesHandle.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -131,8 +131,8 @@ _.each(Collections, (Collection, key) => {
                 { _id: data[0]._id },
                 {
                     $set: {
-                        score: Math.random()
-                    }
+                        score: Math.random(),
+                    },
                 }
             );
         });
@@ -144,9 +144,9 @@ _.each(Collections, (Collection, key) => {
                     a: 1,
                     b: 1,
                     c: {
-                        a: 1
-                    }
-                }
+                        a: 1,
+                    },
+                },
             });
 
             let handle = subscribe({ _id: docId });
@@ -168,7 +168,7 @@ _.each(Collections, (Collection, key) => {
                     remove({ _id: docId }, () => {
                         done();
                     });
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -179,8 +179,8 @@ _.each(Collections, (Collection, key) => {
                     $set: {
                         'nested.c.b': 1,
                         'nested.b': 2,
-                        'nested.d': 1
-                    }
+                        'nested.d': 1,
+                    },
                 }
             );
         });
@@ -189,7 +189,7 @@ _.each(Collections, (Collection, key) => {
             const context = Random.id();
             [_id1, _id2] = await createSync([
                 { context, game: 'monopoly', title: 'test' },
-                { context, game: 'monopoly', title: 'test2' }
+                { context, game: 'monopoly', title: 'test2' },
             ]);
 
             let handle = subscribe({ game: 'monopoly' });
@@ -205,7 +205,7 @@ _.each(Collections, (Collection, key) => {
                     done();
 
                     remove({ context, game: 'monopoly' });
-                }
+                },
             });
 
             update(
@@ -218,7 +218,7 @@ _.each(Collections, (Collection, key) => {
             const context = 'multi-update';
             [_id1, id2] = await createSync([
                 { context, title: 'test' },
-                { context, title: 'test2' }
+                { context, title: 'test2' },
             ]);
 
             let handle = subscribe({ context });
@@ -236,13 +236,13 @@ _.each(Collections, (Collection, key) => {
                         handle.stop();
                         done();
                     }
-                }
+                },
             });
 
             update(
                 { context },
                 {
-                    $set: { score: Math.random() }
+                    $set: { score: Math.random() },
                 },
                 { multi: true }
             );
@@ -251,11 +251,11 @@ _.each(Collections, (Collection, key) => {
         it('Should detect an update of a non published document', async function(done) {
             let _id = await createSync({
                 game: 'backgammon',
-                title: 'test'
+                title: 'test',
             });
 
             let handle = subscribe({
-                game: 'chess'
+                game: 'chess',
             });
 
             const score = Math.random();
@@ -274,7 +274,7 @@ _.each(Collections, (Collection, key) => {
                     remove({ _id }, () => {
                         done();
                     });
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -288,15 +288,15 @@ _.each(Collections, (Collection, key) => {
                     _groups: ['company1', 'company2', 'company3'],
                     _main: 'company1',
                     _global: {
-                        roles: ['manage-users', 'manage-profiles']
-                    }
-                }
+                        roles: ['manage-users', 'manage-profiles'],
+                    },
+                },
             });
 
             let handle = subscribe(
                 {},
                 {
-                    fields: { roles: 1 }
+                    fields: { roles: 1 },
                 }
             );
 
@@ -308,7 +308,7 @@ _.each(Collections, (Collection, key) => {
                     observeChangesHandle.stop();
                     done();
                     remove({ _id });
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -323,17 +323,17 @@ _.each(Collections, (Collection, key) => {
                 bom: [
                     {
                         stockId: 1,
-                        quantity: 1
+                        quantity: 1,
                     },
                     {
                         stockId: 2,
-                        quantity: 2
+                        quantity: 2,
                     },
                     {
                         stockId: 3,
-                        quantity: 3
-                    }
-                ]
+                        quantity: 3,
+                    },
+                ],
             });
 
             let handle = subscribe(
@@ -341,8 +341,8 @@ _.each(Collections, (Collection, key) => {
                 {
                     fields: {
                         context: 1,
-                        bom: 1
-                    }
+                        bom: 1,
+                    },
                 }
             );
 
@@ -362,7 +362,7 @@ _.each(Collections, (Collection, key) => {
                     observeChangesHandle.stop();
                     remove({ _id });
                     done();
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -370,7 +370,7 @@ _.each(Collections, (Collection, key) => {
             update(
                 { _id, 'bom.stockId': 1 },
                 {
-                    $set: { 'bom.$.quantity': 30 }
+                    $set: { 'bom.$.quantity': 30 },
                 }
             );
         });
@@ -382,21 +382,21 @@ _.each(Collections, (Collection, key) => {
                 let _id = await createSync({
                     orgid: '1',
                     siteIds: ['1', '2'],
-                    Year: 2017
+                    Year: 2017,
                 });
 
                 let handle = subscribe({
                     $and: [
                         {
-                            orgid: '1'
+                            orgid: '1',
                         },
                         {
-                            siteIds: { $in: ['1'] }
+                            siteIds: { $in: ['1'] },
                         },
                         {
-                            Year: { $in: [2017] }
-                        }
-                    ]
+                            Year: { $in: [2017] },
+                        },
+                    ],
                 });
 
                 await waitForHandleToBeReady(handle);
@@ -417,15 +417,15 @@ _.each(Collections, (Collection, key) => {
                         handle.stop();
                         observeChangesHandle.stop();
                         done();
-                    }
+                    },
                 });
 
                 update(
                     { _id },
                     {
                         $set: {
-                            something: 30
-                        }
+                            something: 30,
+                        },
                     }
                 );
             });
@@ -434,13 +434,13 @@ _.each(Collections, (Collection, key) => {
         it('Should be able to detect subsequent updates for direct processing with _ids', async function(done) {
             let [_id1, _id2] = await createSync([
                 { subsequent_test: true, name: 'John Smith' },
-                { subsequent_test: true, name: 'Michael Willow' }
+                { subsequent_test: true, name: 'Michael Willow' },
             ]);
 
             let handle = subscribe(
                 { _id: { $in: [_id1, _id2] } },
                 {
-                    fields: { subsequent_test: 1, name: 1 }
+                    fields: { subsequent_test: 1, name: 1 },
                 }
             );
 
@@ -460,16 +460,16 @@ _.each(Collections, (Collection, key) => {
                         observer.stop();
                         done();
                     }
-                }
+                },
             });
 
             await waitForHandleToBeReady(handle);
 
             await updateSync(_id1, {
-                $set: { name: 'John Smithy' }
+                $set: { name: 'John Smithy' },
             });
             await updateSync(_id2, {
-                $set: { name: 'Michael Willowy' }
+                $set: { name: 'Michael Willowy' },
             });
         });
 
@@ -477,7 +477,7 @@ _.each(Collections, (Collection, key) => {
             let _id = await createSync({
                 operators: true,
                 connections: [1, 2],
-                number: 10
+                number: 10,
             });
 
             let handle = subscribe({ _id });
@@ -493,15 +493,15 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             await updateSync(
                 { _id },
                 {
                     $addToSet: {
-                        connections: 3
-                    }
+                        connections: 3,
+                    },
                 }
             );
         });
@@ -510,7 +510,7 @@ _.each(Collections, (Collection, key) => {
             let _id = await createSync({
                 operators: true,
                 connections: [1, 2],
-                number: 10
+                number: 10,
             });
 
             let handle = subscribe({ _id });
@@ -526,15 +526,15 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             await updateSync(
                 { _id },
                 {
                     $pull: {
-                        connections: 2
-                    }
+                        connections: 2,
+                    },
                 }
             );
         });
@@ -544,8 +544,8 @@ _.each(Collections, (Collection, key) => {
                 profile: {
                     language: 'EN',
                     email: 'xxx@xxx.com',
-                    number: 5
-                }
+                    number: 5,
+                },
             });
 
             let handle = subscribe({ _id });
@@ -564,13 +564,13 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             await updateSync(_id, {
                 $set: {
-                    'profile.number': 10
-                }
+                    'profile.number': 10,
+                },
             });
         });
 
@@ -578,21 +578,21 @@ _.each(Collections, (Collection, key) => {
             let _id = await createSync({
                 test_pull_and_set_combo: true,
                 connections: [1],
-                number: 10
+                number: 10,
             });
 
             let handle = subscribe({ test_pull_and_set_combo: true });
             let cursor = Collection.find(
                 {
                     _id: {
-                        $in: [_id]
-                    }
+                        $in: [_id],
+                    },
                 },
                 {
                     fields: {
                         connections: 1,
-                        number: 1
-                    }
+                        number: 1,
+                    },
                 }
             );
 
@@ -607,16 +607,16 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             await updateSync(_id, {
                 $pull: {
-                    connections: { $in: [1] }
+                    connections: { $in: [1] },
                 },
                 $set: {
-                    number: 20
-                }
+                    number: 20,
+                },
             });
         });
 
@@ -629,17 +629,17 @@ _.each(Collections, (Collection, key) => {
                 { context, number: 10, text: 'T - 2' },
                 { context, number: 15, text: 'T - 3' },
                 { context, number: 20, text: 'T - 4' },
-                { context, number: 25, text: 'T - 5' }
+                { context, number: 25, text: 'T - 5' },
             ]);
 
             const [_id1, _id2, _id3, _id4, _id5] = ids;
 
             const handle = subscribe(
                 {
-                    context: 'limit-sort-test'
+                    context: 'limit-sort-test',
                 },
                 {
-                    sort: { number: -1 }
+                    sort: { number: -1 },
                 }
             );
 
@@ -656,7 +656,7 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             const data = cursor.fetch();
@@ -669,13 +669,13 @@ _.each(Collections, (Collection, key) => {
             updateSync(
                 { _id: _id2 },
                 {
-                    $set: { number: 30 }
+                    $set: { number: 30 },
                 }
             );
             updateSync(
                 { _id: _id3 },
                 {
-                    $set: { context: 'limit-sort-test-invalidate' }
+                    $set: { context: 'limit-sort-test-invalidate' },
                 }
             );
         });
@@ -685,12 +685,12 @@ _.each(Collections, (Collection, key) => {
             const ids = await createSync([
                 { context, meta: { student: false } },
                 { context, meta: { student: true } },
-                { context, meta: { student: true } }
+                { context, meta: { student: true } },
             ]);
 
             const handle = subscribe({
                 _id: { $in: ids },
-                'meta.student': true
+                'meta.student': true,
             });
 
             await waitForHandleToBeReady(handle);
@@ -710,21 +710,21 @@ _.each(Collections, (Collection, key) => {
                     if (docId == ids[0]) {
                         assert.equal(docId, ids[0]);
                         update(ids[0], {
-                            $set: { 'meta.changing': true }
+                            $set: { 'meta.changing': true },
                         });
                     }
                 },
                 changed(docId, doc) {
                     if (docId == ids[0]) {
                         update(ids[0], {
-                            $set: { 'meta.student': false }
+                            $set: { 'meta.student': false },
                         });
                     }
-                }
+                },
             });
 
             updateSync(ids[0], {
-                $set: { 'meta.student': true }
+                $set: { 'meta.student': true },
             });
         });
 
@@ -745,7 +745,7 @@ _.each(Collections, (Collection, key) => {
                         handle.stop();
                         done();
                     }, 50);
-                }
+                },
             });
 
             create({ context });
@@ -767,7 +767,7 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             update(_id, { $set: { number: 10 } });
@@ -778,13 +778,13 @@ _.each(Collections, (Collection, key) => {
 
             let _id = await createSync({
                 context,
-                passengers: []
+                passengers: [],
             });
             const handle = subscribe(_id, {
                 fields: {
                     context: 1,
-                    'passengers.name': 1
-                }
+                    'passengers.name': 1,
+                },
             });
 
             await waitForHandleToBeReady(handle);
@@ -797,7 +797,7 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             update(_id, {
@@ -805,9 +805,9 @@ _.each(Collections, (Collection, key) => {
                     passengers: {
                         _id: 'y2MECXDgr9ggiP5D4',
                         name: 'Marlee Nielsen',
-                        phone: ''
-                    }
-                }
+                        phone: '',
+                    },
+                },
             });
         });
 
@@ -825,8 +825,8 @@ _.each(Collections, (Collection, key) => {
                         { context },
                         {
                             $set: {
-                                number: 20
-                            }
+                                number: 20,
+                            },
                         }
                     );
                 },
@@ -835,14 +835,14 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             upsert(
                 { context },
                 {
                     context,
-                    number: 10
+                    number: 10,
                 }
             );
         });
@@ -870,12 +870,12 @@ _.each(Collections, (Collection, key) => {
                     if (docId === _id) {
                         done('Should not be in changed');
                     }
-                }
+                },
             });
 
             _id = await createSync(
                 {
-                    context
+                    context,
                 },
                 { pushToRedis: false }
             );
@@ -883,7 +883,7 @@ _.each(Collections, (Collection, key) => {
             update(
                 { _id },
                 {
-                    $set: { number: 10 }
+                    $set: { number: 10 },
                 },
                 { pushToRedis: false },
                 (err, res) => {
@@ -906,8 +906,8 @@ _.each(Collections, (Collection, key) => {
                     fields: {
                         profile: 0,
                         'address.city': 0,
-                        fullname: 0
-                    }
+                        fullname: 0,
+                    },
                 }
             );
 
@@ -935,8 +935,8 @@ _.each(Collections, (Collection, key) => {
                                 fullname: 'Testing',
                                 other: 'Publico',
                                 newField: 'public',
-                                'profile.firstName': 'John'
-                            }
+                                'profile.firstName': 'John',
+                            },
                         }
                     );
                 },
@@ -952,20 +952,20 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             _id = await createSync({
                 context,
                 profile: {
-                    name: 'Secret'
+                    name: 'Secret',
                 },
                 address: {
                     country: 'Country',
-                    city: 'Secret'
+                    city: 'Secret',
                 },
                 fullname: 'Secret',
-                other: 'Public'
+                other: 'Public',
             });
         });
 
@@ -978,8 +978,8 @@ _.each(Collections, (Collection, key) => {
                         context: 1,
                         profile: 1,
                         'address.city': 1,
-                        fullname: 1
-                    }
+                        fullname: 1,
+                    },
                 }
             );
 
@@ -1003,8 +1003,8 @@ _.each(Collections, (Collection, key) => {
                                 fullname: 'Testing',
                                 other: 'secret',
                                 newField: 'secret',
-                                'profile.firstName': 'John'
-                            }
+                                'profile.firstName': 'John',
+                            },
                         }
                     );
                 },
@@ -1018,20 +1018,20 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             let _id = await createSync({
                 context,
                 profile: {
-                    name: 'Public'
+                    name: 'Public',
                 },
                 address: {
                     country: 'Country',
-                    city: 'Public'
+                    city: 'Public',
                 },
                 fullname: 'Public',
-                other: 'Secret'
+                other: 'Secret',
             });
         });
 
@@ -1042,10 +1042,10 @@ _.each(Collections, (Collection, key) => {
                 {
                     fields: {
                         context: 1,
-                        _id: 1
+                        _id: 1,
                     },
                     sort: { context: 1 },
-                    limit: 20
+                    limit: 20,
                 }
             );
 
@@ -1060,8 +1060,8 @@ _.each(Collections, (Collection, key) => {
                         { _id: docId },
                         {
                             $set: {
-                                something: false
-                            }
+                                something: false,
+                            },
                         }
                     );
 
@@ -1071,12 +1071,12 @@ _.each(Collections, (Collection, key) => {
                     done(
                         'Should not be in changed event because nothing changed'
                     );
-                }
+                },
             });
 
             create({
                 context,
-                something: true
+                something: true,
             });
         });
 
@@ -1096,8 +1096,8 @@ _.each(Collections, (Collection, key) => {
                             { _id: docId },
                             {
                                 $unset: {
-                                    something: ''
-                                }
+                                    something: '',
+                                },
                             }
                         );
                     }, 50);
@@ -1109,12 +1109,12 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             create({
                 context,
-                something: true
+                something: true,
             });
         });
 
@@ -1126,8 +1126,8 @@ _.each(Collections, (Collection, key) => {
                 {
                     fields: {
                         context: 1,
-                        'deep.deep.array': 1
-                    }
+                        'deep.deep.array': 1,
+                    },
                 }
             );
 
@@ -1141,12 +1141,12 @@ _.each(Collections, (Collection, key) => {
                     update(
                         {
                             _id: docId,
-                            'deep.deep.array': 6
+                            'deep.deep.array': 6,
                         },
                         {
                             $set: {
-                                'deep.deep.array.$': 20
-                            }
+                                'deep.deep.array.$': 20,
+                            },
                         }
                     );
                 },
@@ -1161,16 +1161,16 @@ _.each(Collections, (Collection, key) => {
                     observer.stop();
                     handle.stop();
                     done();
-                }
+                },
             });
 
             create({
                 context,
                 deep: {
                     deep: {
-                        array: [1, 2, 3, 4, 5, 6]
-                    }
-                }
+                        array: [1, 2, 3, 4, 5, 6],
+                    },
+                },
             });
         });
 
@@ -1182,8 +1182,8 @@ _.each(Collections, (Collection, key) => {
                 {
                     fields: {
                         context: 1,
-                        passengers: 1
-                    }
+                        passengers: 1,
+                    },
                 }
             );
 
@@ -1196,8 +1196,8 @@ _.each(Collections, (Collection, key) => {
                         { _id: docId },
                         {
                             $set: {
-                                'passengers.1.phone': 'ZZZ'
-                            }
+                                'passengers.1.phone': 'ZZZ',
+                            },
                         }
                     );
                 },
@@ -1210,7 +1210,7 @@ _.each(Collections, (Collection, key) => {
                             done();
                         }
                     });
-                }
+                },
             });
 
             create({
@@ -1218,13 +1218,13 @@ _.each(Collections, (Collection, key) => {
                 passengers: [
                     {
                         previous: 'XXX',
-                        phone: 'XXX'
+                        phone: 'XXX',
                     },
                     {
                         previous: 'YYY',
-                        phone: 'YYY'
-                    }
-                ]
+                        phone: 'YYY',
+                    },
+                ],
             });
         });
 
@@ -1235,14 +1235,14 @@ _.each(Collections, (Collection, key) => {
                 context,
                 emails: {
                     $elemMatch: {
-                        address: 'x@x.com'
-                    }
-                }
+                        address: 'x@x.com',
+                    },
+                },
             });
 
             await waitForHandleToBeReady(handle);
             const cursor = Collection.find({
-                context
+                context,
             });
 
             const observer = cursor.observeChanges({
@@ -1252,16 +1252,16 @@ _.each(Collections, (Collection, key) => {
                     handle.stop();
                     observer.stop();
                     done();
-                }
+                },
             });
 
             create({
                 context,
                 emails: [
                     {
-                        address: 'x@x.com'
-                    }
-                ]
+                        address: 'x@x.com',
+                    },
+                ],
             });
         });
 
@@ -1269,37 +1269,84 @@ _.each(Collections, (Collection, key) => {
             const context = 'deep-level-nesting-' + Random.id();
 
             let handle = subscribe({
-                context
+                context,
             });
 
             await waitForHandleToBeReady(handle);
             const cursor = Collection.find({
-                context
+                context,
             });
 
             const observer = cursor.observeChanges({
                 added(docId, doc) {
                     update(docId, {
                         $set: {
-                            'item.profile.name': 'Elena Smith'
-                        }
+                            'item.profile.name': 'Elena Smith',
+                        },
                     });
                 },
                 changed(docId, doc) {
                     assert.isObject(doc.item);
                     assert.equal('Elena Smith', doc.item.profile.name);
                     done();
-                }
+                },
             });
 
             create({
                 context,
                 item: {
                     profile: {
-                        name: 'John Smith'
-                    }
-                }
+                        name: 'John Smith',
+                    },
+                },
             });
+        });
+
+        it('Should work with a filter on a subfield and a top field specified', async function(done) {
+            _id = await createSync({
+                master: {
+                    sub: 'TEST',
+                    sub2: 1,
+                    sub3: 1,
+                },
+            });
+
+            let handle = subscribe(
+                {
+                    _id,
+                    'master.sub': 'TEST',
+                },
+                {
+                    fields: {
+                        master: 1,
+                    },
+                }
+            );
+
+            await waitForHandleToBeReady(handle);
+
+            const cursor = Collection.find({ _id });
+            const document = Collection.findOne({ _id });
+            assert.isObject(document.master);
+            assert.equal(document.master.sub, 'TEST');
+            assert.equal(document.master.sub2, 1);
+            assert.equal(document.master.sub3, 1);
+
+            let observeChangesHandle = cursor.observeChanges({
+                changed(docId, doc) {
+                    assert.equal(doc.master.sub2, 2);
+                    handle.stop();
+                    observeChangesHandle.stop();
+                    done();
+                },
+            });
+
+            update(
+                { _id },
+                {
+                    $set: { 'master.sub2': 2 },
+                }
+            );
         });
     });
 });
