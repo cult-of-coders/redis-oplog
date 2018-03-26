@@ -40,4 +40,6 @@ export {
 
 if (Meteor.settings.redisOplog) {
     init(Meteor.settings.redisOplog);
+} else {
+    console.log("RedisOplog could not find Meteor.settings.redisOplog. Did you add the redisOplog settings at Meteor.settings.redisOplog?");
 }
