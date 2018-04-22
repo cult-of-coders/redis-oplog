@@ -1,40 +1,44 @@
-import {Items} from './collections';
+import { Items } from './collections';
 
-Meteor.publish('transformations_items', function () {
+Meteor.publish('transformations_items', function() {
     return Items.find();
 });
-Meteor.publish('transformations_items_custom', function () {
-    return Items.find({
-        context: 'client',
-    }, {
-        transform(doc) {
-            doc.customServerTransform = true;
-            return doc;
+Meteor.publish('transformations_items_custom', function() {
+    return Items.find(
+        {
+            context: 'client',
+        },
+        {
+            transform(doc) {
+                doc.customServerTransform = true;
+                return doc;
+            },
         }
-    });
+    );
 });
 
 Meteor.methods({
-    'transformations_boot'() {
+    transformations_boot() {
         Items.remove({});
-        Items.insert({context: 'client', title: 'hello1'});
-    }
+        Items.insert({ context: 'client', title: 'hello1' });
+    },
 });
 
-
-describe('Transformations - Server Test', function () {
-    it('Should transform properly', function (done) {
+describe('Transformations - Server Test', function() {
+    it('Should transform properly', function(done) {
         const context = Random.id();
         const handle = Items.find({
             context,
         }).observeChanges({
             added(docId, doc) {
+                // console.log('add', doc);
+                // console.trace();
                 assert.isTrue(doc.defaultServerTransform);
                 handle.stop();
                 done();
-            }
+            },
         });
 
-        Items.insert({context, title: 'hello2'});
-    })
+        Items.insert({ context, title: 'hello2' });
+    });
 });
