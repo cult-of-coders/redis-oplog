@@ -1,5 +1,4 @@
-Welcome to Redis Oplog
-======================
+# Welcome to Redis Oplog
 
 ### LICENSE: MIT
 
@@ -22,7 +21,7 @@ meteor add disable-oplog
 Configure it via Meteor settings:
 
 ```
-// settings.json 
+// settings.json
 {
     ...
     "redisOplog": {}
@@ -42,7 +41,6 @@ Configure it via Meteor settings:
         "pushToRedis": true // Pushes to redis the changes by default
     },
     "debug": false, // Will show timestamp and activity of redis-oplog.
-    "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
   }
 }
 ```
@@ -61,11 +59,12 @@ RedisOplog is fully backwards compatible, so there won't be any change in how yo
 To make sure it is compatible with other packages which extend the `Mongo.Collection` methods, make sure you go to `.meteor/packages`
 and put `cultofcoders:redis-oplog` as the first option.
 
-RedisOplog does not work with *insecure* package, which is used for bootstrapping your app.
+RedisOplog does not work with _insecure_ package, which is used for bootstrapping your app.
 
 ## Stats
 
 If you are interested in viewing how many observers are registered or memory consumption:
+
 ```
 meteor shell
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
@@ -75,9 +74,10 @@ RedisOplog.stats()
 ```
 
 ### The levels of scaling reactivity
-1. Just add RedisOplog, you will already see big performance improvements
-2. Fine-tune your reactivity by using custom namespaces and channels
-3. Implement your own custom reactivity by using Redis Vent
+
+1.  Just add RedisOplog, you will already see big performance improvements
+2.  Fine-tune your reactivity by using custom namespaces and channels
+3.  Implement your own custom reactivity by using Redis Vent
 
 ### [Optimistic UI](docs/optimistic_ui.md)
 
@@ -108,3 +108,11 @@ reactivity for the Meteor instances with a few lines of code.
 
 If you are looking to scale your business using this package and you need to have your back covered. We are here to help. Feel free to contact us
 at contact@cultofcoders.com.
+
+## Todo
+
+*   Metrics
+*   Remove stats docs
+*   Optimistic UI
+*   Server-side tests
+*   Other calls

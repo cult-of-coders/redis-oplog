@@ -31,8 +31,6 @@ describe('Transformations - Server Test', function() {
             context,
         }).observeChanges({
             added(docId, doc) {
-                // console.log('add', doc);
-                // console.trace();
                 assert.isTrue(doc.defaultServerTransform);
                 handle.stop();
                 done();
