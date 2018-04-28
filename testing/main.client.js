@@ -698,6 +698,8 @@ _.each(Collections, (Collection, key) => {
             let cursor = Collection.find({ context });
             const data = cursor.fetch();
 
+            assert.lengthOf(data, 2);
+
             const observer = cursor.observeChanges({
                 removed(docId) {
                     assert.equal(docId, ids[0]);
