@@ -2,7 +2,6 @@ import './lib/mongo//mongoCollectionNames';
 
 import { RedisPipe, Events } from './lib/constants';
 import { Meteor } from 'meteor/meteor';
-import stats from './lib/utils/stats';
 import init from './lib/init';
 import Config from './lib/config';
 import { getRedisListener, getRedisPusher } from './lib/redis/getRedisClient';
@@ -12,7 +11,6 @@ import Vent from './lib/vent/Vent';
 
 const RedisOplog = {
     init,
-    stats,
 };
 
 // Warnings
