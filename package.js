@@ -29,6 +29,7 @@ Package.onUse(function(api) {
         'diff-sequence',
         'id-map',
         'mongo-id',
+        'tracker',
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
