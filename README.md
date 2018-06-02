@@ -79,6 +79,10 @@ RedisOplog.stats()
 2. Fine-tune your reactivity by using custom namespaces and channels
 3. Implement your own custom reactivity by using Redis Vent
 
+### Events for Meteor (+ Redis Oplog, Grapher and GraphQL/Apollo)
+
+*   Meteor Night 2018 Slide: [Arguments for Meteor](https://drive.google.com/file/d/1Tx9vO-XezO3DI2uAYalXPvhJ-Avqc4-q/view) - Theodor Diaconu, CEO of Cult of Coders: “Redis Oplog, Grapher, and Apollo Live.
+
 ### [Optimistic UI](docs/optimistic_ui.md)
 
 If you are using Optimistic UI (Latency Compensation) in your application, you should give this a read.
