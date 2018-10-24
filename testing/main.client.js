@@ -636,7 +636,7 @@ _.each(Collections, (Collection, key) => {
 
             const handle = subscribe(
                 {
-                    context: 'limit-sort-test',
+                    context,
                 },
                 {
                     sort: { number: -1 },
@@ -646,17 +646,33 @@ _.each(Collections, (Collection, key) => {
             await waitForHandleToBeReady(handle);
 
             const cursor = Collection.find({ context });
+            let inChanged = false;
             const observer = cursor.observeChanges({
                 changed(docId, doc) {
                     assert.equal(docId, _id2);
                     assert.equal(doc.number, 30);
+                    inChanged = true;
                 },
                 removed(docId) {
                     assert.equal(docId, _id3);
+
+                    // Now we will add it back!
+                    updateSync(
+                        { _id: _id3 },
+                        {
+                            $set: { context },
+                        }
+                    );
+                },
+                added(docId) {
+                    assert.equal(docId, _id3);
+                    
+                    assert.isTrue(inChanged);
+                    
                     observer.stop();
                     handle.stop();
                     done();
-                },
+                }
             });
 
             const data = cursor.fetch();
