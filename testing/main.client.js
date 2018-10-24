@@ -622,6 +622,7 @@ _.each(Collections, (Collection, key) => {
 
         it('Should work properly with limit-sort kind of queries', async function(done) {
             const context = 'limit-sort-test';
+            const limit = 5;
             await removeSync({ context });
 
             const ids = await createSync([
@@ -630,15 +631,17 @@ _.each(Collections, (Collection, key) => {
                 { context, number: 15, text: 'T - 3' },
                 { context, number: 20, text: 'T - 4' },
                 { context, number: 25, text: 'T - 5' },
+                { context, number: -1, text: 'T - Last one' },
             ]);
 
-            const [_id1, _id2, _id3, _id4, _id5] = ids;
+            const [_id1, _id2, _id3, _id4, _id5, _id6] = ids;
 
             const handle = subscribe(
                 {
                     context,
                 },
                 {
+                    limit,
                     sort: { number: -1 },
                 }
             );
@@ -647,6 +650,7 @@ _.each(Collections, (Collection, key) => {
 
             const cursor = Collection.find({ context });
             let inChanged = false;
+            let initialAddBlast = true;
             const observer = cursor.observeChanges({
                 changed(docId, doc) {
                     assert.equal(docId, _id2);
@@ -654,33 +658,47 @@ _.each(Collections, (Collection, key) => {
                     inChanged = true;
                 },
                 removed(docId) {
-                    assert.equal(docId, _id3);
-
-                    // Now we will add it back!
-                    updateSync(
-                        { _id: _id3 },
-                        {
-                            $set: { context },
-                        }
-                    );
+                    if (docId === _id3) {
+                        assert.equal(docId, _id3);
+    
+                        // Now we will add it back!
+                        updateSync(
+                            { _id: _id3 },
+                            {
+                                $set: { context },
+                            }
+                        );
+                    }
                 },
-                added(docId) {
-                    assert.equal(docId, _id3);
-                    
-                    assert.isTrue(inChanged);
-                    
-                    observer.stop();
-                    handle.stop();
-                    done();
+                added(docId, doc) {
+                    if (initialAddBlast) {
+                        return;
+                    }
+
+                    if (docId === _id6) {
+                        // console.log('id6 has been added bc id3 has been removed.');
+                    } else {
+                        // console.log('id3 should be added back');
+                        assert.equal(docId, _id3);
+                        assert.isTrue(inChanged);
+                        
+                        observer.stop();
+                        handle.stop();
+                        done();
+                    }
                 }
             });
 
+            initialAddBlast = false;
             const data = cursor.fetch();
 
-            assert.lengthOf(data, 5);
-            ids.forEach((_id, idx) => {
-                assert.equal(data[5 - 1 - idx]._id, _id);
-            });
+            assert.lengthOf(data, limit);
+
+            // We make sure that that the last element does not exist and is properly sorted.
+            assert.isTrue(data.find(el => el._id === _id6) === undefined);
+            // ids.forEach((_id, idx) => {
+            //     assert.equal(data[limit - 1 - idx]._id, _id);
+            // });
 
             updateSync(
                 { _id: _id2 },
