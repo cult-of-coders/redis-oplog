@@ -30,6 +30,7 @@ Package.onUse(function(api) {
         'ddp-server',
         'diff-sequence',
         'mongo-id',
+        'dburles:mongo-collection-instances@0.3.5',
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
