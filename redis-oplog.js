@@ -38,6 +38,8 @@ export {
     PublicationFactory,
 }
 
-if (Meteor.settings.redisOplog) {
+if (process.env.REDIS_OPLOG_SETTINGS) {
+    init(JSON.parse(process.env.REDIS_OPLOG_SETTINGS));
+} else if (Meteor.settings.redisOplog) {
     init(Meteor.settings.redisOplog);
 }
