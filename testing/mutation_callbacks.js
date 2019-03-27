@@ -19,10 +19,10 @@ describe('Callbacks', function () {
 })
 
 const Collection2 = new Mongo.Collection('collection2')
-Collection2.attachSchema({
+Collection2.attachSchema(new SimpleSchema({
     title: {type: String},
     score: {type: Number, optional: true}
-})
+}));
 
 describe('Collection2 support', function () {
     it('Should trim spaces in string', function (done) {
