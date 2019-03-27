@@ -87,10 +87,10 @@ using the same strategies specified above:
 ```js
 import {getRedisPusher, Events, RedisPipe} from 'meteor/cultofcoders:redis-oplog';
 
-getRedisPusher.publish('tasks', EJSON.stringify({
+getRedisPusher().publish('tasks', EJSON.stringify({
     [RedisPipe.DOC]: {_id: taskId},
     [RedisPipe.EVENT]: Events.UPDATE,
     [RedisPipe.FIELDS]: ['status']
-});
+}));
 ```
 

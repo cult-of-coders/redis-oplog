@@ -1,5 +1,4 @@
-Welcome to Redis Oplog
-======================
+# Welcome to Redis Oplog
 
 
 ### LICENSE: MIT
@@ -23,7 +22,7 @@ meteor add disable-oplog
 Configure it via Meteor settings:
 
 ```
-// settings.json 
+// settings.json
 {
     ...
     "redisOplog": {}
@@ -41,9 +40,8 @@ Configure it via Meteor settings:
     "mutationDefaults": {
         "optimistic": true, // Does not do a sync processing on the diffs. But it works by default with client-side mutations.
         "pushToRedis": true // Pushes to redis the changes by default
-    }
+    },
     "debug": false, // Will show timestamp and activity of redis-oplog.
-    "overridePublishFunction": true // Meteor.publish becomes Meteor.publishWithRedis, set to false if you don't want to override it
   }
 }
 ```
@@ -62,11 +60,12 @@ RedisOplog is fully backwards compatible, so there won't be any change in how yo
 To make sure it is compatible with other packages which extend the `Mongo.Collection` methods, make sure you go to `.meteor/packages`
 and put `cultofcoders:redis-oplog` as the first option.
 
-RedisOplog does not work with *insecure* package, which is used for bootstrapping your app.
+RedisOplog does not work with _insecure_ package, which is used for bootstrapping your app.
 
 ## Stats
 
 If you are interested in viewing how many observers are registered or memory consumption:
+
 ```
 meteor shell
 import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
@@ -76,9 +75,10 @@ RedisOplog.stats()
 ```
 
 ### The levels of scaling reactivity
-1. Just add RedisOplog, you will already see big performance improvements
-2. Fine-tune your reactivity by using custom namespaces and channels
-3. Implement your own custom reactivity by using Redis Vent
+
+1.  Just add RedisOplog, you will already see big performance improvements
+2.  Fine-tune your reactivity by using custom namespaces and channels
+3.  Implement your own custom reactivity by using Redis Vent
 
 ### [Optimistic UI](docs/optimistic_ui.md)
 
@@ -115,13 +115,11 @@ at contact@cultofcoders.com.
 This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
 <a href="graphs/contributors"><img src="https://opencollective.com/redis-oplog/contributors.svg?width=890" /></a>
 
-
 ## Backers
 
 Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/redis-oplog#backer)]
 
 <a href="https://opencollective.com/redis-oplog#backers" target="_blank"><img src="https://opencollective.com/redis-oplog/backers.svg?width=890"></a>
-
 
 ## Sponsors
 
@@ -137,3 +135,4 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 <a href="https://opencollective.com/redis-oplog/sponsor/7/website" target="_blank"><img src="https://opencollective.com/redis-oplog/sponsor/7/avatar.svg"></a>
 <a href="https://opencollective.com/redis-oplog/sponsor/8/website" target="_blank"><img src="https://opencollective.com/redis-oplog/sponsor/8/avatar.svg"></a>
 <a href="https://opencollective.com/redis-oplog/sponsor/9/website" target="_blank"><img src="https://opencollective.com/redis-oplog/sponsor/9/avatar.svg"></a>
+

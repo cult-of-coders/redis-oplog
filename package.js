@@ -1,47 +1,47 @@
 Package.describe({
     name: 'cultofcoders:redis-oplog',
-    version: '1.2.5_1',
+    version: '1.2.7_1',
     // Brief, one-line summary of the package.
-    summary: 'Replacement for Meteor\'s MongoDB oplog implementation',
+    summary: "Replacement for Meteor's MongoDB oplog implementation",
     // URL to the Git repository containing the source code for this package.
     git: 'https://github.com/cult-of-coders/redis-oplog',
     // By default, Meteor will default to using README.md for documentation.
     // To avoid submitting documentation, set this field to null.
-    documentation: 'README.md'
+    documentation: 'README.md',
 });
 
 Npm.depends({
-    'deep-diff': '0.3.4',
-    'redis': '2.8.0',
-    'deep-extend': '0.4.1',
-    'object-sizeof': '1.1.1',
+    redis: '2.8.0',
+    'deep-extend': '0.5.0',
     'lodash.clonedeep': '4.5.0',
 });
 
-Package.onUse(function (api) {
-    api.versionsFrom('1.3');
+Package.onUse(function(api) {
+    api.versionsFrom('1.5.1');
     api.use([
         'underscore',
         'ecmascript',
         'ejson',
-        'dburles:mongo-collection-instances@0.3.5',
-        'peerlibrary:publish-context@0.5.0',
         'minimongo',
         'mongo',
-        'random'
+        'random',
+        'ddp-server',
+        'diff-sequence',
+        'id-map',
+        'mongo-id',
+        'tracker',
     ]);
 
     api.mainModule('redis-oplog.js', 'server');
     api.mainModule('redis-oplog.client.js', 'client');
 });
 
-Package.onTest(function (api) {
+Package.onTest(function(api) {
     api.use('cultofcoders:redis-oplog');
 
     // extensions
-    api.use('aldeed:collection2@2.10.0');
+    api.use('aldeed:collection2@3.0.0');
     api.use('reywood:publish-composite@1.5.2');
-    api.use('peerlibrary:reactive-publish@0.5.0');
     api.use('natestrauser:publish-performant-counts@0.1.2');
     api.use('socialize:user-presence@0.4.0');
 
@@ -50,14 +50,10 @@ Package.onTest(function (api) {
     api.use('mongo');
     api.use('random');
     api.use('accounts-password');
-    api.use('matb33:collection-hooks');
+    api.use('matb33:collection-hooks@0.8.4');
     api.use('alanning:roles@1.2.16');
 
-    api.use([
-        'coffeescript@1.12.7_3',
-        'practicalmeteor:mocha@2.4.5_6',
-        'practicalmeteor:chai'
-    ]);
+    api.use(['cultofcoders:mocha', 'practicalmeteor:chai']);
 
     api.mainModule('testing/main.server.js', 'server');
     api.addFiles('testing/publishComposite/boot.js', 'server');
