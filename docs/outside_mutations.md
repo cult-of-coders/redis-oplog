@@ -91,7 +91,6 @@ getRedisPusher().publish('tasks', EJSON.stringify({
     [RedisPipe.DOC]: {_id: taskId},
     [RedisPipe.EVENT]: Events.UPDATE,
     [RedisPipe.FIELDS]: ['status']
-  })
-);
+}));
 ```
 
