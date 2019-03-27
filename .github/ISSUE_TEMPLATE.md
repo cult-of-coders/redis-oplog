@@ -5,3 +5,5 @@
 - [ ] If the feature changes current behavior, reasons why your solution is better
 - [ ] Provide with an example of the publication and the mutation that you do
 - [ ] Enabled "debug" inside the package and show us some meaningful logs
+<!-- Love redis-oplog? Please consider supporting our collective:
+👉  https://opencollective.com/redis-oplog/donate -->
