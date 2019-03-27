@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { Collections, config } from './boot';
 import { Random } from 'meteor/random';
 import { _ } from 'meteor/underscore';

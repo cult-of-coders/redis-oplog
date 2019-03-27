@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import {Items} from './collections';
 
 describe('Transformations', function () {

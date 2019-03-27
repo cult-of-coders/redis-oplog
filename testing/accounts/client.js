@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import {Meteor} from 'meteor/meteor';
 import { DDP } from 'meteor/ddp-client';
 

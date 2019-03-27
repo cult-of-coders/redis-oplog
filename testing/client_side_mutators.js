@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import {Collections, config} from './boot';
 import helperGenerator from './lib/helpers';
 
