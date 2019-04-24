@@ -138,7 +138,10 @@ Tasks.configureRedisOplog({
         Object.assign(options, { 
             namespace: `company::${companyId}` 
         });
-    }
+    },
+    // Optional boolean that determines whether you would like to include
+    // the entire previous document in your redis events
+    shouldIncludePrevDocument: true,
 })
 ```
 
@@ -200,6 +203,30 @@ Messages.configureRedisOplog({
 Using this may be much more complicated than just specifying namespaces wherever you do finds, mutations, however, this can be very well suited when you
 have a multi-tenant system, many places in which you perform updates, or you want to easily disable reactivity for a collection,
 or you want to fine-tune redis-oplog with in a non-instrusive way inside your existing publications or methods.
+
+`shouldIncludePrevDocument` Allows you to enable passing through the previous document through the redis event messages. The default value for
+`shouldIncludePrevDocument` is `false` but it can be enabled for each collection where you might need the previous document state on receiving updates
+
+Example:
+For a collection with `shouldIncludePrevDocument: false` the payload 'd' (document) field will contain only the document id after an update
+```
+{ 
+    u: 'event_id', 
+    f: [ 'fieldModified' ], 
+    e: 'u', 
+    d: { _id: 'document_id' } 
+}
+```
+If that same collection now had `shouldIncludePrevDocument: true` the payload would now look like:
+```
+{ 
+    u: 'event_id', 
+    f: [ 'fieldModified' ], 
+    e: 'u', 
+    d: { _id: 'document_id', fieldModified: 'oldValue' } 
+}
+```
+
 
 ### Synthetic Mutation
 
