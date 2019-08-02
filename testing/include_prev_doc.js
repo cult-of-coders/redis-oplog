@@ -1,3 +1,5 @@
+import { assert } from 'chai';
+
 import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
 import Config from '../lib/config';
