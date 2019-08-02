@@ -24,6 +24,20 @@ Any code change should be submitted as a pull request. The description should ex
 The bigger the pull request, the longer it will take to review and merge. Try to break down large pull requests in smaller chunks that are easier to review and merge.
 It is also always helpful to have some context for your pull request. What was the purpose? Why does it matter to you?
 
+## Running Tests
+
+### Setup 
+```
+meteor create --release 1.8.1-rc.1 --bare test
+cd test
+meteor npm i --save selenium-webdriver@3.6.0 chromedriver@2.36.0 simpl-schema
+```
+
+### Start Tests
+```
+METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=chrome meteor test-packages --once --driver-package meteortesting:mocha ../
+```
+
 ## Financial contributions
 
 We also welcome financial contributions in full transparency on our [open collective](https://opencollective.com/redis-oplog).
