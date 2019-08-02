@@ -30,12 +30,12 @@ It is also always helpful to have some context for your pull request. What was t
 ```
 meteor create --release 1.8.1 --bare test
 cd test
-meteor npm i --save selenium-webdriver@3.6.0 chromedriver@2.36.0 simpl-schema
+meteor npm i --save puppeteer@1.18.1 simpl-schema
 ```
 
 ### Start Tests
 ```
-METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=chrome meteor test-packages --once --driver-package meteortesting:mocha ../
+METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../
 ```
 
 ## Financial contributions
