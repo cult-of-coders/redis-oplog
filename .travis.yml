@@ -28,7 +28,7 @@ before_script:
   - sleep 3
 
 script:
-  - meteor create --release 1.8.1-rc.1 --bare test
+  - meteor create --release 1.8.1 --bare test
   - cd test
   - meteor npm i --save selenium-webdriver@3.6.0 chromedriver@2.36.0 simpl-schema
   - METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=chrome meteor test-packages --once --driver-package meteortesting:mocha ../

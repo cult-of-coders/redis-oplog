@@ -28,7 +28,7 @@ It is also always helpful to have some context for your pull request. What was t
 
 ### Setup 
 ```
-meteor create --release 1.8.1-rc.1 --bare test
+meteor create --release 1.8.1 --bare test
 cd test
 meteor npm i --save selenium-webdriver@3.6.0 chromedriver@2.36.0 simpl-schema
 ```
