@@ -12,8 +12,8 @@ before_install:
 
 cache:
   directories:
-    - ~/.npm
-    - ~/.meteor
+    - $HOME/.npm
+    - $HOME/.meteor
 
 notifications:
   email: false
