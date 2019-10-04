@@ -139,9 +139,14 @@ Tasks.configureRedisOplog({
             namespace: `company::${companyId}` 
         });
     },
+
     // Optional boolean that determines whether you would like to include
     // the entire previous document in your redis events
-    shouldIncludePrevDocument: true,
+    shouldIncludePrevDocument: false,
+
+    // If you set this to false, will offers you extreme speed when you have a lot of listeners, or when your listeners use a slave mongo database
+    // If may also have negative impact on performance if you have very large documents
+    protectAgainstRaceConditions: true,
 })
 ```
 

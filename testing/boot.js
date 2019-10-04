@@ -17,13 +17,25 @@ const Standard = new Mongo.Collection('test_redis_collection');
 const Channel = new Mongo.Collection('test_redis_collection_channel');
 const Namespace = new Mongo.Collection('test_redis_collection_namespace');
 
-const Collections = { Standard, Channel, Namespace };
+const RaceConditionProne = new Mongo.Collection('test_redis_race_condition_prone');
+if (Meteor.isServer) {
+    RaceConditionProne.configureRedisOplog({
+        protectAgainstRaceConditions: false
+    });
+}
+
+const Collections = { Standard, Channel, Namespace, RaceConditionProne };
 const opts = {
     Standard: {},
+    RaceConditionProne: {},
     Channel: { channel: 'some_channel' },
     Namespace: { namespace: 'some_namespace' },
 };
 const config = {
+    RaceConditionProne: { 
+        suffix: 'race-condition-prone', 
+        disableSyntheticTests: true,
+    },
     Standard: { suffix: 'standard', channel: 'test_redis_collection' },
     Channel: { suffix: 'channeled', channel: 'some_channel' },
     Namespace: {
