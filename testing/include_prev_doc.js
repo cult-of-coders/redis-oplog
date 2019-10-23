@@ -25,10 +25,12 @@ describe('PrevDocCollection Serverside', function () {
       }
     });
 
+    const random = Random.id()
+
     // trigger insert update and removed redis events
-    PrevDocCollection.insert({ _id: 'prev_doc_1', value: 'oldValue' });
-    PrevDocCollection.update({ _id: 'prev_doc_1' }, { $set: { value: 'newValue' } });
-    PrevDocCollection.remove({ _id: 'prev_doc_1' });
+    PrevDocCollection.insert({ _id: `${random}`, value: 'oldValue' });
+    PrevDocCollection.update({ _id: `${random}` }, { $set: { value: 'newValue' } });
+    PrevDocCollection.remove({ _id: `${random}` });
   });
 
   it('Should receive an insert event without prev doc', async function (done) {

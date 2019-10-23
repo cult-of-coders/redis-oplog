@@ -21,5 +21,5 @@ notifications:
 script:
   - meteor create --release 1.8.1 --bare test
   - cd test
-  - meteor npm i --save puppeteer@1.18.1 simpl-schema
+  - meteor npm i --save puppeteer@1.18.1 simpl-schema chai
   - METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../

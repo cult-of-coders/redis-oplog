@@ -14,6 +14,10 @@ _.each(Collections, (Collection, key) => {
         waitForHandleToBeReady,
     } = helperGenerator(config[key].suffix);
 
+    if (config[key].disableSyntheticTests) {
+        return;
+    }
+
     describe('It should work with synthetic mutators: ' + key, function() {
         it('Should work with insert', async function(done) {
             let handle = subscribe({
