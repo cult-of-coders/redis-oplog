@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import {Orders, Items} from './collections';
 import {Meteor} from 'meteor/meteor';
 

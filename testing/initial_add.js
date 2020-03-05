@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import {Mongo} from 'meteor/mongo';
 
 const InitialAddCollection = new Mongo.Collection('initial_add')

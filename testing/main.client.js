@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { Collections, config } from './boot';
 import { _ } from 'meteor/underscore';
 import './synthetic_mutators';

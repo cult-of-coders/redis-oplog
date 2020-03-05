@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { Items } from './collections';
 
 Meteor.publish('transformations_items', function() {
