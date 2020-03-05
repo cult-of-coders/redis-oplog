@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import {Items} from './collections';
 import {_} from 'meteor/underscore';
 import {waitForHandleToBeReady, callWithPromise} from '../lib/sync_utils';

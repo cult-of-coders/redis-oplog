@@ -1,11 +1,4 @@
-sudo: required
-addons:
-  chrome: stable
-
-dist: xenial
-
 services:
-  - xvfb
   - redis-server
 
 language: node_js
@@ -19,17 +12,14 @@ before_install:
 
 cache:
   directories:
-    - ~/.npm
-    - "node_modules"
+    - $HOME/.npm
+    - $HOME/.meteor
 
 notifications:
   email: false
 
-before_script:
-  - sleep 3
-
 script:
-  - meteor create --release 1.8.1-rc.1 --bare test
+  - meteor create --release 1.8.1 --bare test
   - cd test
-  - meteor npm i --save selenium-webdriver@3.6.0 chromedriver@2.36.0 simpl-schema chai
-  - METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=chrome meteor test-packages --once --driver-package meteortesting:mocha ../
+  - meteor npm i --save puppeteer@1.18.1 simpl-schema chai
+  - METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../

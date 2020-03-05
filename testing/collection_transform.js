@@ -1,4 +1,6 @@
+import { assert } from 'chai';
 function Foo () {}
+
 const fooCollection = new Mongo.Collection('foo', {
     transform: function(document) {
         return new Foo(document)

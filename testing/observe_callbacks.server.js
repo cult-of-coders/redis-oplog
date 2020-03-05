@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { Mongo } from 'meteor/mongo';
 
 const Collection = new Mongo.Collection('test_observe_callbacks');

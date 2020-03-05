@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
 import { Random } from 'meteor/random';
 

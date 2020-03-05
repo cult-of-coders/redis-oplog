@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { SmartIds } from './collections';
 import { Meteor } from 'meteor/meteor';
 
