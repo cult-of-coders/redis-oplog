@@ -1155,7 +1155,7 @@ _.each(Collections, (Collection, key) => {
         });
 
         it('Should work when updating deep array when it is specified as a field', async function(done) {
-            const context = 'deep-array-objects';
+            const context = `deep-array-objects-${Random.id()}`;
 
             let handle = subscribe(
                 { context },
@@ -1168,6 +1168,7 @@ _.each(Collections, (Collection, key) => {
             );
 
             await waitForHandleToBeReady(handle);
+
             const cursor = Collection.find({ context });
 
             const observer = cursor.observeChanges({
