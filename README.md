@@ -42,7 +42,7 @@ Configure it via Meteor settings:
         "pushToRedis": true // Pushes to redis the changes by default
     },
     "debug": false, // Will show timestamp and activity of redis-oplog.
-    "disableMongo": false // Set to true to disable redis-oplog's Mongo functionality. Useful if you just want to use Vent.
+    "extendMongoCollection": true // Set to false to leave Mongo.Collection as is without redis-oplog functionality. Useful if you just want to use Vent.
   }
 }
 ```
