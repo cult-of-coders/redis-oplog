@@ -1,3 +1,4 @@
+import { assert } from 'chai';
 import { Collections, config } from './boot';
 import { Random } from 'meteor/random';
 import { _ } from 'meteor/underscore';
@@ -12,6 +13,10 @@ _.each(Collections, (Collection, key) => {
         subscribe,
         waitForHandleToBeReady,
     } = helperGenerator(config[key].suffix);
+
+    if (config[key].disableSyntheticTests) {
+        return;
+    }
 
     describe('It should work with synthetic mutators: ' + key, function() {
         it('Should work with insert', async function(done) {
