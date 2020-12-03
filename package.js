@@ -13,7 +13,7 @@ Package.describe({
 Npm.depends({
     redis: '2.8.0',
     'deep-extend': '0.5.0',
-    'lodash.clonedeep': '4.5.0'
+    'lodash': '4.17.15'
 });
 
 Package.onUse(function(api) {
@@ -53,7 +53,7 @@ Package.onTest(function(api) {
     api.use('matb33:collection-hooks@0.8.4');
     api.use('alanning:roles@1.2.16');
 
-    api.use(['meteortesting:mocha']);
+    api.use(['meteortesting:mocha@1.0.0', 'meteortesting:mocha-core@1.0.1']);
 
     api.mainModule('testing/main.server.js', 'server');
     api.addFiles('testing/publishComposite/boot.js', 'server');

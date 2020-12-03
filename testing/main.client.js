@@ -5,6 +5,7 @@ import './synthetic_mutators';
 import './client_side_mutators';
 import './publishComposite/client.test';
 import './optimistic-ui/client.test';
+import './payload_batching.client';
 // import './server-autorun/client';
 import './transformations/client';
 import './publish-counts/client';
