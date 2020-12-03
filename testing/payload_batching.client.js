@@ -32,10 +32,10 @@ describe('Redis Payload Batching', function () {
                     setTimeout(() => {
                         if (changes === expectedChanges) done();
                         else throw new Error('Too many changes')
-                    }, 200)
+                    }, 200);
                 }
             },
-        })
+        });
         
         // kick off several updates
         for (let i = 0; i < 10; i++) {
@@ -77,7 +77,7 @@ describe('Redis Payload Batching', function () {
                     done();
                 }
             },
-        })
+        });
         
         // kick off several updates
         for (let i = 0; i < numUpdates; i++) {
@@ -91,7 +91,7 @@ describe('Redis Payload Batching', function () {
                 { optimistic: false, pushToRedis: true }
             );
             // wait till new debounce interval
-            await new Promise(resolve => setTimeout(resolve, SLEEP_INTERVAL))
+            await new Promise(resolve => setTimeout(resolve, SLEEP_INTERVAL));
         }
     });
 
@@ -122,7 +122,7 @@ describe('Redis Payload Batching', function () {
                     setTimeout(() => {
                         if (changes === expectedChanges) done();
                         else throw new Error('Too many changes')
-                    }, 200)
+                    }, 200);
                 }
             },
         })
@@ -139,7 +139,7 @@ describe('Redis Payload Batching', function () {
                 { optimistic: false, pushToRedis: true }
             );
             // wait till new debounce interval
-            await new Promise(resolve => setTimeout(resolve, sleepInterval))
+            await new Promise(resolve => setTimeout(resolve, sleepInterval));
         }
     }).timeout(5000);
 });
