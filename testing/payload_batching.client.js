@@ -2,10 +2,11 @@ import { Random } from 'meteor/random';
 import { assert } from 'chai';
 import {Collections, config} from './boot';
 import helperGenerator from './lib/helpers';
+import Config from '../lib/config';
 
 const Collection = Collections['Standard'];
 
-describe.only('Redis Payload Batching', function () {
+describe('Redis Payload Batching', function () {
     const {
         update,
         createSync,
@@ -13,7 +14,7 @@ describe.only('Redis Payload Batching', function () {
         waitForHandleToBeReady
     } = helperGenerator(config['Standard'].suffix);
 
-    it('Ensure config debounce interval works as expected part 1', async function(done) {
+    it('Should process all the updates at once since we are not waiting more than the debounceInterval between updates', async function(done) {
         const docId = Random.id();
         let handle = subscribe({ _id: docId });
 
@@ -51,16 +52,23 @@ describe.only('Redis Payload Batching', function () {
         }
     });
 
-    it('Ensure config debounce interval works as expected part 2', async function(done) {
+    it('Should correctly process each update separately since we are waiting longer than the debounce interval between updates', async function(done) {
         const docId = Random.id();
         let handle = subscribe({ _id: docId });
+        // We wait twice the debounce interval to ensure that any payloads that were received
+        // and debounced by the server would have been processed
+        const sleepInterval = 2 * Config.debounceInterval; 
+        // Execute multiple updates to confirm that those updates are not being batched
+        const numUpdates = 3;
+        // Since we are sleeping more than the debounce interval we expect our total number 
+        // of changes received from the server to equal the number of updates
+        const expectedChanges = numUpdates;
 
         await createSync({ _id: docId, value: -1 });
 
         await waitForHandleToBeReady(handle);
 
         let changes = 0;
-        const expectedChanges = 3;
         Collection.find({ _id: docId }).observeChanges({
             changed() {
                 changes += 1;
@@ -73,7 +81,7 @@ describe.only('Redis Payload Batching', function () {
         })
         
         // kick off several updates
-        for (let i = 0; i < expectedChanges; i++) {
+        for (let i = 0; i < numUpdates; i++) {
             update(
                 { _id: docId },
                 {
@@ -84,20 +92,28 @@ describe.only('Redis Payload Batching', function () {
                 { optimistic: false, pushToRedis: true }
             );
             // wait till new debounce interval
-            await new Promise(resolve => setTimeout(resolve, 200))
+            await new Promise(resolve => setTimeout(resolve, SLEEP_INTERVAL))
         }
     });
 
-    it('Ensure config max wait works as expected', async function(done) {
+    it('Should correctly use maxWait to batch changes if we exceed the first debounce window', async function(done) {
         const docId = Random.id();
         let handle = subscribe({ _id: docId });
-
+        // We set a short sleep interval here because we want to process more than one
+        // update in the same batch
+        const sleepInterval = 30;
+        // We execute 101 updates here so that the total execution time here is 30ms * 101 updates = 3030ms
+        // This ensures that our final update happens after the maxWait and should be processed in two batches
+        const numUpdates = 101;
+        // Since we should see our updates processed in two batches, we expect to receive only two changed events
+        // from the server
+        const expectedChanges = 2;
+        
         await createSync({ _id: docId, value: -1 });
 
         await waitForHandleToBeReady(handle);
 
         let changes = 0;
-        const expectedChanges = 2;
         Collection.find({ _id: docId }).observeChanges({
             changed() {
                 changes += 1;
@@ -113,7 +129,7 @@ describe.only('Redis Payload Batching', function () {
         })
         
         // kick off several updates
-        for (let i = 0; i < 101; i++) {
+        for (let i = 0; i < numUpdates; i++) {
             update(
                 { _id: docId },
                 {
@@ -124,7 +140,7 @@ describe.only('Redis Payload Batching', function () {
                 { optimistic: false, pushToRedis: true }
             );
             // wait till new debounce interval
-            await new Promise(resolve => setTimeout(resolve, 30))
+            await new Promise(resolve => setTimeout(resolve, sleepInterval))
         }
     }).timeout(5000);
 });
