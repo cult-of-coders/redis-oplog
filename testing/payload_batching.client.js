@@ -91,7 +91,7 @@ describe('Redis Payload Batching', function () {
                 { optimistic: false, pushToRedis: true }
             );
             // wait till new debounce interval
-            await new Promise(resolve => setTimeout(resolve, SLEEP_INTERVAL));
+            await new Promise(resolve => setTimeout(resolve, sleepInterval));
         }
     });
 
