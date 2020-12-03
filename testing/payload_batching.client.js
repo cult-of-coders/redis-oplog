@@ -1,5 +1,4 @@
 import { Random } from 'meteor/random';
-import { assert } from 'chai';
 import {Collections, config} from './boot';
 import helperGenerator from './lib/helpers';
 import Config from '../lib/config';
