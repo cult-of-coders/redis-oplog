@@ -10,30 +10,29 @@ import ObservableCollection from './lib/cache/ObservableCollection';
 import Vent from './lib/vent/Vent';
 
 const RedisOplog = {
-    init,
+	init,
 };
 
 // Warnings
-Meteor.startup(function() {
-    if (Package['insecure']) {
-        console.log('RedisOplog does not support the insecure package.');
-    }
+Meteor.startup(function () {
+	if (Package.insecure)
+		console.log('RedisOplog does not support the insecure package.');
+
 });
 
 export {
-    RedisOplog,
-    SyntheticMutator,
-    ObservableCollection,
-    RedisPipe,
-    Config,
-    Events,
-    Vent,
-    getRedisListener,
-    getRedisPusher,
+	RedisOplog,
+	SyntheticMutator,
+	ObservableCollection,
+	RedisPipe,
+	Config,
+	Events,
+	Vent,
+	getRedisListener,
+	getRedisPusher,
 };
 
-if (process.env.REDIS_OPLOG_SETTINGS) {
-    init(JSON.parse(process.env.REDIS_OPLOG_SETTINGS));
-} else if (Meteor.settings.redisOplog) {
-    init(Meteor.settings.redisOplog);
-}
+if (process.env.REDIS_OPLOG_SETTINGS)
+	init(JSON.parse(process.env.REDIS_OPLOG_SETTINGS));
+else if (Meteor.settings.redisOplog)
+	init(Meteor.settings.redisOplog);

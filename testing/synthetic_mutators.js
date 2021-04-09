@@ -5,184 +5,186 @@ import { _ } from 'meteor/underscore';
 import helperGenerator from './lib/helpers';
 
 _.each(Collections, (Collection, key) => {
-    const {
-        update,
-        createSync,
-        remove,
-        synthetic,
-        subscribe,
-        waitForHandleToBeReady,
-    } = helperGenerator(config[key].suffix);
+	const {
+		update,
+		createSync,
+		remove,
+		synthetic,
+		subscribe,
+		waitForHandleToBeReady,
+	} = helperGenerator(config[key].suffix);
 
-    if (config[key].disableSyntheticTests) {
-        return;
-    }
+	if (config[key].disableSyntheticTests)
+		return;
 
-    describe('It should work with synthetic mutators: ' + key, function() {
-        it('Should work with insert', async function(done) {
-            let handle = subscribe({
-                game: `synthetic.${config[key].suffix}`,
-            });
+	describe(`It should work with synthetic mutators: ${key}`, function() {
+		it('Should work with insert', async function(done) {
+			const handle = subscribe({
+				game: `synthetic.${config[key].suffix}`,
+			});
 
-            const cursor = Collection.find();
+			const cursor = Collection.find();
 
-            let observeChangesHandle = cursor.observeChanges({
-                added(docId, doc) {
-                    assert.equal(doc.game, `synthetic.${config[key].suffix}`);
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                },
-            });
+			const observeChangesHandle = cursor.observeChanges({
+				added(docId, doc) {
+					assert.equal(doc.game, `synthetic.${config[key].suffix}`);
+					observeChangesHandle.stop();
+					handle.stop();
+					done();
+				},
+			});
 
-            await waitForHandleToBeReady(handle);
+			await waitForHandleToBeReady(handle);
 
-            synthetic('insert', {
-                game: `synthetic.${config[key].suffix}`,
-            });
-        });
+			synthetic('insert', {
+				game: `synthetic.${config[key].suffix}`,
+			});
+		});
 
-        it('Should work with update with operators: $set', async function(done) {
-            let handle = subscribe({
-                game: 'chess',
-            });
+		it('Should work with update with operators: $set', async function(done) {
+			const handle = subscribe({
+				game: 'chess',
+			});
 
-            const cursor = Collection.find({ game: 'chess' });
+			const cursor = Collection.find({ game: 'chess' });
 
-            let observeChangesHandle = cursor.observeChanges({
-                changed(docId, doc) {
-                    assert.equal(doc.isPlaying, true);
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                },
-            });
+			const observeChangesHandle = cursor.observeChanges({
+				changed(docId, doc) {
+					assert.equal(doc.isPlaying, true);
+					observeChangesHandle.stop();
+					handle.stop();
+					done();
+				},
+			});
 
-            await waitForHandleToBeReady(handle);
+			await waitForHandleToBeReady(handle);
 
-            let _id = cursor.fetch()[0]._id;
-            assert.isString(_id);
+			const { _id } = cursor.fetch()[0];
 
-            synthetic('update', _id, {
-                $set: {
-                    isPlaying: true,
-                },
-            });
-        });
+			assert.isString(_id);
 
-        it('Should work with update with operators: $push', async function(done) {
-            let _id = await createSync({
-                synthetic_test: true,
-                connections: [],
-            });
+			synthetic('update', _id, {
+				$set: {
+					isPlaying: true,
+				},
+			});
+		});
 
-            let handle = subscribe({ synthetic_test: true });
+		it('Should work with update with operators: $push', async function(done) {
+			const _id = await createSync({
+				synthetic_test: true,
+				connections: [],
+			});
 
-            const cursor = Collection.find({
-                synthetic_test: true,
-            });
+			const handle = subscribe({ synthetic_test: true });
 
-            let observeChangesHandle = cursor.observeChanges({
-                changed(docId, doc) {
-                    assert.lengthOf(doc.connections, 1);
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                },
-            });
+			const cursor = Collection.find({
+				synthetic_test: true,
+			});
 
-            await waitForHandleToBeReady(handle);
+			const observeChangesHandle = cursor.observeChanges({
+				changed(docId, doc) {
+					assert.lengthOf(doc.connections, 1);
+					observeChangesHandle.stop();
+					handle.stop();
+					done();
+				},
+			});
 
-            synthetic('update', _id, {
-                $push: {
-                    connections: 1,
-                },
-            });
-        });
+			await waitForHandleToBeReady(handle);
 
-        it('Should work with update', async function(done) {
-            let handle = subscribe({ game: 'chess' });
+			synthetic('update', _id, {
+				$push: {
+					connections: 1,
+				},
+			});
+		});
 
-            const cursor = Collection.find();
+		it('Should work with update', async function(done) {
+			const handle = subscribe({ game: 'chess' });
 
-            let observeChangesHandle = cursor.observeChanges({
-                changed(docId, doc) {
-                    assert.equal(doc.isPlaying, true);
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                },
-            });
+			const cursor = Collection.find();
 
-            await waitForHandleToBeReady(handle);
+			const observeChangesHandle = cursor.observeChanges({
+				changed(docId, doc) {
+					assert.equal(doc.isPlaying, true);
+					observeChangesHandle.stop();
+					handle.stop();
+					done();
+				},
+			});
 
-            let _id = cursor.fetch()[0]._id;
-            assert.isString(_id);
+			await waitForHandleToBeReady(handle);
 
-            synthetic('update', _id, {
-                $set: {
-                    isPlaying: true,
-                },
-            });
-        });
+			const { _id } = cursor.fetch()[0];
 
-        it('Should work with remove', async function(done) {
-            let handle = subscribe({
-                game: 'chess',
-            });
+			assert.isString(_id);
 
-            const cursor = Collection.find();
+			synthetic('update', _id, {
+				$set: {
+					isPlaying: true,
+				},
+			});
+		});
 
-            let _id;
-            let observeChangesHandle = cursor.observeChanges({
-                removed(docId, doc) {
-                    if (docId == _id) {
-                        observeChangesHandle.stop();
-                        handle.stop();
-                        done();
-                    }
-                },
-            });
+		it('Should work with remove', async function(done) {
+			const handle = subscribe({
+				game: 'chess',
+			});
 
-            await waitForHandleToBeReady(handle);
+			const cursor = Collection.find();
 
-            _id = cursor.fetch()[0]._id;
-            assert.isString(_id);
+			let _id;
+			const observeChangesHandle = cursor.observeChanges({
+				removed(docId, doc) {
+					if (docId == _id) {
+						observeChangesHandle.stop();
+						handle.stop();
+						done();
+					}
+				},
+			});
 
-            synthetic('remove', _id);
-        });
+			await waitForHandleToBeReady(handle);
 
-        it('Should work with update with _id', async function(done) {
-            const context = 'synth-with-id';
+			_id = cursor.fetch()[0]._id;
+			assert.isString(_id);
 
-            let _id = await createSync({ context });
-            let handle = subscribe({
-                _id: { $in: [_id] },
-            });
+			synthetic('remove', _id);
+		});
 
-            const cursor = Collection.find();
-            await waitForHandleToBeReady(handle);
+		it('Should work with update with _id', async function(done) {
+			const context = 'synth-with-id';
 
-            let observer = cursor.observeChanges({
-                changed(docId, doc) {
-                    assert.equal(docId, _id);
-                    assert.equal(doc.isPlaying, true);
-                    observer.stop();
-                    handle.stop();
-                    done();
-                },
-            });
+			const _id = await createSync({ context });
+			const handle = subscribe({
+				_id: { $in: [_id] },
+			});
 
-            synthetic(
-                'update',
-                _id,
-                {
-                    $set: {
-                        isPlaying: true,
-                    },
-                },
-                `${Collection._name}::${_id}`
-            );
-        });
-    });
+			const cursor = Collection.find();
+
+			await waitForHandleToBeReady(handle);
+
+			const observer = cursor.observeChanges({
+				changed(docId, doc) {
+					assert.equal(docId, _id);
+					assert.equal(doc.isPlaying, true);
+					observer.stop();
+					handle.stop();
+					done();
+				},
+			});
+
+			synthetic(
+				'update',
+				_id,
+				{
+					$set: {
+						isPlaying: true,
+					},
+				},
+				`${Collection._name}::${_id}`,
+			);
+		});
+	});
 });

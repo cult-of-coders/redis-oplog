@@ -1,7 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 
 const SmartIds = new Mongo.Collection('smart_ids', {
-    idGeneration: 'MONGO'
+	idGeneration: 'MONGO',
 });
 
 export { SmartIds };
