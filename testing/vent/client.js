@@ -4,7 +4,7 @@ import {Random} from 'meteor/random';
 import {Vent} from 'meteor/cultofcoders:redis-oplog';
 
 describe('Vent', function () {
-    it('Should receive the event accordingly', async function (done) {
+    it('Should receive the event accordingly', function (done) {
         const threadId = Random.id();
         const channel = `threads::${threadId}::new_message`;
 
@@ -25,7 +25,7 @@ describe('Vent', function () {
         })
     });
 
-    it('Should be able to work with 2 different listeners to the same endpoint', async function (done) {
+    it('Should be able to work with 2 different listeners to the same endpoint', function (done) {
         const threadId = Random.id();
         const channel = `threads::${threadId}::new_message`;
 
@@ -63,7 +63,7 @@ describe('Vent', function () {
     });
 
 
-    it('Should handle event bombarding and not losing anything along the way', async function (done) {
+    it('Should handle event bombarding and not losing anything along the way', function (done) {
         const threadId = Random.id();
         const channel = `threads::${threadId}::new_message`;
 
@@ -88,7 +88,7 @@ describe('Vent', function () {
     });
 
 
-    it('Should not receive the event if handler is stopped', async function (done) {
+    it('Should not receive the event if handler is stopped', function (done) {
         const threadId = Random.id();
         const channel = `threads::${threadId}::new_message`;
 
