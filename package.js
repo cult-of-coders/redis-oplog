@@ -11,7 +11,7 @@ Package.describe({
 });
 
 Npm.depends({
-	redis: '2.8.0',
+	ioredis: '4.26.0',
 	'deep-extend': '0.5.0',
 	'lodash.clonedeep': '4.5.0',
 });
@@ -40,7 +40,7 @@ Package.onTest(function(api) {
 	api.use('cultofcoders:redis-oplog');
 
 	// extensions
-	api.use('aldeed:collection2@3.0.0');
+	api.use('aldeed:collection2@3.2.1');
 	api.use('reywood:publish-composite@1.5.2');
 	api.use('natestrauser:publish-performant-counts@0.1.2');
 	api.use('socialize:user-presence@0.4.0');
