@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import {waitForHandleToBeReady, callWithPromise} from '../lib/sync_utils';
-import {Random} from 'meteor/random';
-import {Vent} from 'meteor/cultofcoders:redis-oplog';
+import { waitForHandleToBeReady, callWithPromise } from '../lib/sync_utils';
+import { Random } from 'meteor/random';
+import { Vent } from 'meteor/cultofcoders:redis-oplog';
 
 describe('Vent', function () {
     it('Should receive the event accordingly', function (done) {
@@ -21,7 +21,7 @@ describe('Vent', function () {
 
         Meteor.call('vent_emit', {
             channel,
-            object: {text: 'Hello!'}
+            object: { text: 'Hello!' }
         })
     });
 
@@ -32,7 +32,7 @@ describe('Vent', function () {
         let inHandle1 = false;
         let inHandle2 = false;
 
-        const handle1 = Vent.subscribe('threadMessage', {channel});
+        const handle1 = Vent.subscribe('threadMessage', { channel });
 
         handle1.listen(function (message) {
             inHandle1 = true;
@@ -44,7 +44,7 @@ describe('Vent', function () {
             }
         });
 
-        const handle2 = Vent.subscribe('threadMessage', {channel});
+        const handle2 = Vent.subscribe('threadMessage', { channel });
 
         handle2.listen(function (message) {
             inHandle2 = true;
@@ -58,7 +58,7 @@ describe('Vent', function () {
 
         Meteor.call('vent_emit', {
             channel,
-            object: {text: 'Hello!'}
+            object: { text: 'Hello!' }
         })
     });
 
@@ -82,7 +82,7 @@ describe('Vent', function () {
 
         Meteor.call('vent_emit', {
             channel,
-            object: {text: 'Hello!'},
+            object: { text: 'Hello!' },
             times: 100
         })
     });
@@ -104,7 +104,7 @@ describe('Vent', function () {
 
         Meteor.call('vent_emit', {
             channel,
-            object: {text: 'Hello!'}
+            object: { text: 'Hello!' }
         });
 
         setTimeout(function () {

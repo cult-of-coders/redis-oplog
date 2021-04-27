@@ -32,8 +32,8 @@ _.each(Collections, (Collection, key) => {
         waitForHandleToBeReady,
     } = helperGenerator(config[key].suffix);
 
-    describe('It should work with: ' + key, function() {
-        it('Should detect a removal', function(done) {
+    describe('It should work with: ' + key, function () {
+        it('Should detect a removal', function (done) {
             let handle = subscribe(
                 {
                     game: 'chess',
@@ -62,14 +62,14 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
-                createSync({ game: 'chess', title: randomTitle }).then(function(id) {
+            waitForHandleToBeReady(handle).then(function () {
+                createSync({ game: 'chess', title: randomTitle }).then(function (id) {
                     _id = id;
                 });
             });
         });
 
-        it('Should detect an insert', function(done) {
+        it('Should detect an insert', function (done) {
             let handle = subscribe(
                 {
                     game: 'chess',
@@ -87,14 +87,14 @@ _.each(Collections, (Collection, key) => {
                     if (doc.title === 'E') {
                         observeChangesHandle.stop();
                         handle.stop();
-                        remove({ _id: docId }, function() {
+                        remove({ _id: docId }, function () {
                             done();
                         });
                     }
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 let data = cursor.fetch();
 
                 assert.lengthOf(data, 3);
@@ -106,7 +106,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should detect an update simple', function(done) {
+        it('Should detect an update simple', function (done) {
             let handle = subscribe(
                 {
                     game: 'chess',
@@ -127,21 +127,21 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 let data = cursor.fetch();
 
                 update(
-                  { _id: data[0]._id },
-                  {
-                      $set: {
-                          score: Math.random(),
-                      },
-                  }
+                    { _id: data[0]._id },
+                    {
+                        $set: {
+                            score: Math.random(),
+                        },
+                    }
                 );
             });
         });
 
-        it('Should detect an update deeply nested', function(done) {
+        it('Should detect an update deeply nested', function (done) {
             createSync({
                 game: 'chess',
                 nested: {
@@ -151,7 +151,7 @@ _.each(Collections, (Collection, key) => {
                         a: 1,
                     },
                 },
-            }).then(function(docId) {
+            }).then(function (docId) {
                 let handle = subscribe({ _id: docId });
                 const cursor = Collection.find({ _id: docId });
 
@@ -174,29 +174,29 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     update(
-                      { _id: docId },
-                      {
-                          $set: {
-                              'nested.c.b': 1,
-                              'nested.b': 2,
-                              'nested.d': 1,
-                          },
-                      }
+                        { _id: docId },
+                        {
+                            $set: {
+                                'nested.c.b': 1,
+                                'nested.b': 2,
+                                'nested.d': 1,
+                            },
+                        }
                     );
                 });
             });
         });
 
-        it('Should not update multiple documents if not specified (multi:true)', function(done) {
+        it('Should not update multiple documents if not specified (multi:true)', function (done) {
             const context = Random.id();
             createSync([
                 { context, game: 'monopoly', title: 'test' },
                 { context, game: 'monopoly', title: 'test2' },
-            ]).then(function([_id1, _id2]) {
+            ]).then(function ([_id1, _id2]) {
                 let handle = subscribe({ game: 'monopoly' });
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const cursor = Collection.find({ _id: { $in: [_id1, _id2] } });
 
                     const observeChangesHandle = cursor.observeChanges({
@@ -211,21 +211,21 @@ _.each(Collections, (Collection, key) => {
                     });
 
                     update(
-                      { context, game: 'monopoly' },
-                      { $set: { score: Math.random() } }
+                        { context, game: 'monopoly' },
+                        { $set: { score: Math.random() } }
                     );
                 });
             });
         });
 
-        it('Should update multiple documents if specified', function(done) {
+        it('Should update multiple documents if specified', function (done) {
             const context = 'multi-update';
             createSync([
                 { context, title: 'test' },
                 { context, title: 'test2' },
-            ]).then(function([_id1, _id2]) {
+            ]).then(function ([_id1, _id2]) {
                 let handle = subscribe({ context });
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const cursor = Collection.find({ context });
 
                     let changes = 0;
@@ -242,21 +242,21 @@ _.each(Collections, (Collection, key) => {
                     });
 
                     update(
-                      { context },
-                      {
-                          $set: { score: Math.random() },
-                      },
-                      { multi: true }
+                        { context },
+                        {
+                            $set: { score: Math.random() },
+                        },
+                        { multi: true }
                     );
                 });
             });
         });
 
-        it('Should detect an update of a non published document', function(done) {
+        it('Should detect an update of a non published document', function (done) {
             let _id = createSync({
                 game: 'backgammon',
                 title: 'test',
-            }).then(function(_id){
+            }).then(function (_id) {
                 let handle = subscribe({
                     game: 'chess',
                 });
@@ -280,13 +280,13 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     update({ _id }, { $set: { game: 'chess', score } });
                 });
             });
         });
 
-        it('Should detect an update of a nested field when fields is specified', function(done) {
+        it('Should detect an update of a nested field when fields is specified', function (done) {
             createSync({
                 roles: {
                     _groups: ['company1', 'company2', 'company3'],
@@ -295,12 +295,12 @@ _.each(Collections, (Collection, key) => {
                         roles: ['manage-users', 'manage-profiles'],
                     },
                 },
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe(
-                  {},
-                  {
-                      fields: { roles: 1 },
-                  }
+                    {},
+                    {
+                        fields: { roles: 1 },
+                    }
                 );
 
                 const cursor = Collection.find();
@@ -314,13 +314,13 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     update({ _id }, { $set: { 'roles._main': 'company2' } });
                 });
             });
         });
 
-        it('Should update properly a nested field when a positional parameter is used', function(done) {
+        it('Should update properly a nested field when a positional parameter is used', function (done) {
             const context = 'positional-paramter';
 
             createSync({
@@ -339,15 +339,15 @@ _.each(Collections, (Collection, key) => {
                         quantity: 3,
                     },
                 ],
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe(
-                  { context },
-                  {
-                      fields: {
-                          context: 1,
-                          bom: 1,
-                      },
-                  }
+                    { context },
+                    {
+                        fields: {
+                            context: 1,
+                            bom: 1,
+                        },
+                    }
                 );
 
                 const cursor = Collection.find({ context });
@@ -369,24 +369,24 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     update(
-                      { _id, 'bom.stockId': 1 },
-                      {
-                          $set: { 'bom.$.quantity': 30 },
-                      }
+                        { _id, 'bom.stockId': 1 },
+                        {
+                            $set: { 'bom.$.quantity': 30 },
+                        }
                     );
                 });
             });
         });
 
         ['server'].forEach(context => {
-            it('Should work with $and operators: ' + context, function(done) {
+            it('Should work with $and operators: ' + context, function (done) {
                 createSync({
                     orgid: '1',
                     siteIds: ['1', '2'],
                     Year: 2017,
-                }).then(function(_id) {
+                }).then(function (_id) {
                     let handle = subscribe({
                         $and: [
                             {
@@ -401,7 +401,7 @@ _.each(Collections, (Collection, key) => {
                         ],
                     });
 
-                    waitForHandleToBeReady(handle).then(function() {
+                    waitForHandleToBeReady(handle).then(function () {
                         const cursor = Collection.find();
                         let inChangedEvent = false;
                         const observeChangesHandle = cursor.observeChanges({
@@ -422,28 +422,28 @@ _.each(Collections, (Collection, key) => {
                         });
 
                         update(
-                          { _id },
-                          {
-                              $set: {
-                                  something: 30,
-                              },
-                          }
+                            { _id },
+                            {
+                                $set: {
+                                    something: 30,
+                                },
+                            }
                         );
                     });
                 });
             });
         });
 
-        it('Should be able to detect subsequent updates for direct processing with _ids', function(done) {
+        it('Should be able to detect subsequent updates for direct processing with _ids', function (done) {
             createSync([
                 { subsequent_test: true, name: 'John Smith' },
                 { subsequent_test: true, name: 'Michael Willow' },
-            ]).then(function([_id1, _id2]) {
+            ]).then(function ([_id1, _id2]) {
                 let handle = subscribe(
-                  { _id: { $in: [_id1, _id2] } },
-                  {
-                      fields: { subsequent_test: 1, name: 1 },
-                  }
+                    { _id: { $in: [_id1, _id2] } },
+                    {
+                        fields: { subsequent_test: 1, name: 1 },
+                    }
                 );
 
                 const cursor = Collection.find({ subsequent_test: true });
@@ -465,10 +465,10 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     updateSync(_id1, {
                         $set: { name: 'John Smithy' },
-                    }).then(function() {
+                    }).then(function () {
                         updateSync(_id2, {
                             $set: { name: 'Michael Willowy' },
                         });
@@ -477,16 +477,16 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with the $addToSet', function(done) {
+        it('Should work with the $addToSet', function (done) {
             createSync({
                 operators: true,
                 connections: [1, 2],
                 number: 10,
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe({ _id });
                 let cursor = Collection.find({ _id });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const observer = cursor.observeChanges({
                         changed(docId, doc) {
                             assert.equal(docId, _id);
@@ -499,27 +499,27 @@ _.each(Collections, (Collection, key) => {
                     });
 
                     updateSync(
-                      { _id },
-                      {
-                          $addToSet: {
-                              connections: 3,
-                          },
-                      }
+                        { _id },
+                        {
+                            $addToSet: {
+                                connections: 3,
+                            },
+                        }
                     );
                 });
             });
         });
 
-        it('Should work with the $pull', function(done) {
+        it('Should work with the $pull', function (done) {
             createSync({
                 operators: true,
                 connections: [1, 2],
                 number: 10,
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe({ _id });
                 let cursor = Collection.find({ _id });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const observer = cursor.observeChanges({
                         changed(docId, doc) {
                             assert.equal(docId, _id);
@@ -532,29 +532,29 @@ _.each(Collections, (Collection, key) => {
                     });
 
                     updateSync(
-                      { _id },
-                      {
-                          $pull: {
-                              connections: 2,
-                          },
-                      }
+                        { _id },
+                        {
+                            $pull: {
+                                connections: 2,
+                            },
+                        }
                     );
                 });
             });
         });
 
-        it('Should work with nested field updates', function(done) {
+        it('Should work with nested field updates', function (done) {
             createSync({
                 profile: {
                     language: 'EN',
                     email: 'xxx@xxx.com',
                     number: 5,
                 },
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe({ _id });
                 let cursor = Collection.find({ _id });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const observer = cursor.observeChanges({
                         changed(docId, doc) {
                             assert.equal(docId, _id);
@@ -578,28 +578,28 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with the $pull and $set in combination', function(done) {
+        it('Should work with the $pull and $set in combination', function (done) {
             createSync({
                 test_pull_and_set_combo: true,
                 connections: [1],
                 number: 10,
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe({ test_pull_and_set_combo: true });
                 let cursor = Collection.find(
-                  {
-                      _id: {
-                          $in: [_id],
-                      },
-                  },
-                  {
-                      fields: {
-                          connections: 1,
-                          number: 1,
-                      },
-                  }
+                    {
+                        _id: {
+                            $in: [_id],
+                        },
+                    },
+                    {
+                        fields: {
+                            connections: 1,
+                            number: 1,
+                        },
+                    }
                 );
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const observer = cursor.observeChanges({
                         changed(docId, doc) {
                             assert.equal(docId, _id);
@@ -624,10 +624,10 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work properly with limit-sort kind of queries', function(done) {
+        it('Should work properly with limit-sort kind of queries', function (done) {
             const context = 'limit-sort-test';
             const limit = 5;
-            removeSync({ context }).then(function() {
+            removeSync({ context }).then(function () {
                 createSync([
                     { context, number: 5, text: 'T - 1' },
                     { context, number: 10, text: 'T - 2' },
@@ -635,20 +635,20 @@ _.each(Collections, (Collection, key) => {
                     { context, number: 20, text: 'T - 4' },
                     { context, number: 25, text: 'T - 5' },
                     { context, number: -1, text: 'T - Last one' },
-                ]).then(function(ids) {
+                ]).then(function (ids) {
                     const [_id1, _id2, _id3, _id4, _id5, _id6] = ids;
 
                     const handle = subscribe(
-                      {
-                          context,
-                      },
-                      {
-                          limit,
-                          sort: { number: -1 },
-                      }
+                        {
+                            context,
+                        },
+                        {
+                            limit,
+                            sort: { number: -1 },
+                        }
                     );
 
-                    waitForHandleToBeReady(handle).then(function() {
+                    waitForHandleToBeReady(handle).then(function () {
                         const cursor = Collection.find({ context });
                         let inChanged = false;
                         let initialAddBlast = true;
@@ -664,10 +664,10 @@ _.each(Collections, (Collection, key) => {
 
                                     // Now we will add it back!
                                     updateSync(
-                                      { _id: _id3 },
-                                      {
-                                          $set: { context },
-                                      }
+                                        { _id: _id3 },
+                                        {
+                                            $set: { context },
+                                        }
                                     );
                                 }
                             },
@@ -702,35 +702,35 @@ _.each(Collections, (Collection, key) => {
                         // });
 
                         updateSync(
-                          { _id: _id2 },
-                          {
-                              $set: { number: 30 },
-                          }
+                            { _id: _id2 },
+                            {
+                                $set: { number: 30 },
+                            }
                         );
                         updateSync(
-                          { _id: _id3 },
-                          {
-                              $set: { context: 'limit-sort-test-invalidate' },
-                          }
+                            { _id: _id3 },
+                            {
+                                $set: { context: 'limit-sort-test-invalidate' },
+                            }
                         );
                     });
                 });
             });
         });
 
-        it('Should work with _ids direct processing and other filters present', function(done) {
+        it('Should work with _ids direct processing and other filters present', function (done) {
             const context = 'ids-process-test';
             createSync([
                 { context, meta: { student: false } },
                 { context, meta: { student: true } },
                 { context, meta: { student: true } },
-            ]).then(function(ids) {
+            ]).then(function (ids) {
                 const handle = subscribe({
                     _id: { $in: ids },
                     'meta.student': true,
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     let cursor = Collection.find({ context });
                     const data = cursor.fetch();
 
@@ -768,11 +768,11 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should detect an insert with the default processor', function(done) {
+        it('Should detect an insert with the default processor', function (done) {
             const context = 'insert-default-processing' + Random.id();
             const handle = subscribe({ context });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
 
                 let observer;
@@ -791,12 +791,12 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should detect an update with string publication that should be id', function(done) {
+        it('Should detect an update with string publication that should be id', function (done) {
             const context = 'string-filters';
-            createSync({ context }).then(function(_id) {
+            createSync({ context }).then(function (_id) {
                 const handle = subscribe(_id);
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const cursor = Collection.find({ context });
 
                     const observer = cursor.observeChanges({
@@ -814,13 +814,13 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with deep nest specified fields', function(done) {
+        it('Should work with deep nest specified fields', function (done) {
             const context = 'edge-case-001';
 
             createSync({
                 context,
                 passengers: [],
-            }).then(function(_id) {
+            }).then(function (_id) {
                 const handle = subscribe(_id, {
                     fields: {
                         context: 1,
@@ -828,7 +828,7 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const cursor = Collection.find({ context });
                     const observer = cursor.observeChanges({
                         changed(docId, doc) {
@@ -853,22 +853,22 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with upsert', function(done) {
+        it('Should work with upsert', function (done) {
             const context = 'upsertion' + Random.id();
             const handle = subscribe({ context });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
                 const observer = cursor.observeChanges({
                     added(docId, doc) {
                         assert.equal(doc.number, 10);
                         upsert(
-                          { context },
-                          {
-                              $set: {
-                                  number: 20,
-                              },
-                          }
+                            { context },
+                            {
+                                $set: {
+                                    number: 20,
+                                },
+                            }
                         );
                     },
                     changed(docId, doc) {
@@ -880,20 +880,20 @@ _.each(Collections, (Collection, key) => {
                 });
 
                 upsert(
-                  { context },
-                  {
-                      context,
-                      number: 10,
-                  }
+                    { context },
+                    {
+                        context,
+                        number: 10,
+                    }
                 );
             });
         });
 
-        it('Should not detect a change if pushToRedis is false', function(done) {
+        it('Should not detect a change if pushToRedis is false', function (done) {
             const context = 'pushToRedis:false';
             const handle = subscribe({ context });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
                 let _id;
                 const observer = cursor.observeChanges({
@@ -915,22 +915,22 @@ _.each(Collections, (Collection, key) => {
                 });
 
                 createSync(
-                  {
-                      context,
-                  },
-                  { pushToRedis: false }
-                ).then(function(id) {
+                    {
+                        context,
+                    },
+                    { pushToRedis: false }
+                ).then(function (id) {
                     _id = id;
 
                     update(
-                      { _id },
-                      {
-                          $set: { number: 10 },
-                      },
-                      { pushToRedis: false },
-                      (err, res) => {
-                          remove({ _id }, { pushToRedis: false });
-                      }
+                        { _id },
+                        {
+                            $set: { number: 10 },
+                        },
+                        { pushToRedis: false },
+                        (err, res) => {
+                            remove({ _id }, { pushToRedis: false });
+                        }
                     );
 
                     setTimeout(() => {
@@ -942,7 +942,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work correctly when disallowed fields are specified', function(done) {
+        it('Should work correctly when disallowed fields are specified', function (done) {
             const context = 'disallowed-fields-' + Random.id();
             const handle = subscribe(
                 { context },
@@ -955,7 +955,7 @@ _.each(Collections, (Collection, key) => {
                 }
             );
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
 
                 let _id;
@@ -971,16 +971,16 @@ _.each(Collections, (Collection, key) => {
                         assert.isUndefined(doc.fullname);
 
                         update(
-                          { _id: docId },
-                          {
-                              $set: {
-                                  'address.country': 'Testing',
-                                  fullname: 'Testing',
-                                  other: 'Publico',
-                                  newField: 'public',
-                                  'profile.firstName': 'John',
-                              },
-                          }
+                            { _id: docId },
+                            {
+                                $set: {
+                                    'address.country': 'Testing',
+                                    fullname: 'Testing',
+                                    other: 'Publico',
+                                    newField: 'public',
+                                    'profile.firstName': 'John',
+                                },
+                            }
                         );
                     },
                     changed(docId, doc) {
@@ -1009,13 +1009,13 @@ _.each(Collections, (Collection, key) => {
                     },
                     fullname: 'Secret',
                     other: 'Public',
-                }).then(function(id) {
+                }).then(function (id) {
                     _id = id;
                 });
             });
         });
 
-        it('Should work correctly with the allowed fields only specified', function(done) {
+        it('Should work correctly with the allowed fields only specified', function (done) {
             const context = 'allowed-fields';
             const handle = subscribe(
                 { context },
@@ -1029,7 +1029,7 @@ _.each(Collections, (Collection, key) => {
                 }
             );
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
                 const observer = cursor.observeChanges({
                     added(docId, doc) {
@@ -1041,16 +1041,16 @@ _.each(Collections, (Collection, key) => {
                         assert.isString(doc.fullname);
 
                         update(
-                          { _id: docId },
-                          {
-                              $set: {
-                                  'address.country': 'Testing',
-                                  fullname: 'Testing',
-                                  other: 'secret',
-                                  newField: 'secret',
-                                  'profile.firstName': 'John',
-                              },
-                          }
+                            { _id: docId },
+                            {
+                                $set: {
+                                    'address.country': 'Testing',
+                                    fullname: 'Testing',
+                                    other: 'secret',
+                                    newField: 'secret',
+                                    'profile.firstName': 'John',
+                                },
+                            }
                         );
                     },
                     changed(docId, doc) {
@@ -1081,7 +1081,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with limit-sort when only _id is specified', function(done) {
+        it('Should work with limit-sort when only _id is specified', function (done) {
             const context = Random.id();
             const handle = subscribe(
                 { context },
@@ -1095,26 +1095,26 @@ _.each(Collections, (Collection, key) => {
                 }
             );
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
                 const observer = cursor.observeChanges({
                     added(docId, doc) {
                         assert.isUndefined(doc.something);
                         assert.isTrue(_.keys(doc).length == 1);
                         update(
-                          { _id: docId },
-                          {
-                              $set: {
-                                  something: false,
-                              },
-                          }
+                            { _id: docId },
+                            {
+                                $set: {
+                                    something: false,
+                                },
+                            }
                         );
 
                         done();
                     },
                     changed(docId, doc) {
                         done(
-                          'Should not be in changed event because nothing changed'
+                            'Should not be in changed event because nothing changed'
                         );
                     },
                 });
@@ -1126,11 +1126,11 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work properly with $unset', function(done) {
+        it('Should work properly with $unset', function (done) {
             const context = 'test-$unset';
             const handle = subscribe({ context });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
                 const observer = cursor.observeChanges({
                     added(docId, doc) {
@@ -1138,12 +1138,12 @@ _.each(Collections, (Collection, key) => {
 
                         setTimeout(() => {
                             update(
-                              { _id: docId },
-                              {
-                                  $unset: {
-                                      something: '',
-                                  },
-                              }
+                                { _id: docId },
+                                {
+                                    $unset: {
+                                        something: '',
+                                    },
+                                }
                             );
                         }, 50);
                     },
@@ -1164,7 +1164,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work when updating deep array when it is specified as a field', function(done) {
+        it('Should work when updating deep array when it is specified as a field', function (done) {
             const context = `deep-array-objects-${Random.id()}`;
 
             let handle = subscribe(
@@ -1177,7 +1177,7 @@ _.each(Collections, (Collection, key) => {
                 }
             );
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
 
                 const observer = cursor.observeChanges({
@@ -1185,15 +1185,15 @@ _.each(Collections, (Collection, key) => {
                         assert.isArray(doc.deep.deep.array);
                         assert.lengthOf(doc.deep.deep.array, 6);
                         update(
-                          {
-                              _id: docId,
-                              'deep.deep.array': 6,
-                          },
-                          {
-                              $set: {
-                                  'deep.deep.array.$': 20,
-                              },
-                          }
+                            {
+                                _id: docId,
+                                'deep.deep.array': 6,
+                            },
+                            {
+                                $set: {
+                                    'deep.deep.array.$': 20,
+                                },
+                            }
                         );
                     },
                     changed(docId, doc) {
@@ -1221,7 +1221,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work when updating a specific element in an array', function(done) {
+        it('Should work when updating a specific element in an array', function (done) {
             const context = 'update-specific-in-arrays';
 
             let handle = subscribe(
@@ -1234,18 +1234,18 @@ _.each(Collections, (Collection, key) => {
                 }
             );
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({ context });
 
                 const observer = cursor.observeChanges({
                     added(docId, doc) {
                         update(
-                          { _id: docId },
-                          {
-                              $set: {
-                                  'passengers.1.phone': 'ZZZ',
-                              },
-                          }
+                            { _id: docId },
+                            {
+                                $set: {
+                                    'passengers.1.phone': 'ZZZ',
+                                },
+                            }
                         );
                     },
                     changed(docId, doc) {
@@ -1276,7 +1276,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with $elemMatch query selector', function(done) {
+        it('Should work with $elemMatch query selector', function (done) {
             const context = 'work-with-elemMatch-' + Random.id();
 
             let handle = subscribe({
@@ -1288,7 +1288,7 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({
                     context,
                 });
@@ -1314,14 +1314,14 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should detect 3rd level nesting changes', function(done) {
+        it('Should detect 3rd level nesting changes', function (done) {
             const context = 'deep-level-nesting-' + Random.id();
 
             let handle = subscribe({
                 context,
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 const cursor = Collection.find({
                     context,
                 });
@@ -1352,27 +1352,27 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with a filter on a subfield and a top field specified', function(done) {
+        it('Should work with a filter on a subfield and a top field specified', function (done) {
             createSync({
                 master: {
                     sub: 'TEST',
                     sub2: 1,
                     sub3: 1,
                 },
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe(
-                  {
-                      _id,
-                      'master.sub': 'TEST',
-                  },
-                  {
-                      fields: {
-                          master: 1,
-                      },
-                  }
+                    {
+                        _id,
+                        'master.sub': 'TEST',
+                    },
+                    {
+                        fields: {
+                            master: 1,
+                        },
+                    }
                 );
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     const cursor = Collection.find({ _id });
                     const document = Collection.findOne({ _id });
                     assert.isObject(document.master);
@@ -1390,10 +1390,10 @@ _.each(Collections, (Collection, key) => {
                     });
 
                     update(
-                      { _id },
-                      {
-                          $set: { 'master.sub2': 2 },
-                      }
+                        { _id },
+                        {
+                            $set: { 'master.sub2': 2 },
+                        }
                     );
                 });
             });
