@@ -15,7 +15,7 @@ Incrementally adoptable & works with your current Meteor project.
 ## Installation
 
 ```bash
-meteor add cultofcoders:redis-oplog
+meteor add skadmin:redis-oplog
 meteor add disable-oplog
 ```
 
@@ -58,7 +58,7 @@ meteor run --settings settings.json
 RedisOplog is fully backwards compatible, so there won't be any change in how you use Meteor, unless you want to fine-tune your application for absolute performance.
 
 To make sure it is compatible with other packages which extend the `Mongo.Collection` methods, make sure you go to `.meteor/packages`
-and put `cultofcoders:redis-oplog` as the first option.
+and put `skadmin:redis-oplog` as the first option.
 
 RedisOplog does not work with _insecure_ package, which is used for bootstrapping your app.
 
@@ -68,7 +68,7 @@ If you are interested in viewing how many observers are registered or memory con
 
 ```
 meteor shell
-import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
+import { RedisOplog } from 'meteor/skadmin:redis-oplog';
 
 // works only server-side
 RedisOplog.stats()

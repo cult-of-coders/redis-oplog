@@ -37,7 +37,7 @@ Package.onUse(function(api) {
 });
 
 Package.onTest(function(api) {
-	api.use('cultofcoders:redis-oplog');
+	api.use('skadmin:redis-oplog');
 
 	// extensions
 	api.use('aldeed:collection2@3.2.1');

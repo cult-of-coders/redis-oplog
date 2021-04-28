@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { waitForHandleToBeReady, callWithPromise } from '../lib/sync_utils';
 import { Random } from 'meteor/random';
-import { Vent } from 'meteor/cultofcoders:redis-oplog';
+import { Vent } from 'meteor/skadmin:redis-oplog';
 
 describe('Vent', function () {
 	it('Should receive the event accordingly', async function (done) {
