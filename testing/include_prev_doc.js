@@ -13,7 +13,7 @@ PrevDocCollection.configureRedisOplog({
 });
 
 describe('PrevDocCollection Serverside', function () {
-  it('Should receive an insert event with prev doc', async function (done) {
+  it('Should receive an insert event with prev doc', function (done) {
     Config.pubSubManager.subscribe('test_redis_prev_doc', function(payload) {
       // make sure events have prev document values
       if (payload.e === 'u') {
@@ -33,7 +33,7 @@ describe('PrevDocCollection Serverside', function () {
     PrevDocCollection.remove({ _id: `${random}` });
   });
 
-  it('Should receive an insert event without prev doc', async function (done) {
+  it('Should receive an insert event without prev doc', function (done) {
     Config.pubSubManager.subscribe('test_redis_no_prev_doc', function(payload) {
       // make sure events do not have any prev document values
       // because NoPrevDocCollection does not have shouldIncludePrevDocument set
