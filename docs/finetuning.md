@@ -162,7 +162,7 @@ data based on the event for example:
 
 The `Events` object can be imported like this:
 ```js
-import {Events} from 'meteor/cultofcoders:redis-oplog';
+import {Events} from 'meteor/skadmin:redis-oplog';
 ```
 
 The mutation() function is called before the actual mutation takes place.
@@ -244,7 +244,7 @@ For example you have a game or a chat, and you want to transmit to the other use
 You don't need to store `isTyping` in the database to do this.
 
 ```js
-import { SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
+import { SyntheticMutator } from 'meteor/skadmin:redis-oplog';
 
 // If you put the Mongo.Collection object as first argument, it will transform itself to "messages" (the collection name)
 Meteor.methods({

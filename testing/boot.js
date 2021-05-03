@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
-import { RedisOplog, SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
+import { RedisOplog, SyntheticMutator } from 'meteor/skadmin:redis-oplog';
 
 if (Meteor.isServer) {
     RedisOplog.init({
@@ -32,8 +32,8 @@ const opts = {
     Namespace: { namespace: 'some_namespace' },
 };
 const config = {
-    RaceConditionProne: { 
-        suffix: 'race-condition-prone', 
+    RaceConditionProne: {
+        suffix: 'race-condition-prone',
         disableSyntheticTests: true,
     },
     Standard: { suffix: 'standard', channel: 'test_redis_collection' },

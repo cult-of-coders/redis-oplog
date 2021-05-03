@@ -15,7 +15,7 @@ What this means:
 
 On the server:
 ```js
-import {Vent} from 'meteor/cultofcoders:redis-oplog';
+import {Vent} from 'meteor/skadmin:redis-oplog';
 
 // This creates a publication end-point (make sure the name does not collide with any existing publish endpoints)
 Vent.publish({
@@ -54,7 +54,7 @@ Meteor.methods({
 
 On the client:
 ```js
-import {Vent} from 'meteor/cultofcoders:redis-oplog';
+import {Vent} from 'meteor/skadmin:redis-oplog';
 
 // same handler from Meteor.subscribe, extended with a listen() function
 const handler = Vent.subscribe('threadMessage', {threadId});
@@ -90,7 +90,7 @@ Vent.publish('paymentStatus', function ({paymentId}) {
 
 2. Subscribe to it on the client
 ```js
-import {Vent} from 'meteor/cultofcoders:redis-oplog';
+import {Vent} from 'meteor/skadmin:redis-oplog';
 
 const handler = Vent.subscribe('paymentStatus', {paymentId});
 handler.listen(function ({status}) {
@@ -105,7 +105,7 @@ handler.listen(function ({status}) {
 Most likely here you will have a unique webhook that accepts payment status updates from your payment processors
 
 ```js
-import {Vent} from 'meteor/cultofcoders:redis-oplog';
+import {Vent} from 'meteor/skadmin:redis-oplog';
 
 // in a separate server, or in the same server, doesn't matter
 // when messages from your payment processors are received

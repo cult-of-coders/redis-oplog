@@ -85,7 +85,7 @@ If you are using `.rawCollection()` to perform some MongoDB specific operations,
 using the same strategies specified above:
 
 ```js
-import {getRedisPusher, Events, RedisPipe} from 'meteor/cultofcoders:redis-oplog';
+import {getRedisPusher, Events, RedisPipe} from 'meteor/skadmin:redis-oplog';
 
 getRedisPusher().publish('tasks', EJSON.stringify({
     [RedisPipe.DOC]: {_id: taskId},

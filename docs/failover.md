@@ -13,7 +13,7 @@ In order to configure these events, you can do it like this:
 
 ```js
 // in a server-side file that is loaded on startup
-import { Config } from 'meteor/cultofcoders:redis-oplog';
+import { Config } from 'meteor/skadmin:redis-oplog';
 
 _.extend(Config.redisExtras.events, {
     reconnect({delay, attempt, error}) {
