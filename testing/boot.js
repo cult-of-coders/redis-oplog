@@ -5,7 +5,7 @@ import { RedisOplog, SyntheticMutator } from 'meteor/skadmin:redis-oplog';
 if (Meteor.isServer) {
     RedisOplog.init({
         redis: {
-            port: 6379, // Redis port
+            port: 26379, // Redis port
             host: '127.0.0.1', // Redis host
         },
         // overridePublishFunction: true
