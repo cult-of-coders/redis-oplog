@@ -6,7 +6,7 @@ if (Meteor.isServer) {
     RedisOplog.init({
         redis: {
             port: 26379, // Redis port
-            host: '127.0.0.1', // Redis host
+            host: 'redis-sentinel', //'127.0.0.1', // Redis host
         },
         // overridePublishFunction: true
         // debug: true
