@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import {Items} from './collections';
+import { Items } from './collections';
 
 describe('Transformations', function () {
     it('Should receive correct data', function (done) {

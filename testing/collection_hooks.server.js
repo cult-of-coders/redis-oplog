@@ -6,8 +6,8 @@ describe('It should work with collection:hooks', function () {
 
     const opts = [
         {},
-        {channel: 'xxx'},
-        {namespace: 'xxx'}
+        { channel: 'xxx' },
+        { namespace: 'xxx' }
     ];
 
     let idx = 1;
@@ -45,8 +45,8 @@ describe('It should work with collection:hooks', function () {
                 updates['after.remove'] = true;
             });
 
-            const id = Collection.insert({someData: true});
-            Collection.update(id, {someData: false});
+            const id = Collection.insert({ someData: true });
+            Collection.update(id, { someData: false });
             Collection.remove(id);
 
             _.each(updates, (value, key) => {
