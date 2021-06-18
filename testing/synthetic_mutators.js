@@ -18,8 +18,8 @@ _.each(Collections, (Collection, key) => {
         return;
     }
 
-    describe('It should work with synthetic mutators: ' + key, function() {
-        it('Should work with insert', function(done) {
+    describe('It should work with synthetic mutators: ' + key, function () {
+        it('Should work with insert', function (done) {
             let handle = subscribe({
                 game: `synthetic.${config[key].suffix}`,
             });
@@ -35,14 +35,14 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 synthetic('insert', {
                     game: `synthetic.${config[key].suffix}`,
                 });
             });
         });
 
-        it('Should work with update with operators: $set', function(done) {
+        it('Should work with update with operators: $set', function (done) {
             let handle = subscribe({
                 game: 'chess',
             });
@@ -58,7 +58,7 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 let _id = cursor.fetch()[0]._id;
                 assert.isString(_id);
 
@@ -70,11 +70,11 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with update with operators: $push', function(done) {
+        it('Should work with update with operators: $push', function (done) {
             createSync({
                 synthetic_test: true,
                 connections: [],
-            }).then(function(_id) {
+            }).then(function (_id) {
                 let handle = subscribe({ synthetic_test: true });
 
                 const cursor = Collection.find({
@@ -90,7 +90,7 @@ _.each(Collections, (Collection, key) => {
                     },
                 });
 
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     synthetic('update', _id, {
                         $push: {
                             connections: 1,
@@ -100,7 +100,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with update', function(done) {
+        it('Should work with update', function (done) {
             let handle = subscribe({ game: 'chess' });
 
             const cursor = Collection.find();
@@ -114,7 +114,7 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 let _id = cursor.fetch()[0]._id;
                 assert.isString(_id);
 
@@ -126,7 +126,7 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with remove', function(done) {
+        it('Should work with remove', function (done) {
             let handle = subscribe({
                 game: 'chess',
             });
@@ -144,7 +144,7 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            waitForHandleToBeReady(handle).then(function() {
+            waitForHandleToBeReady(handle).then(function () {
                 _id = cursor.fetch()[0]._id;
                 assert.isString(_id);
 
@@ -152,16 +152,16 @@ _.each(Collections, (Collection, key) => {
             });
         });
 
-        it('Should work with update with _id', function(done) {
+        it('Should work with update with _id', function (done) {
             const context = 'synth-with-id';
 
-            createSync({ context }).then(function(_id) {
+            createSync({ context }).then(function (_id) {
                 let handle = subscribe({
                     _id: { $in: [_id] },
                 });
 
                 const cursor = Collection.find();
-                waitForHandleToBeReady(handle).then(function() {
+                waitForHandleToBeReady(handle).then(function () {
                     let observer = cursor.observeChanges({
                         changed(docId, doc) {
                             assert.equal(docId, _id);
@@ -173,14 +173,14 @@ _.each(Collections, (Collection, key) => {
                     });
 
                     synthetic(
-                      'update',
-                      _id,
-                      {
-                          $set: {
-                              isPlaying: true,
-                          },
-                      },
-                      `${Collection._name}::${_id}`
+                        'update',
+                        _id,
+                        {
+                            $set: {
+                                isPlaying: true,
+                            },
+                        },
+                        `${Collection._name}::${_id}`
                     );
                 });
             });
