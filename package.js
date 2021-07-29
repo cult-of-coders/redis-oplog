@@ -1,6 +1,6 @@
 Package.describe({
     name: 'skadmin:redis-oplog',
-    version: '2.1.13',
+    version: '2.1.14',
     // Brief, one-line summary of the package.
     summary: "Replacement for Meteor's MongoDB opib/config.log implementation",
     // URL to the Git repository containing the source code for this package.
@@ -36,26 +36,26 @@ Package.onUse(function(api) {
     api.mainModule('redis-oplog.client.js', 'client');
 });
 
-Package.onTest(function(api) {
-    api.use('skadmin:redis-oplog');
-
-    // extensions
-    api.use('aldeed:collection2@3.0.0');
-    api.use('reywood:publish-composite@1.5.2');
-    api.use('natestrauser:publish-performant-counts@0.1.2');
-    api.use('socialize:user-presence@0.4.0');
-
-    api.use('ecmascript');
-    api.use('tracker');
-    api.use('mongo');
-    api.use('random');
-    api.use('matb33:collection-hooks@0.8.4');
-
-    api.use(['meteortesting:mocha']);
-
-    api.mainModule('testing/main.server.js', 'server');
-    api.addFiles('testing/publishComposite/boot.js', 'server');
-    api.addFiles('testing/optimistic-ui/boot.js', 'server');
-
-    api.mainModule('testing/main.client.js', 'client');
-});
+// Package.onTest(function(api) {
+//     api.use('skadmin:redis-oplog');
+//
+//     // extensions
+//     api.use('aldeed:collection2@3.0.0');
+//     api.use('reywood:publish-composite@1.5.2');
+//     api.use('natestrauser:publish-performant-counts@0.1.2');
+//     api.use('socialize:user-presence@0.4.0');
+//
+//     api.use('ecmascript');
+//     api.use('tracker');
+//     api.use('mongo');
+//     api.use('random');
+//     api.use('matb33:collection-hooks@0.8.4');
+//
+//     api.use(['meteortesting:mocha']);
+//
+//     api.mainModule('testing/main.server.js', 'server');
+//     api.addFiles('testing/publishComposite/boot.js', 'server');
+//     api.addFiles('testing/optimistic-ui/boot.js', 'server');
+//
+//     api.mainModule('testing/main.client.js', 'client');
+// });
