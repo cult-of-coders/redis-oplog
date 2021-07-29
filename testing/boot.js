@@ -2,16 +2,16 @@ import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
 import { RedisOplog, SyntheticMutator } from 'meteor/skadmin:redis-oplog';
 
-// if (Meteor.isServer) {
-//     RedisOplog.init({
-//         redis: {
-//             port: 26379, // Redis port
-//             host: 'redis-sentinel', //'127.0.0.1', // Redis host
-//         },
-//         // overridePublishFunction: true
-//         // debug: true
-//     });
-// }
+if (Meteor.isServer) {
+    RedisOplog.init({
+        redis: {
+            port: 26379, // Redis port
+            host: 'redis-sentinel', //'127.0.0.1', // Redis host
+        },
+        // overridePublishFunction: true
+        // debug: true
+    });
+}
 
 const Standard = new Mongo.Collection('test_redis_collection');
 const Channel = new Mongo.Collection('test_redis_collection_channel');

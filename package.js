@@ -1,6 +1,6 @@
 Package.describe({
     name: 'skadmin:redis-oplog',
-    version: '2.2.0',
+    version: '2.1.13',
     // Brief, one-line summary of the package.
     summary: "Replacement for Meteor's MongoDB opib/config.log implementation",
     // URL to the Git repository containing the source code for this package.
@@ -49,9 +49,7 @@ Package.onTest(function(api) {
     api.use('tracker');
     api.use('mongo');
     api.use('random');
-    api.use('accounts-password');
     api.use('matb33:collection-hooks@0.8.4');
-    api.use('alanning:roles@1.2.16');
 
     api.use(['meteortesting:mocha']);
 
