@@ -41,17 +41,17 @@ Package.onTest(function(api) {
 
     // extensions
     api.use('aldeed:collection2@3.0.0');
-    api.use('reywood:publish-composite@1.5.2');
+    api.use('reywood:publish-composite@1.7.3');
     api.use('natestrauser:publish-performant-counts@0.1.2');
-    api.use('socialize:user-presence@0.4.0');
+    api.use('socialize:user-presence@1.0.4');
 
     api.use('ecmascript');
     api.use('tracker');
     api.use('mongo');
     api.use('random');
     api.use('accounts-password');
-    api.use('matb33:collection-hooks@0.8.4');
-    api.use('alanning:roles@1.2.16');
+    api.use('matb33:collection-hooks@1.1.2');
+    api.use('alanning:roles@3.4.0');
 
     api.use(['meteortesting:mocha']);
 
