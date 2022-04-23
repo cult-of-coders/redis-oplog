@@ -3,6 +3,7 @@
 ### 2.1.0
 - Projections option support
 - Update Mocha tests
+- Update tests to use Meteor 1.12.2 to fix certificates issues
 
 ### 1.2.3
 - Redis connection failover handling
