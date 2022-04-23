@@ -1,4 +1,5 @@
 import { Accounts } from 'meteor/accounts-base';
+import { UserPresence } from 'meteor/socialize:user-presence';
 
 // UserPresence.onCleanup(function(){
 //     Meteor.users.update({}, {$unset:{status:true}}, {multi:true});
