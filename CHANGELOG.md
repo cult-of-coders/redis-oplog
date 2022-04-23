@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### 2.1.0
+- Projections option support
+- Update Mocha tests
+
 ### 1.2.3
 - Redis connection failover handling
 - Refetching the up to date collection when Redis connection resumes
