@@ -22,7 +22,12 @@ jobs:
         uses: meteorengineer/setup-meteor@v1
         with:
           meteor-release: ${{ matrix.meteor }}
-      - run: meteor create --release 1.12.2 --bare test
-      - run: cd test
-      - run: meteor npm i --save puppeteer@1.18.1 simpl-schema chai
-      - run: METEOR_PACKAGE_DIRS="$GITHUB_WORKSPACE" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha $GITHUB_WORKSPACE
+      - name: Setup tests
+        run: |
+          meteor create --release 1.12.2 --bare test
+          cd test
+          meteor npm i --save puppeteer@1.18.1 simpl-schema chai
+      - name: Test
+        run: |
+          cd test
+          METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../
