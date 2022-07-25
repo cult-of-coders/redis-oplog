@@ -11,7 +11,7 @@ const callWithPromise = (method, ...args) => {
 Meteor.callWithPromise = callWithPromise;
 
 const waitForHandleToBeReady = handle => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         Tracker.autorun(c => {
             if (handle.ready()) {
                 c.stop();

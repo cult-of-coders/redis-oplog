@@ -188,11 +188,11 @@ Messages.configureRedisOplog({
         }
         if (event === Events.REMOVE) {
             // If it performs a remove by _id (which is the most usual)
-            threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
+            threadId = Messages.findOne({_id: selector._id}, {projection: {threadId: 1}}).threadId;
         }
         if (event === Events.UPDATE) {
             // If it performs an update by _id (which is the most usual)
-            threadId = Messages.findOne({_id: selector._id}, {fields: {threadId: 1}}).threadId;
+            threadId = Messages.findOne({_id: selector._id}, {projection: {threadId: 1}}).threadId;
         }
         
         options.namespace = `threads::${threadId}`;
