@@ -43,7 +43,7 @@ Package.onTest(function(api) {
     api.use('aldeed:collection2@3.0.0');
     api.use('reywood:publish-composite@1.7.3');
     api.use('natestrauser:publish-performant-counts@0.1.2');
-    api.use('socialize:user-presence@1.0.4');
+    // api.use('socialize:user-presence@1.0.4');
 
     api.use('ecmascript');
     api.use('tracker');
