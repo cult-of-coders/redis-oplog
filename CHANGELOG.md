@@ -1,8 +1,14 @@
 ## CHANGELOG
 
+### 2.1.0
+- Meteor 2.6 support
+- Projections option support
+- Update Mocha tests
+- Update tests to use Meteor 1.12.2 to fix certificates issues
+
 ### 1.2.3
 - Redis connection failover handling
-- Refetching the up to date collection when Redis connection resumes
+- Re-fetching the up-to-date collection when Redis connection resumes
 - Bug fixes and improvements
 
 ### 1.2.2
