@@ -1,5 +1,7 @@
 ## CHANGELOG
 
+### 2.2.0
+
 ### 2.1.1
 - Fixes callback is not a function error when using SyntheticMutator.update
 
