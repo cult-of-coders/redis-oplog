@@ -1,3 +1,6 @@
 .DS_Store
 dump.rdb
 npm-debug.log
+.idea/
+
+test/

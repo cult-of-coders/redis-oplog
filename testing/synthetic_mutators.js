@@ -18,13 +18,13 @@ _.each(Collections, (Collection, key) => {
         return;
     }
 
-    describe('It should work with synthetic mutators: ' + key, function() {
-        it('Should work with insert', async function(done) {
+    describe('It should work with synthetic mutators: ' + key, function () {
+        it('Should work with insert', function (done) {
             let handle = subscribe({
                 game: `synthetic.${config[key].suffix}`,
             });
 
-            const cursor = Collection.find();
+            const cursor = Collection.find({});
 
             let observeChangesHandle = cursor.observeChanges({
                 added(docId, doc) {
@@ -35,14 +35,14 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            await waitForHandleToBeReady(handle);
-
-            synthetic('insert', {
-                game: `synthetic.${config[key].suffix}`,
+            waitForHandleToBeReady(handle).then(function () {
+                synthetic('insert', {
+                    game: `synthetic.${config[key].suffix}`,
+                });
             });
         });
 
-        it('Should work with update with operators: $set', async function(done) {
+        it('Should work with update with operators: $set', function (done) {
             let handle = subscribe({
                 game: 'chess',
             });
@@ -58,49 +58,49 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            await waitForHandleToBeReady(handle);
+            waitForHandleToBeReady(handle).then(function () {
+                let _id = cursor.fetch()[0]._id;
+                assert.isString(_id);
 
-            let _id = cursor.fetch()[0]._id;
-            assert.isString(_id);
-
-            synthetic('update', _id, {
-                $set: {
-                    isPlaying: true,
-                },
+                synthetic('update', _id, {
+                    $set: {
+                        isPlaying: true,
+                    },
+                });
             });
         });
 
-        it('Should work with update with operators: $push', async function(done) {
-            let _id = await createSync({
+        it('Should work with update with operators: $push', function (done) {
+            createSync({
                 synthetic_test: true,
                 connections: [],
-            });
+            }).then(function (_id) {
+                let handle = subscribe({ synthetic_test: true });
 
-            let handle = subscribe({ synthetic_test: true });
+                const cursor = Collection.find({
+                    synthetic_test: true,
+                });
 
-            const cursor = Collection.find({
-                synthetic_test: true,
-            });
+                let observeChangesHandle = cursor.observeChanges({
+                    changed(docId, doc) {
+                        assert.lengthOf(doc.connections, 1);
+                        observeChangesHandle.stop();
+                        handle.stop();
+                        done();
+                    },
+                });
 
-            let observeChangesHandle = cursor.observeChanges({
-                changed(docId, doc) {
-                    assert.lengthOf(doc.connections, 1);
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                },
-            });
-
-            await waitForHandleToBeReady(handle);
-
-            synthetic('update', _id, {
-                $push: {
-                    connections: 1,
-                },
+                waitForHandleToBeReady(handle).then(function () {
+                    synthetic('update', _id, {
+                        $push: {
+                            connections: 1,
+                        },
+                    });
+                });
             });
         });
 
-        it('Should work with update', async function(done) {
+        it('Should work with update', function (done) {
             let handle = subscribe({ game: 'chess' });
 
             const cursor = Collection.find();
@@ -114,19 +114,19 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            await waitForHandleToBeReady(handle);
+            waitForHandleToBeReady(handle).then(function () {
+                let _id = cursor.fetch()[0]._id;
+                assert.isString(_id);
 
-            let _id = cursor.fetch()[0]._id;
-            assert.isString(_id);
-
-            synthetic('update', _id, {
-                $set: {
-                    isPlaying: true,
-                },
+                synthetic('update', _id, {
+                    $set: {
+                        isPlaying: true,
+                    },
+                });
             });
         });
 
-        it('Should work with remove', async function(done) {
+        it('Should work with remove', function (done) {
             let handle = subscribe({
                 game: 'chess',
             });
@@ -144,45 +144,46 @@ _.each(Collections, (Collection, key) => {
                 },
             });
 
-            await waitForHandleToBeReady(handle);
+            waitForHandleToBeReady(handle).then(function () {
+                _id = cursor.fetch()[0]._id;
+                assert.isString(_id);
 
-            _id = cursor.fetch()[0]._id;
-            assert.isString(_id);
-
-            synthetic('remove', _id);
+                synthetic('remove', _id);
+            });
         });
 
-        it('Should work with update with _id', async function(done) {
+        it('Should work with update with _id', function (done) {
             const context = 'synth-with-id';
 
-            let _id = await createSync({ context });
-            let handle = subscribe({
-                _id: { $in: [_id] },
+            createSync({ context }).then(function (_id) {
+                let handle = subscribe({
+                    _id: { $in: [_id] },
+                });
+
+                const cursor = Collection.find();
+                waitForHandleToBeReady(handle).then(function () {
+                    let observer = cursor.observeChanges({
+                        changed(docId, doc) {
+                            assert.equal(docId, _id);
+                            assert.equal(doc.isPlaying, true);
+                            observer.stop();
+                            handle.stop();
+                            done();
+                        },
+                    });
+
+                    synthetic(
+                        'update',
+                        _id,
+                        {
+                            $set: {
+                                isPlaying: true,
+                            },
+                        },
+                        `${Collection._name}::${_id}`
+                    );
+                });
             });
-
-            const cursor = Collection.find();
-            await waitForHandleToBeReady(handle);
-
-            let observer = cursor.observeChanges({
-                changed(docId, doc) {
-                    assert.equal(docId, _id);
-                    assert.equal(doc.isPlaying, true);
-                    observer.stop();
-                    handle.stop();
-                    done();
-                },
-            });
-
-            synthetic(
-                'update',
-                _id,
-                {
-                    $set: {
-                        isPlaying: true,
-                    },
-                },
-                `${Collection._name}::${_id}`
-            );
         });
     });
 });
