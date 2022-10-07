@@ -1,5 +1,8 @@
 ## CHANGELOG
 
+### 2.1.1
+- Fixes callback is not a function error when using SyntheticMutator.update
+
 ### 2.1.0
 - Meteor 2.6 support
 - Projections option support
