@@ -53,7 +53,7 @@ Configure it via Meteor settings:
 ```
 
 To see what you can configure under `"redis": {}` take a look here:
-https://www.npmjs.com/package/redis#options-object-properties
+[https://github.com/luin/ioredis#connect-to-redis](https://github.com/luin/ioredis#connect-to-redis)
 
 ```bash
 meteor run --settings settings.json
