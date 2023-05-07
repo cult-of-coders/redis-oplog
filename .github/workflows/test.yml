@@ -7,14 +7,14 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        meteor: [1.12.2, 2.6.1, 2.7.3]
-        redis-version: [4, 5, 6]
+        meteor: [1.12.2, 2.6.1, 2.7.3, 2.8.1, 2.12]
+        redis-version: [4, 5, 6, 7]
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Start Redis
-        uses: supercharge/redis-github-action@1.4.0
+        uses: supercharge/redis-github-action@1.5.0
         with:
           redis-version: ${{ matrix.redis-version }}
 
