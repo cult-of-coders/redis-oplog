@@ -4,6 +4,7 @@
 - Bumped minimum Meteor version to v1.12.2
 - Updated tests to cover from Meteor v1.12.2 to the latest v2.12
 - Added testing for Redis v7
+- Fix update not returning number
 
 ### 2.1.1
 - Fixes callback is not a function error when using SyntheticMutator.update
