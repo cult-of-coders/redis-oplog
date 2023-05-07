@@ -28,7 +28,7 @@ It is also always helpful to have some context for your pull request. What was t
 
 ### Setup 
 ```
-meteor create --release 1.8.1 --bare test
+meteor create --release 1.12.2 --bare test
 cd test
 meteor npm i --save puppeteer@1.18.1 simpl-schema chai
 ```
