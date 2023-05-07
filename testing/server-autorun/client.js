@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import {Orders, Items} from './collections';
-import {Meteor} from 'meteor/meteor';
+import { Orders, Items } from './collections';
+import { Meteor } from 'meteor/meteor';
 
 describe('Testing autorun functionality', function () {
     it('Should be able to subscribe', function (done) {

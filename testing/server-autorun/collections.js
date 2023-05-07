@@ -1,6 +1,4 @@
-import {Mongo} from 'meteor/mongo';
+import { Mongo } from 'meteor/mongo';
 
-const Items = new Mongo.Collection('autorun_test_items');
-const Orders = new Mongo.Collection('autorun_test_orders');
-
-export {Orders, Items}
+export const Items = new Mongo.Collection('autorun_test_items');
+export const Orders = new Mongo.Collection('autorun_test_orders');

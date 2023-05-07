@@ -1,5 +1,5 @@
-import {Vent} from 'meteor/cultofcoders:redis-oplog';
-import {Meteor} from 'meteor/meteor';
+import { Vent } from 'meteor/cultofcoders:redis-oplog';
+import { Meteor } from 'meteor/meteor';
 
 Vent.publish({
     'threadMessage'({channel, shouldReturn = true}) {

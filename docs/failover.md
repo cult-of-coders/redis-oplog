@@ -15,7 +15,7 @@ In order to configure these events, you can do it like this:
 // in a server-side file that is loaded on startup
 import { Config } from 'meteor/cultofcoders:redis-oplog';
 
-_.extend(Config.redisExtras.events, {
+Object.assign(Config.redisExtras.events, {
     reconnect({delay, attempt, error}) {
         // put your logic here. 
     },

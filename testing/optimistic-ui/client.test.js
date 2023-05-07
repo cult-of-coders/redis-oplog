@@ -1,6 +1,6 @@
+import { Meteor } from 'meteor/meteor';
 import { assert } from 'chai';
 import { Items } from './collections';
-import { _ } from 'meteor/underscore';
 import { waitForHandleToBeReady, callWithPromise } from '../lib/sync_utils';
 import { Random } from 'meteor/random';
 import './boot';
@@ -26,7 +26,7 @@ describe('Optimistic UI', () => {
                         }
 
                         assert.lengthOf(doc.liked, 2);
-                        assert.isTrue(_.contains(doc.liked, 'XXX'));
+                        assert.isTrue(doc.liked.includes('XXX'));
 
                         setTimeout(() => {
                             handle.stop();
@@ -36,7 +36,7 @@ describe('Optimistic UI', () => {
                     },
                 });
 
-                const item = _.first(cursor.fetch());
+                const item = cursor.fetch()[0];
                 assert.isObject(item);
 
                 Meteor.call('optimistic_ui.items.update', item._id, {
@@ -69,7 +69,7 @@ describe('Optimistic UI', () => {
                     }
 
                     assert.lengthOf(doc.liked, 2);
-                    assert.isTrue(_.contains(doc.liked, 'XXX'));
+                    assert.isTrue(doc.liked.includes('XXX'));
 
                     setTimeout(() => {
                         handle.stop();
@@ -79,7 +79,7 @@ describe('Optimistic UI', () => {
                 },
             });
 
-            const item = _.first(cursor.fetch());
+            const item = cursor.fetch()[0];
             assert.isObject(item);
 
             Items.update(item._id, {

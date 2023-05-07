@@ -1,4 +1,8 @@
 import { Accounts } from 'meteor/accounts-base';
+import { Random } from 'meteor/random';
+import { Meteor } from 'meteor/meteor'
+import { Roles } from 'meteor/alanning:roles'
+
 // import { UserPresence } from 'meteor/socialize:user-presence';
 
 // UserPresence.onCleanup(function(){

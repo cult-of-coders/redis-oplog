@@ -64,18 +64,18 @@ if (Meteor.isServer) {
             filters,
             options
         ) {
-            return Collection.find(filters, _.extend({}, options, opts[key]));
+            return Collection.find(filters, Object.assign({}, options, opts[key]));
         });
 
         Meteor.methods({
             [`create.${config[key].suffix}`](item, options = {}) {
                 if (_.isArray(item)) {
                     return _.map(item, i =>
-                        Collection.insert(i, _.extend(options, opts[key]))
+                        Collection.insert(i, Object.assign(options, opts[key]))
                     );
                 }
 
-                return Collection.insert(item, _.extend(options, opts[key]));
+                return Collection.insert(item, Object.assign(options, opts[key]));
             },
             [`fetch.${config[key].suffix}`](selector = {}, options = {}) {
                 return Collection.find(selector, options).fetch();
@@ -84,20 +84,20 @@ if (Meteor.isServer) {
                 return Collection.update(
                     selectors,
                     modifier,
-                    _.extend({}, opts[key], options)
+                    Object.assign({}, opts[key], options)
                 );
             },
             [`upsert.${config[key].suffix}`](selectors, modifier, options) {
                 return Collection.upsert(
                     selectors,
                     modifier,
-                    _.extend({}, opts[key], options)
+                    Object.assign({}, opts[key], options)
                 );
             },
             [`remove.${config[key].suffix}`](selectors, options = {}) {
                 return Collection.remove(
                     selectors,
-                    _.extend(options, opts[key])
+                    Object.assign(options, opts[key])
                 );
             },
             [`synthetic.${config[key].suffix}`](
