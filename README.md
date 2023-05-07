@@ -9,7 +9,7 @@
 
 ### LICENSE: MIT
 
-[![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog) [![Backers on Open Collective](https://opencollective.com/redis-oplog/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/redis-oplog/sponsors/badge.svg)](#sponsors)
+[![Backers on Open Collective](https://opencollective.com/redis-oplog/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/redis-oplog/sponsors/badge.svg)](#sponsors)
 
 ## RedisOplog
 

@@ -19,6 +19,7 @@ import './collection-defaults/server';
 import './polling/server';
 import './object-id/server';
 import './include_prev_doc';
+import './return_value';
 
 import { _ } from 'meteor/underscore';
 
