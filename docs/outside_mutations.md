@@ -38,7 +38,7 @@ redis.publish('tasks', JSON.stringify({
 
 You have to be careful, if in your app you subscribe by `_id`:
 ```js
-return Task.find({_id: taskId})
+return Tasks.find({_id: taskId})
 ```
 
 In order for the processor to catch the event you have to send it to the `tasks::taskId` channel, where `taskId` represents the actual id inside MongoDB.
@@ -47,7 +47,7 @@ So, if you have both types of publications, you have to publish it to both `task
 
 If you use namespaces, the channels also change:
 ```js
-return Task.find({groupId}, {
+return Tasks.find({groupId}, {
     namespace: `group::${groupId}`
 })
 ```
@@ -57,7 +57,7 @@ you have to send it to both `group::groupId::tasks` and `tasks::taskId`, where `
 
 Keep in mind, that namespaces don't affect direct query processing:
 ```js
-return Task.find({_id: taskId}, {
+return Tasks.find({_id: taskId}, {
     namespace: `group::${groupId}`
 })
 ```
