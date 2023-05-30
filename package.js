@@ -11,8 +11,8 @@ Package.describe({
 });
 
 Npm.depends({
-    redis: '2.8.0',
-    'deep-extend': '0.5.0',
+    redis: '3.1.2',
+    'deep-extend': '0.6.0',
     'lodash.clonedeep': '4.5.0'
 });
 
