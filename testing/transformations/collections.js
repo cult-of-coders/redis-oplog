@@ -1,4 +1,5 @@
-import {Mongo} from 'meteor/mongo';
+import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 
 let Items;
 
@@ -18,4 +19,4 @@ if (Meteor.isServer) {
     });
 }
 
-export {Items}
+export { Items }

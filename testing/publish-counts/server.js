@@ -1,5 +1,6 @@
+import { Meteor } from 'meteor/meteor';
 import { Counter } from 'meteor/natestrauser:publish-performant-counts'
-import {Items} from './collections';
+import { Items } from './collections';
 
 Meteor.publish('performant_counts', function () {
     return new Counter(
