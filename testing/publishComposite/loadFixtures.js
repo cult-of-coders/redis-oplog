@@ -1,4 +1,4 @@
-import {Items, Children} from './collections';
+import { Items, Children } from './collections';
 
 const ITEMS = 5;
 const CHILDREN_PER_ITEM = 5;

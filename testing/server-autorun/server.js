@@ -1,4 +1,5 @@
-import {Orders, Items} from './collections';
+import { Meteor } from 'meteor/meteor';
+import { Orders, Items } from './collections';
 import './publication';
 
 

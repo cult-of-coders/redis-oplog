@@ -1,1 +1,1 @@
-import {Orders, Items} from './collections';
+import { Orders, Items } from './collections';

@@ -1,8 +1,25 @@
 ## CHANGELOG
 
+### 2.2.0
+- Bumped minimum Meteor version to v1.12.2
+- Updated tests to cover from Meteor v1.12.2 to the latest v2.12
+- Added testing for Redis v7
+- Updated `node-redis` to v3.1.2
+- Updated `deep-extend` to v0.6.0
+- Fix update not returning number
+
+### 2.1.1
+- Fixes callback is not a function error when using SyntheticMutator.update
+
+### 2.1.0
+- Meteor 2.6 support
+- Projections option support
+- Update Mocha tests
+- Update tests to use Meteor 1.12.2 to fix certificates issues
+
 ### 1.2.3
 - Redis connection failover handling
-- Refetching the up to date collection when Redis connection resumes
+- Re-fetching the up-to-date collection when Redis connection resumes
 - Bug fixes and improvements
 
 ### 1.2.2

@@ -1,0 +1,32 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        meteor: [1.12.2, 2.6.1, 2.7.3, 2.8.1, 2.12]
+        redis-version: [4, 5, 6, 7]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.5.0
+        with:
+          redis-version: ${{ matrix.redis-version }}
+
+      - name: Setup Meteor
+        uses: meteorengineer/setup-meteor@v1
+        with:
+          meteor-release: ${{ matrix.meteor }}
+      - name: Setup tests
+        run: |
+          meteor create --release ${{ matrix.meteor }} --bare test
+          cd test
+          meteor npm i --save puppeteer@1.18.1 simpl-schema chai
+      - name: Test
+        working-directory: ./test
+        run: METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../

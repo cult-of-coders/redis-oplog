@@ -1,11 +1,16 @@
 import { Accounts } from 'meteor/accounts-base';
+import { Random } from 'meteor/random';
+import { Meteor } from 'meteor/meteor'
+import { Roles } from 'meteor/alanning:roles'
+
+// import { UserPresence } from 'meteor/socialize:user-presence';
 
 // UserPresence.onCleanup(function(){
 //     Meteor.users.update({}, {$unset:{status:true}}, {multi:true});
 // });
-UserPresence.onUserOnline(function(userId) {
-    Meteor.users.update({ _id: userId }, { $set: { status: 'online' } });
-});
+// UserPresence.onUserOnline(function(userId) {
+//     Meteor.users.update({ _id: userId }, { $set: { status: 'online' } });
+// });
 // UserPresence.onUserIdle(function(userId){
 //     Meteor.users.update({_id:userId}, {$set:{status:"idle"}})
 // });

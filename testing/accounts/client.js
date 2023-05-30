@@ -1,6 +1,5 @@
 import { assert } from 'chai';
-import {Meteor} from 'meteor/meteor';
-import { DDP } from 'meteor/ddp-client';
+import { Meteor } from 'meteor/meteor';
 
 describe('Testing accounts functionality', function () {
     it('Should properly subscribe and login', function (done) {

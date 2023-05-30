@@ -1,9 +1,15 @@
-# Welcome to Redis Oplog
+## Introducing BlueLibs
 
+- [GitHub BlueLibs Monorepo](https://github.com/bluelibs/bluelibs)
+- Following the same bold vision of Meteor, but with a modern twist. www.bluelibs.com
+- Read more about our approach coming from Meteor: https://www.bluelibs.com/blog/2021/11/26/the-meteor-of-2022
+- We've implemented [RedisOplog](https://www.bluelibs.com/docs/package-x-bundle#live-data) in our framework as well, but it also works with in-memory and with customisable pubsub, not bound to redis.
+
+# Welcome to Redis Oplog
 
 ### LICENSE: MIT
 
-[![Build Status](https://api.travis-ci.org/cult-of-coders/redis-oplog.svg?branch=master)](https://travis-ci.org/cult-of-coders/redis-oplog) [![Backers on Open Collective](https://opencollective.com/redis-oplog/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/redis-oplog/sponsors/badge.svg)](#sponsors)
+[![Backers on Open Collective](https://opencollective.com/redis-oplog/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/redis-oplog/sponsors/badge.svg)](#sponsors)
 
 ## RedisOplog
 

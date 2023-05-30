@@ -1,54 +1,54 @@
+import { Meteor } from 'meteor/meteor';
 import { assert } from 'chai';
 import { Items } from './collections';
-import { _ } from 'meteor/underscore';
 import { waitForHandleToBeReady, callWithPromise } from '../lib/sync_utils';
 import { Random } from 'meteor/random';
 import './boot';
 
 describe('Optimistic UI', () => {
-    it('Should not cause a flicker with method calls', async function(done) {
+    it('Should not cause a flicker with method calls', function (done) {
         const context = Random.id();
 
-        const itemId = await callWithPromise('optimistic_ui.items.insert', {
+        callWithPromise('optimistic_ui.items.insert', {
             context,
             liked: ['ZZZ'],
-        });
+        }).then(function (itemId) {
+            const handle = Meteor.subscribe('optimistic_ui.items', { _id: itemId });
+            waitForHandleToBeReady(handle).then(function () {
+                const cursor = Items.find({ _id: itemId });
 
-        const handle = Meteor.subscribe('optimistic_ui.items', { _id: itemId });
-        await waitForHandleToBeReady(handle);
+                let alreadyIn = 0;
+                const observer = cursor.observeChanges({
+                    changed(docId, doc) {
+                        alreadyIn++;
+                        if (alreadyIn > 1) {
+                            done('A flicker was caused.');
+                        }
 
-        const cursor = Items.find({ _id: itemId });
+                        assert.lengthOf(doc.liked, 2);
+                        assert.isTrue(doc.liked.includes('XXX'));
 
-        let alreadyIn = 0;
-        const observer = cursor.observeChanges({
-            changed(docId, doc) {
-                alreadyIn++;
-                if (alreadyIn > 1) {
-                    done('A flicker was caused.');
-                }
+                        setTimeout(() => {
+                            handle.stop();
+                            observer.stop();
+                            done();
+                        }, 200);
+                    },
+                });
 
-                assert.lengthOf(doc.liked, 2);
-                assert.isTrue(_.contains(doc.liked, 'XXX'));
+                const item = cursor.fetch()[0];
+                assert.isObject(item);
 
-                setTimeout(() => {
-                    handle.stop();
-                    observer.stop();
-                    done();
-                }, 200);
-            },
-        });
-
-        const item = _.first(cursor.fetch());
-        assert.isObject(item);
-
-        Meteor.call('optimistic_ui.items.update', item._id, {
-            $addToSet: {
-                liked: 'XXX',
-            },
+                Meteor.call('optimistic_ui.items.update', item._id, {
+                    $addToSet: {
+                        liked: 'XXX',
+                    },
+                });
+            });
         });
     });
 
-    it('Should not cause a flicker with isomorphic calls', async function(done) {
+    it('Should not cause a flicker with isomorphic calls', function (done) {
         const context = Random.id();
 
         const itemId = Items.insert({
@@ -57,36 +57,36 @@ describe('Optimistic UI', () => {
         });
 
         const handle = Meteor.subscribe('optimistic_ui.items', { _id: itemId });
-        await waitForHandleToBeReady(handle);
+        waitForHandleToBeReady(handle).then(function () {
+            const cursor = Items.find({ _id: itemId });
 
-        const cursor = Items.find({ _id: itemId });
+            let alreadyIn = 0;
+            const observer = cursor.observeChanges({
+                changed(docId, doc) {
+                    alreadyIn++;
+                    if (alreadyIn > 1) {
+                        done('A flicker was caused.');
+                    }
 
-        let alreadyIn = 0;
-        const observer = cursor.observeChanges({
-            changed(docId, doc) {
-                alreadyIn++;
-                if (alreadyIn > 1) {
-                    done('A flicker was caused.');
-                }
+                    assert.lengthOf(doc.liked, 2);
+                    assert.isTrue(doc.liked.includes('XXX'));
 
-                assert.lengthOf(doc.liked, 2);
-                assert.isTrue(_.contains(doc.liked, 'XXX'));
+                    setTimeout(() => {
+                        handle.stop();
+                        observer.stop();
+                        done();
+                    }, 200);
+                },
+            });
 
-                setTimeout(() => {
-                    handle.stop();
-                    observer.stop();
-                    done();
-                }, 200);
-            },
-        });
+            const item = cursor.fetch()[0];
+            assert.isObject(item);
 
-        const item = _.first(cursor.fetch());
-        assert.isObject(item);
-
-        Items.update(item._id, {
-            $addToSet: {
-                liked: 'XXX',
-            },
+            Items.update(item._id, {
+                $addToSet: {
+                    liked: 'XXX',
+                },
+            });
         });
     });
 });
