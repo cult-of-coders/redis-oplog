@@ -7,6 +7,7 @@
 - Updated `node-redis` to v3.1.2
 - Updated `deep-extend` to v0.6.0
 - Fix update not returning number
+- Fix SyntheticMutator not applying `globalRedisPrefix`
 
 ### 2.1.1
 - Fixes callback is not a function error when using SyntheticMutator.update
