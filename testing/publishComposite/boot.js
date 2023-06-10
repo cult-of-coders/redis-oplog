@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Items, Children } from './collections';
 import loadFixtures from './loadFixtures';
 

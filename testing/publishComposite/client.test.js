@@ -1,6 +1,6 @@
+import { Meteor } from 'meteor/meteor';
 import { assert } from 'chai';
 import { Items, Children } from './collections';
-import { _ } from 'meteor/underscore';
 import { waitForHandleToBeReady, callWithPromise } from '../lib/sync_utils';
 
 describe('Publish Composite', () => {
@@ -21,7 +21,7 @@ describe('Publish Composite', () => {
                     }
                 });
 
-                const item = _.first(cursor.fetch());
+                const item = cursor.fetch()[0];
                 assert.isObject(item);
 
                 const childCursor = Children.find({ itemId: item._id });

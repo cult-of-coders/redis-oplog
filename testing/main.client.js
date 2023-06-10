@@ -165,8 +165,8 @@ _.each(Collections, (Collection, key) => {
                         assert.equal(doc.nested.c.b, 1);
                         assert.equal(doc.nested.c.a, 1);
                         assert.equal(doc.nested.d, 1);
-                        assert.lengthOf(_.keys(doc), 1);
-                        assert.lengthOf(_.keys(doc.nested), 4);
+                        assert.lengthOf(Object.keys(doc), 1);
+                        assert.lengthOf(Object.keys(doc.nested), 4);
 
                         remove({ _id: docId }, () => {
                             done();
@@ -355,7 +355,7 @@ _.each(Collections, (Collection, key) => {
                     changed(docId, doc) {
                         assert.equal(docId, _id);
                         doc.bom.forEach(element => {
-                            assert.isTrue(_.keys(element).length === 2);
+                            assert.isTrue(Object.keys(element).length === 2);
                             if (element.stockId === 1) {
                                 assert.equal(element.quantity, 30);
                             } else {
@@ -1100,7 +1100,7 @@ _.each(Collections, (Collection, key) => {
                 const observer = cursor.observeChanges({
                     added(docId, doc) {
                         assert.isUndefined(doc.something);
-                        assert.isTrue(_.keys(doc).length == 1);
+                        assert.isTrue(Object.keys(doc).length == 1);
                         update(
                             { _id: docId },
                             {

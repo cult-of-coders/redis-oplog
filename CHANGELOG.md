@@ -1,5 +1,14 @@
 ## CHANGELOG
 
+### 2.2.0
+- Bumped minimum Meteor version to v1.12.2
+- Updated tests to cover from Meteor v1.12.2 to the latest v2.12
+- Added testing for Redis v7
+- Updated `node-redis` to v3.1.2
+- Updated `deep-extend` to v0.6.0
+- Fix update not returning number
+- Fix SyntheticMutator not applying `globalRedisPrefix`
+
 ### 2.1.1
 - Fixes callback is not a function error when using SyntheticMutator.update
 

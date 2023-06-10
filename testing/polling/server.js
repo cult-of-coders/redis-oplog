@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Campaigns } from './collections';
 
 Meteor.publish('campaign_search', function(search, pollingIntervalMs = 100) {
