@@ -1,5 +1,10 @@
 ## CHANGELOG
 
+### 2.2.1
+
+- Update `alanning:roles` to v3.5.1
+- Fix reactivity bug in fairly specific situations [#367](https://github.com/cult-of-coders/redis-oplog/issues/367)
+
 ### 2.2.0
 - Bumped minimum Meteor version to v1.12.2
 - Updated tests to cover from Meteor v1.12.2 to the latest v2.12
