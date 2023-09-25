@@ -3,18 +3,18 @@ import { waitForHandleToBeReady, callWithPromise } from './sync_utils';
 
 export default (suffix) => {
     const create = (...args) => {
-        Meteor.call(`create.${suffix}`, ...args);
+        return callWithPromise(`create.${suffix}`, ...args);
     };
 
-    const createSync = (...args) => {
-        return callWithPromise(`create.${suffix}`, ...args);
+    const createSync = async (...args) => {
+        return await callWithPromise(`create.${suffix}`, ...args);
     };
 
     const fetch = (...args) => {
         Meteor.call(`fetch.${suffix}`, ...args);
     };
 
-    const fetchSync = (...args) => {
+    const fetchAsync = (...args) => {
         return callWithPromise(`fetch.${suffix}`, ...args);
     };
 
@@ -22,7 +22,7 @@ export default (suffix) => {
         Meteor.call(`remove.${suffix}`, ...args);
     };
 
-    const removeSync = (...args) => {
+    const removeAsync = (...args) => {
         return callWithPromise(`remove.${suffix}`, ...args);
     };
 
@@ -30,7 +30,7 @@ export default (suffix) => {
         Meteor.call(`update.${suffix}`, ...args);
     };
 
-    const updateSync = (...args) => {
+    const updateAsync = (...args) => {
         return callWithPromise(`update.${suffix}`, ...args);
     };
 
@@ -38,7 +38,7 @@ export default (suffix) => {
         Meteor.call(`upsert.${suffix}`, ...args);
     };
 
-    const upsertSync = (...args) => {
+    const upsertAsync = (...args) => {
         return callWithPromise(`upsert.${suffix}`, ...args);
     };
 
@@ -46,7 +46,7 @@ export default (suffix) => {
         Meteor.call(`synthetic.${suffix}`, ...args);
     };
 
-    const syntheticSync = (...args) => {
+    const syntheticAsync = (...args) => {
         return callWithPromise(`synthetic.${suffix}`, ...args);
     };
 
@@ -58,16 +58,16 @@ export default (suffix) => {
         create,
         createSync,
         update,
-        updateSync,
+        updateAsync,
         upsert,
-        upsertSync,
+        upsertAsync,
         fetch,
-        fetchSync,
+        fetchAsync,
         remove,
-        removeSync,
+        removeAsync,
         subscribe,
         synthetic,
-        syntheticSync,
+        syntheticAsync,
         waitForHandleToBeReady
     }
 }

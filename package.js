@@ -17,7 +17,7 @@ Npm.depends({
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom(['1.12.2', '2.8.1', '2.12']);
+    api.versionsFrom(['1.12.2', '2.8.1', '2.12', '3.0-alpha.15']);
     api.use([
         'underscore',
         'ecmascript',
@@ -40,9 +40,9 @@ Package.onTest(function(api) {
     api.use('cultofcoders:redis-oplog');
 
     // extensions
-    api.use('aldeed:collection2@3.0.0');
-    api.use('reywood:publish-composite@1.7.3');
-    api.use('natestrauser:publish-performant-counts@0.1.2');
+    //api.use('aldeed:collection2@3.0.0');
+    api.use('reywood:publish-composite');
+    api.use('natestrauser:publish-performant-counts');
     // api.use('socialize:user-presence@1.0.4');
 
     api.use('ecmascript');
@@ -50,8 +50,8 @@ Package.onTest(function(api) {
     api.use('mongo');
     api.use('random');
     api.use('accounts-password');
-    api.use('matb33:collection-hooks@1.1.2');
-    api.use('alanning:roles@3.5.1');
+    //api.use('matb33:collection-hooks');
+    api.use('alanning:roles');
 
     api.use(['meteortesting:mocha']);
 

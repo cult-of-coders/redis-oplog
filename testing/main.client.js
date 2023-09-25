@@ -23,50 +23,56 @@ _.each(Collections, (Collection, key) => {
         create,
         createSync,
         update,
-        updateSync,
+        updateAsync,
         upsert,
-        upsertSync,
+        upsertAsync,
         remove,
-        removeSync,
+        removeAsync,
         subscribe,
         waitForHandleToBeReady,
     } = helperGenerator(config[key].suffix);
 
     describe('It should work with: ' + key, function () {
         it('Should detect a removal', function (done) {
-            let handle = subscribe(
-                {
-                    game: 'chess',
-                },
-                {
-                    sort: { score: -1 },
-                    limit: 5,
-                }
-            );
+            try {
+                let handle = subscribe(
+                    {
+                        game: 'chess',
+                    },
+                    {
+                        sort: { score: -1 },
+                        limit: 5,
+                    },
+                );
 
-            const randomTitle = Random.id();
-            const cursor = Collection.find();
-            let _id;
+                const randomTitle = Random.id();
+                const cursor = Collection.find();
+                let _id;
 
-            let observeChangesHandle = cursor.observeChanges({
-                added(docId, doc) {
-                    if (doc.title === randomTitle) {
-                        remove({ _id: docId });
-                    }
-                },
-                removed(docId) {
-                    assert.equal(docId, _id);
-                    observeChangesHandle.stop();
-                    handle.stop();
-                    done();
-                },
-            });
-
-            waitForHandleToBeReady(handle).then(function () {
-                createSync({ game: 'chess', title: randomTitle }).then(function (id) {
-                    _id = id;
+                let observeChangesHandle = cursor.observeChanges({
+                    added(docId, doc) {
+                        if (doc.title === randomTitle) {
+                            remove({ _id: docId });
+                        }
+                    },
+                    removed(docId) {
+                        assert.equal(docId, _id);
+                        observeChangesHandle.stop();
+                        handle.stop();
+                        done();
+                    },
                 });
-            });
+
+                waitForHandleToBeReady(handle).then(function () {
+                    createSync({ game: 'chess', title: randomTitle })
+                        .then(async function (id) {
+                            _id = id;
+                        });
+                });
+            } catch (e) {
+                console.error(e)
+                done(e)
+            }
         });
 
         it('Should detect an insert', function (done) {
@@ -77,7 +83,7 @@ _.each(Collections, (Collection, key) => {
                 {
                     sort: { score: -1 },
                     limit: 5,
-                }
+                },
             );
 
             const cursor = Collection.find({ game: 'chess' });
@@ -114,7 +120,7 @@ _.each(Collections, (Collection, key) => {
                 {
                     sort: { score: -1 },
                     limit: 5,
-                }
+                },
             );
 
             const cursor = Collection.find();
@@ -136,7 +142,7 @@ _.each(Collections, (Collection, key) => {
                         $set: {
                             score: Math.random(),
                         },
-                    }
+                    },
                 );
             });
         });
@@ -183,7 +189,7 @@ _.each(Collections, (Collection, key) => {
                                 'nested.b': 2,
                                 'nested.d': 1,
                             },
-                        }
+                        },
                     );
                 });
             });
@@ -212,7 +218,7 @@ _.each(Collections, (Collection, key) => {
 
                     update(
                         { context, game: 'monopoly' },
-                        { $set: { score: Math.random() } }
+                        { $set: { score: Math.random() } },
                     );
                 });
             });
@@ -246,7 +252,7 @@ _.each(Collections, (Collection, key) => {
                         {
                             $set: { score: Math.random() },
                         },
-                        { multi: true }
+                        { multi: true },
                     );
                 });
             });
@@ -300,7 +306,7 @@ _.each(Collections, (Collection, key) => {
                     {},
                     {
                         fields: { roles: 1 },
-                    }
+                    },
                 );
 
                 const cursor = Collection.find();
@@ -347,7 +353,7 @@ _.each(Collections, (Collection, key) => {
                             context: 1,
                             bom: 1,
                         },
-                    }
+                    },
                 );
 
                 const cursor = Collection.find({ context });
@@ -374,7 +380,7 @@ _.each(Collections, (Collection, key) => {
                         { _id, 'bom.stockId': 1 },
                         {
                             $set: { 'bom.$.quantity': 30 },
-                        }
+                        },
                     );
                 });
             });
@@ -427,7 +433,7 @@ _.each(Collections, (Collection, key) => {
                                 $set: {
                                     something: 30,
                                 },
-                            }
+                            },
                         );
                     });
                 });
@@ -443,7 +449,7 @@ _.each(Collections, (Collection, key) => {
                     { _id: { $in: [_id1, _id2] } },
                     {
                         fields: { subsequent_test: 1, name: 1 },
-                    }
+                    },
                 );
 
                 const cursor = Collection.find({ subsequent_test: true });
@@ -466,10 +472,10 @@ _.each(Collections, (Collection, key) => {
                 });
 
                 waitForHandleToBeReady(handle).then(function () {
-                    updateSync(_id1, {
+                    updateAsync(_id1, {
                         $set: { name: 'John Smithy' },
                     }).then(function () {
-                        updateSync(_id2, {
+                        updateAsync(_id2, {
                             $set: { name: 'Michael Willowy' },
                         });
                     });
@@ -498,13 +504,13 @@ _.each(Collections, (Collection, key) => {
                         },
                     });
 
-                    updateSync(
+                    updateAsync(
                         { _id },
                         {
                             $addToSet: {
                                 connections: 3,
                             },
-                        }
+                        },
                     );
                 });
             });
@@ -531,13 +537,13 @@ _.each(Collections, (Collection, key) => {
                         },
                     });
 
-                    updateSync(
+                    updateAsync(
                         { _id },
                         {
                             $pull: {
                                 connections: 2,
                             },
-                        }
+                        },
                     );
                 });
             });
@@ -569,7 +575,7 @@ _.each(Collections, (Collection, key) => {
                         },
                     });
 
-                    updateSync(_id, {
+                    updateAsync(_id, {
                         $set: {
                             'profile.number': 10,
                         },
@@ -596,7 +602,7 @@ _.each(Collections, (Collection, key) => {
                             connections: 1,
                             number: 1,
                         },
-                    }
+                    },
                 );
 
                 waitForHandleToBeReady(handle).then(function () {
@@ -612,7 +618,7 @@ _.each(Collections, (Collection, key) => {
                         },
                     });
 
-                    updateSync(_id, {
+                    updateAsync(_id, {
                         $pull: {
                             connections: { $in: [1] },
                         },
@@ -627,7 +633,7 @@ _.each(Collections, (Collection, key) => {
         it('Should work properly with limit-sort kind of queries', function (done) {
             const context = 'limit-sort-test';
             const limit = 5;
-            removeSync({ context }).then(function () {
+            removeAsync({ context }).then(function () {
                 createSync([
                     { context, number: 5, text: 'T - 1' },
                     { context, number: 10, text: 'T - 2' },
@@ -645,7 +651,7 @@ _.each(Collections, (Collection, key) => {
                         {
                             limit,
                             sort: { number: -1 },
-                        }
+                        },
                     );
 
                     waitForHandleToBeReady(handle).then(function () {
@@ -663,11 +669,11 @@ _.each(Collections, (Collection, key) => {
                                     assert.equal(docId, _id3);
 
                                     // Now we will add it back!
-                                    updateSync(
+                                    updateAsync(
                                         { _id: _id3 },
                                         {
                                             $set: { context },
-                                        }
+                                        },
                                     );
                                 }
                             },
@@ -687,7 +693,7 @@ _.each(Collections, (Collection, key) => {
                                     handle.stop();
                                     done();
                                 }
-                            }
+                            },
                         });
 
                         initialAddBlast = false;
@@ -701,17 +707,17 @@ _.each(Collections, (Collection, key) => {
                         //     assert.equal(data[limit - 1 - idx]._id, _id);
                         // });
 
-                        updateSync(
+                        updateAsync(
                             { _id: _id2 },
                             {
                                 $set: { number: 30 },
-                            }
+                            },
                         );
-                        updateSync(
+                        updateAsync(
                             { _id: _id3 },
                             {
                                 $set: { context: 'limit-sort-test-invalidate' },
-                            }
+                            },
                         );
                     });
                 });
@@ -761,7 +767,7 @@ _.each(Collections, (Collection, key) => {
                         },
                     });
 
-                    updateSync(ids[0], {
+                    updateAsync(ids[0], {
                         $set: { 'meta.student': true },
                     });
                 });
@@ -868,7 +874,7 @@ _.each(Collections, (Collection, key) => {
                                 $set: {
                                     number: 20,
                                 },
-                            }
+                            },
                         );
                     },
                     changed(docId, doc) {
@@ -884,7 +890,7 @@ _.each(Collections, (Collection, key) => {
                     {
                         context,
                         number: 10,
-                    }
+                    },
                 );
             });
         });
@@ -893,10 +899,10 @@ _.each(Collections, (Collection, key) => {
             const context = 'pushToRedis:false';
             const handle = subscribe({ context });
 
-            waitForHandleToBeReady(handle).then(function () {
+            waitForHandleToBeReady(handle).then(async function () {
                 const cursor = Collection.find({ context });
                 let _id;
-                const observer = cursor.observeChanges({
+                const observer = await cursor.observeChanges({
                     added(docId, doc) {
                         if (docId === _id) {
                             done('Should not be in added');
@@ -918,7 +924,7 @@ _.each(Collections, (Collection, key) => {
                     {
                         context,
                     },
-                    { pushToRedis: false }
+                    { pushToRedis: false },
                 ).then(function (id) {
                     _id = id;
 
@@ -930,7 +936,7 @@ _.each(Collections, (Collection, key) => {
                         { pushToRedis: false },
                         (err, res) => {
                             remove({ _id }, { pushToRedis: false });
-                        }
+                        },
                     );
 
                     setTimeout(() => {
@@ -952,7 +958,7 @@ _.each(Collections, (Collection, key) => {
                         'address.city': 0,
                         fullname: 0,
                     },
-                }
+                },
             );
 
             waitForHandleToBeReady(handle).then(function () {
@@ -980,7 +986,7 @@ _.each(Collections, (Collection, key) => {
                                     newField: 'public',
                                     'profile.firstName': 'John',
                                 },
-                            }
+                            },
                         );
                     },
                     changed(docId, doc) {
@@ -1026,7 +1032,7 @@ _.each(Collections, (Collection, key) => {
                         'address.city': 1,
                         fullname: 1,
                     },
-                }
+                },
             );
 
             waitForHandleToBeReady(handle).then(function () {
@@ -1050,7 +1056,7 @@ _.each(Collections, (Collection, key) => {
                                     newField: 'secret',
                                     'profile.firstName': 'John',
                                 },
-                            }
+                            },
                         );
                     },
                     changed(docId, doc) {
@@ -1092,7 +1098,7 @@ _.each(Collections, (Collection, key) => {
                     },
                     sort: { context: 1 },
                     limit: 20,
-                }
+                },
             );
 
             waitForHandleToBeReady(handle).then(function () {
@@ -1107,14 +1113,14 @@ _.each(Collections, (Collection, key) => {
                                 $set: {
                                     something: false,
                                 },
-                            }
+                            },
                         );
 
                         done();
                     },
                     changed(docId, doc) {
                         done(
-                            'Should not be in changed event because nothing changed'
+                            'Should not be in changed event because nothing changed',
                         );
                     },
                 });
@@ -1143,7 +1149,7 @@ _.each(Collections, (Collection, key) => {
                                     $unset: {
                                         something: '',
                                     },
-                                }
+                                },
                             );
                         }, 50);
                     },
@@ -1174,7 +1180,7 @@ _.each(Collections, (Collection, key) => {
                         context: 1,
                         'deep.deep.array': 1,
                     },
-                }
+                },
             );
 
             waitForHandleToBeReady(handle).then(function () {
@@ -1193,7 +1199,7 @@ _.each(Collections, (Collection, key) => {
                                 $set: {
                                     'deep.deep.array.$': 20,
                                 },
-                            }
+                            },
                         );
                     },
                     changed(docId, doc) {
@@ -1231,7 +1237,7 @@ _.each(Collections, (Collection, key) => {
                         context: 1,
                         passengers: 1,
                     },
-                }
+                },
             );
 
             waitForHandleToBeReady(handle).then(function () {
@@ -1245,7 +1251,7 @@ _.each(Collections, (Collection, key) => {
                                 $set: {
                                     'passengers.1.phone': 'ZZZ',
                                 },
-                            }
+                            },
                         );
                     },
                     changed(docId, doc) {
@@ -1369,7 +1375,7 @@ _.each(Collections, (Collection, key) => {
                         fields: {
                             master: 1,
                         },
-                    }
+                    },
                 );
 
                 waitForHandleToBeReady(handle).then(function () {
@@ -1393,7 +1399,7 @@ _.each(Collections, (Collection, key) => {
                         { _id },
                         {
                             $set: { 'master.sub2': 2 },
-                        }
+                        },
                     );
                 });
             });

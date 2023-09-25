@@ -7,7 +7,7 @@ const Collection = Collections['Standard'];
 describe('Client-side Mutators', function () {
     const {
         subscribe,
-        fetchSync,
+        fetchAsync,
         waitForHandleToBeReady
     } = helperGenerator(config['Standard'].suffix);
 
@@ -16,11 +16,11 @@ describe('Client-side Mutators', function () {
             client_side_mutators: true
         });
 
-        waitForHandleToBeReady(handle).then(function () {
+        waitForHandleToBeReady(handle).then(async function () {
             const cursor = Collection.find({ client_side_mutators: true });
 
             let testDocId, inChanged = false, inAdded = false, inRemoved = false;
-            const observer = cursor.observeChanges({
+            const observer = await cursor.observeChanges({
                 added(docId, doc) {
                     if (inAdded) {
                         return;
@@ -31,7 +31,7 @@ describe('Client-side Mutators', function () {
                     assert.equal(doc.number, 5);
 
                     setTimeout(async () => {
-                        const result = await fetchSync({ _id: docId });
+                        const result = await fetchAsync({ _id: docId });
                         assert.isArray(result);
                         assert.lengthOf(result, 1);
                         assert.equal(result[0].number, 5);
@@ -50,7 +50,7 @@ describe('Client-side Mutators', function () {
                     assert.equal(doc.number, 10);
 
                     setTimeout(async () => {
-                        const result = await fetchSync({ _id: docId });
+                        const result = await fetchAsync({ _id: docId });
                         assert.lengthOf(result, 1);
                         assert.equal(result[0].number, 10);
 
@@ -67,7 +67,7 @@ describe('Client-side Mutators', function () {
                 }
             });
 
-            Collection.insert({
+            await Collection.insertAsync({
                 client_side_mutators: true,
                 number: 5
             });

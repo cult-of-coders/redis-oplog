@@ -1,29 +1,28 @@
 import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
-import { Random } from 'meteor/random';
 
-describe('It should work with collection:hooks', function () {
+describe('It should work with collection:hooks', async function () {
 
     const opts = [
         {},
         { channel: 'xxx' },
-        { namespace: 'xxx' }
+        { namespace: 'xxx' },
     ];
 
     let idx = 1;
 
-    opts.forEach(options => {
+    for (const options of opts) {
         const Collection = new Mongo.Collection('test_redis_collection_hooks_' + idx++);
-        Collection.remove({});
+        await Collection.removeAsync({});
 
-        it('Should detect all types of changes: ' + JSON.stringify(options), function () {
+        it('Should detect all types of changes: ' + JSON.stringify(options), async function () {
             let updates = {
                 'before.insert': false,
                 'after.insert': false,
                 'before.update': false,
                 'after.update': false,
                 'before.remove': false,
-                'after.remove': false
+                'after.remove': false,
             };
 
             Collection.before.insert(function () {
@@ -45,13 +44,13 @@ describe('It should work with collection:hooks', function () {
                 updates['after.remove'] = true;
             });
 
-            const id = Collection.insert({ someData: true });
-            Collection.update(id, { someData: false });
-            Collection.remove(id);
+            const id = await Collection.insertAsync({ someData: true });
+            await Collection.updateAsync(id, { someData: false });
+            await Collection.removeAsync(id);
 
             _.each(updates, (value, key) => {
                 assert.isTrue(value, key);
             })
         })
-    })
+    }
 });

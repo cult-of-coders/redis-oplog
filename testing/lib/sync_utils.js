@@ -1,14 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 
-const callWithPromise = (method, ...args) => {
-    return new Promise((resolve, reject) => {
-        Meteor.call(method, ...args, (err, res) => {
-            if (err) reject(err.reason || 'Something went wrong.');
-
-            resolve(res);
-        });
-    });
+const callWithPromise = async (method, ...args) => {
+    const result = await Meteor.callAsync(method, ...args);
+    return await result.stubValuePromise;
 };
 
 Meteor.callWithPromise = callWithPromise;

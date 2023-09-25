@@ -19,13 +19,13 @@ Items.configureRedisOplog({
 });
 
 Meteor.methods({
-    'collection_defaults.items.insert'(...args) {
-        return Items.insert(...args);
+    async 'collection_defaults.items.insert'(...args) {
+        return await Items.insertAsync(...args);
     },
-    'collection_defaults.items.update'(...args) {
-        return Items.update(...args);
+    async 'collection_defaults.items.update'(...args) {
+        return await Items.updateAsync(...args);
     },
-    'collection_defaults.items.remove'(...args) {
-        return Items.remove(...args);
+    async 'collection_defaults.items.remove'(...args) {
+        return await Items.removeAsync(...args);
     },
 });

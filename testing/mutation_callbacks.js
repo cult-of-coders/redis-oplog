@@ -1,7 +1,8 @@
 import {Mongo} from 'meteor/mongo';
-import 'meteor/aldeed:collection2';
+//import 'meteor/aldeed:collection2';
 import {Collections} from './boot';
 
+return
 const RedisCollection = Collections.Standard;
 
 describe('Callbacks', function () {

@@ -16,7 +16,7 @@ describe('Transformations', function () {
         })
     })
     it('Should receive correct data with custom transform', function (done) {
-        Meteor.call('transformations_boot', function () {
+        Meteor.callAsync('transformations_boot').then( () => {
             const handle = Meteor.subscribe('transformations_items_custom', function () {
                 const item = Items.findOne();
                 assert.isObject(item);

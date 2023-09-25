@@ -1,24 +1,8 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Random } from 'meteor/random';
 import { Meteor } from 'meteor/meteor'
-import { Roles } from 'meteor/alanning:roles'
 
-// import { UserPresence } from 'meteor/socialize:user-presence';
-
-// UserPresence.onCleanup(function(){
-//     Meteor.users.update({}, {$unset:{status:true}}, {multi:true});
-// });
-// UserPresence.onUserOnline(function(userId) {
-//     Meteor.users.update({ _id: userId }, { $set: { status: 'online' } });
-// });
-// UserPresence.onUserIdle(function(userId){
-//     Meteor.users.update({_id:userId}, {$set:{status:"idle"}})
-// });
-// UserPresence.onUserOffline(function(userId){
-//     Meteor.users.update({_id:userId}, {$unset:{status:true}})
-// });
-
-Meteor.publish('accounts_userData', function(options) {
+Meteor.publish('accounts_userData', function (options) {
     const uid = this.userId;
 
     if (!uid) {
@@ -29,13 +13,11 @@ Meteor.publish('accounts_userData', function(options) {
         {
             _id: uid,
         },
-        options
+        options,
     );
 });
 
-Meteor.publish('accounts_usersAssoc', function() {
-    let _groups = Roles.getGroupsForUser(this.userId, 'subscribed');
-
+Meteor.publish('accounts_usersAssoc', function () {
     return Meteor.users.find(
         {
             _id: {
@@ -51,20 +33,20 @@ Meteor.publish('accounts_usersAssoc', function() {
             sort: {
                 createdAt: 1,
             },
-        }
+        },
     );
 });
 
 Meteor.methods({
-    accounts_createUser(data) {
+    async accounts_createUser(data) {
         const email = `${Random.id()}@x.com`;
-        const userId = Accounts.createUser({
+        const userId = await Accounts.createUserAsync({
             username: Random.id(),
             email,
             password: '12345',
         });
 
-        Meteor.users.update(userId, {
+        await Meteor.users.updateAsync(userId, {
             $set: data,
         });
 
@@ -73,8 +55,8 @@ Meteor.methods({
             email,
         };
     },
-    accounts_updateUser(filters, modifier) {
-        Meteor.users.update(filters, modifier, {
+    async accounts_updateUser(filters, modifier) {
+        await Meteor.users.updateAsync(filters, modifier, {
             optimistic: false,
         });
     },

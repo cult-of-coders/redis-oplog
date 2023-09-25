@@ -4,8 +4,8 @@ import './publication';
 
 
 Meteor.publish('server_autorun_test', function () {
-    this.autorun(function () {
-        const order = Orders.findOne({valid: true});
+    this.autorun(async function () {
+        const order = await Orders.findOneAsync({valid: true});
 
         return Items.find({
             orderId: order ? order._id : null

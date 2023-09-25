@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 
 describe('ObjectId', function () {
     it('Should work!', function (done) {
-        Meteor.callWithPromise('smart_ids_reset').then(function ([id1, id2]) {
+        Meteor.callWithPromise('smart_ids_reset').then(async function ([id1, id2]) {
             const handle = Meteor.subscribe(
                 'smart_ids',
                 {

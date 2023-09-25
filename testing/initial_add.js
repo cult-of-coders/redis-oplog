@@ -4,10 +4,10 @@ import {Mongo} from 'meteor/mongo';
 const InitialAddCollection = new Mongo.Collection('initial_add')
 describe('Initial Add', function () {
     let lastDocId;
-    before(function () {
-        InitialAddCollection.remove({});
+    before(async function () {
+        await InitialAddCollection.removeAsync({});
         for (let i = 0; i <= 10; i++) {
-            lastDocId = InitialAddCollection.insert({number: i})
+            lastDocId = await InitialAddCollection.insertAsync({number: i})
         }
     });
 
@@ -27,8 +27,8 @@ describe('Initial Add', function () {
             });
             done(err);
         });
-        Meteor.defer(() => {
-            InitialAddCollection.remove({_id: lastDocId})
-        })
+
+        InitialAddCollection.removeAsync({_id: lastDocId})
+            .catch(done);
     })
 });

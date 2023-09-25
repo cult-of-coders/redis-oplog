@@ -21,32 +21,30 @@ import './object-id/server';
 import './include_prev_doc';
 import './return_value';
 
-import { _ } from 'meteor/underscore';
+for (const [,Collection] of Object.entries(Collections)) {
+    await Collection.removeAsync({});
 
-_.each(Collections, Collection => {
-    Collection.remove({});
-
-    Collection.insert({
+    await Collection.insertAsync({
         title: 'A',
         score: 20,
-        game: 'chess'
+        game: 'chess',
     });
 
-    Collection.insert({
+    await Collection.insertAsync({
         title: 'B',
         score: 30,
-        game: 'chess'
+        game: 'chess',
     });
 
-    Collection.insert({
+    await Collection.insertAsync({
         title: 'C',
         score: 10,
-        game: 'domino'
+        game: 'domino',
     });
 
-    Collection.insert({
+    await Collection.insertAsync({
         title: 'D',
         score: 40,
-        game: 'chess'
+        game: 'chess',
     });
-});
+}

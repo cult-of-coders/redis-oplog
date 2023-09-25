@@ -30,25 +30,25 @@ Meteor.publishComposite('items_publish_composite', {
 });
 
 Meteor.methods({
-    'publish_composite.load_fixtures'() {
-        loadFixtures();
+    async 'publish_composite.load_fixtures'() {
+        await loadFixtures();
     },
-    'publish_composite.items.insert'(...args) {
-        return Items.insert(...args)
+    async 'publish_composite.items.insert'(...args) {
+        return await Items.insertAsync(...args)
     },
-    'publish_composite.items.update'(...args) {
-        return Items.update(...args)
+    async 'publish_composite.items.update'(...args) {
+        return await Items.updateAsync(...args)
     },
-    'publish_composite.items.remove'(...args) {
-        return Items.remove(...args)
+    async 'publish_composite.items.remove'(...args) {
+        return await Items.removeAsync(...args)
     },
-    'publish_composite.children.insert'(...args) {
-        return Children.insert(...args)
+    async 'publish_composite.children.insert'(...args) {
+        return Children.insertAsync(...args)
     },
-    'publish_composite.children.update'(...args) {
-        return Children.update(...args)
+    async 'publish_composite.children.update'(...args) {
+        return Children.updateAsync(...args)
     },
-    'publish_composite.children.remove'(...args) {
-        return Children.remove(...args)
+    async 'publish_composite.children.remove'(...args) {
+        return Children.removeAsync(...args)
     }
 });

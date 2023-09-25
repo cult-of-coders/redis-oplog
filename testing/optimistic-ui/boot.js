@@ -16,13 +16,13 @@ Items.allow({
 // Meteor.publishComposite.enableDebugLogging();
 
 Meteor.methods({
-    'optimistic_ui.items.insert'(...args) {
-        return Items.insert(...args, { optimistic: true });
+    async 'optimistic_ui.items.insert'(...args) {
+        return await Items.insertAsync(...args, { optimistic: true });
     },
-    'optimistic_ui.items.update'(...args) {
-        return Items.update(...args, { optimistic: true });
+    async 'optimistic_ui.items.update'(...args) {
+        return await Items.updateAsync(...args, { optimistic: true });
     },
-    'optimistic_ui.items.remove'(...args) {
-        return Items.remove(...args, { optimistic: true });
+    async 'optimistic_ui.items.remove'(...args) {
+        return await Items.removeAsync(...args, { optimistic: true });
     },
 });
