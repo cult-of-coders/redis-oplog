@@ -1,6 +1,6 @@
 Package.describe({
-    name: 'cultofcoders:redis-oplog',
-    version: '2.2.1',
+    name: 'networksforchange:redis-oplog',
+    version: '2.2.2',
     // Brief, one-line summary of the package.
     summary: "Replacement for Meteor's MongoDB oplog implementation",
     // URL to the Git repository containing the source code for this package.
@@ -37,7 +37,7 @@ Package.onUse(function(api) {
 });
 
 Package.onTest(function(api) {
-    api.use('cultofcoders:redis-oplog');
+    api.use('networksforchange:redis-oplog');
 
     // extensions
     api.use('aldeed:collection2@3.0.0');
