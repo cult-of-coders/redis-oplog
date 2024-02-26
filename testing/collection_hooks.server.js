@@ -1,6 +1,7 @@
 import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
-import { Random } from 'meteor/random';
+import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
+import helperGenerator from './lib/helpers';
 
 describe('It should work with collection:hooks', function () {
 
@@ -52,6 +53,22 @@ describe('It should work with collection:hooks', function () {
             _.each(updates, (value, key) => {
                 assert.isTrue(value, key);
             })
+        })
+
+        it('Should set SubscriptionInitialization environment during subscription initialization: ' + JSON.stringify(options), function () {
+            let subscriptionInitialized = true;
+
+            Collection.before.find(function () {
+                subscriptionInitialized = RedisOplog.SubscriptionInitialization.get();
+            });
+
+            const handle = Collection.find({
+                someData: true,
+            }).observeChanges();
+
+            assert.isTrue(subscriptionInitialized, 'Subscription initialized');
+
+            handle.stop();
         })
     })
 });
