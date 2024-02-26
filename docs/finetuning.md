@@ -291,6 +291,4 @@ if (SubscriptionInitialization.get()) {
 } else {
     // Apply tenant scope
 }
-
-// If you pass-in the collection instance as argument, this will be automatically done.
 ```
