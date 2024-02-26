@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
-import { RedisOplog } from 'meteor/cultofcoders:redis-oplog';
+import { SubscriptionInitialization } from 'meteor/cultofcoders:redis-oplog';
 import helperGenerator from './lib/helpers';
 
 describe('It should work with collection:hooks', function () {
@@ -59,7 +59,7 @@ describe('It should work with collection:hooks', function () {
             let subscriptionInitialized = true;
 
             Collection.before.find(function () {
-                subscriptionInitialized = RedisOplog.SubscriptionInitialization.get();
+                subscriptionInitialized = SubscriptionInitialization.get();
             });
 
             const handle = Collection.find({
