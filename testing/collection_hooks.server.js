@@ -1,7 +1,6 @@
 import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
 import { SubscriptionInitialization } from 'meteor/cultofcoders:redis-oplog';
-import helperGenerator from './lib/helpers';
 
 describe('It should work with collection:hooks', function () {
 
@@ -64,7 +63,9 @@ describe('It should work with collection:hooks', function () {
 
             const handle = Collection.find({
                 someData: true,
-            }).observeChanges();
+            }).observeChanges({
+                added: function() {}
+            });
 
             assert.isTrue(subscriptionInitialized, 'Subscription initialized');
 
