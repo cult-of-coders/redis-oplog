@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
-import { Random } from 'meteor/random';
+import { SubscriptionInitialization } from 'meteor/cultofcoders:redis-oplog';
 
 describe('It should work with collection:hooks', function () {
 
@@ -52,6 +52,24 @@ describe('It should work with collection:hooks', function () {
             _.each(updates, (value, key) => {
                 assert.isTrue(value, key);
             })
+        })
+
+        it('Should set SubscriptionInitialization environment during subscription initialization: ' + JSON.stringify(options), function () {
+            let subscriptionInitialized = true;
+
+            Collection.before.find(function () {
+                subscriptionInitialized = SubscriptionInitialization.get();
+            });
+
+            const handle = Collection.find({
+                someData: true,
+            }).observeChanges({
+                added: function() {}
+            });
+
+            assert.isTrue(subscriptionInitialized, 'Subscription initialized');
+
+            handle.stop();
         })
     })
 });
