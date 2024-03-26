@@ -1,4 +1,5 @@
-import {waitForHandleToBeReady, callWithPromise} from './sync_utils';
+import { Meteor } from 'meteor/meteor';
+import { waitForHandleToBeReady, callWithPromise } from './sync_utils';
 
 export default (suffix) => {
     const create = (...args) => {

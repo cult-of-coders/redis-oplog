@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { assert } from 'chai';
 import { Items } from './collections';
 

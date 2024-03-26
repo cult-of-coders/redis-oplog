@@ -1,4 +1,5 @@
-import {Items} from './collections';
+import { Meteor } from 'meteor/meteor';
+import { Items } from './collections';
 
 Meteor.publish('custom_publications', function () {
     const cursor = Items.find();
