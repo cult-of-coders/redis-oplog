@@ -279,3 +279,16 @@ SyntheticMutator.update([`company::{companyId}::threads`, `threads::${threadId}`
 
 // If you pass-in the collection instance as argument, this will be automatically done.
 ```
+
+### Disable Query Scopes during Subscription Initialization
+
+By checking SubscriptionInitialization you can disable (user, tenant, or similar) query scopes,
+which may be added automatically using packages like collection-hooks.
+
+```js
+if (SubscriptionInitialization.get()) {
+    // Skip applying the tenant scope
+} else {
+    // Apply tenant scope
+}
+```
