@@ -7,7 +7,6 @@ import Config from './lib/config';
 import { getRedisListener, getRedisPusher } from './lib/redis/getRedisClient';
 import SyntheticMutator from './lib/mongo/SyntheticMutator';
 import ObservableCollection from './lib/cache/ObservableCollection';
-import SubscriptionInitialization from './lib/cache/SubscriptionInitialization';
 import Vent from './lib/vent/Vent';
 
 const RedisOplog = {
@@ -25,7 +24,6 @@ export {
     RedisOplog,
     SyntheticMutator,
     ObservableCollection,
-    SubscriptionInitialization,
     RedisPipe,
     Config,
     Events,

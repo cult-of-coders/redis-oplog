@@ -1,6 +1,5 @@
 import { assert } from 'chai';
 import { _ } from 'meteor/underscore';
-import { SubscriptionInitialization } from 'meteor/cultofcoders:redis-oplog';
 
 describe('It should work with collection:hooks', function () {
 
@@ -54,11 +53,11 @@ describe('It should work with collection:hooks', function () {
             })
         })
 
-        it('Should set SubscriptionInitialization environment during subscription initialization: ' + JSON.stringify(options), function () {
-            let subscriptionInitialized = true;
+        it('Should use direct methods when available: ' + JSON.stringify(options), function () {
+            let withDirect = true;
 
             Collection.before.find(function () {
-                subscriptionInitialized = SubscriptionInitialization.get();
+                withDirect = false;
             });
 
             const handle = Collection.find({
@@ -67,7 +66,7 @@ describe('It should work with collection:hooks', function () {
                 added: function() {}
             });
 
-            assert.isTrue(subscriptionInitialized, 'Subscription initialized');
+            assert.isTrue(withDirect, 'Used direct');
 
             handle.stop();
         })
