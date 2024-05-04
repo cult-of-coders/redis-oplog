@@ -59,7 +59,9 @@ _.each(Collections, (Collection, key) => {
             });
 
             waitForHandleToBeReady(handle).then(function () {
-                let _id = cursor.fetch()[0]._id;
+                // TODO: when the handle is ready not always the documents are
+                // on the collection.
+                const _id = cursor.fetch()[0]._id;
                 assert.isString(_id);
 
                 synthetic('update', _id, {
