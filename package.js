@@ -40,20 +40,18 @@ Package.onTest(function(api) {
     api.use('cultofcoders:redis-oplog');
 
     // extensions
-    api.use('aldeed:collection2@3.0.0');
-    api.use('reywood:publish-composite@1.7.3');
-    api.use('natestrauser:publish-performant-counts@0.1.2');
-    // api.use('socialize:user-presence@1.0.4');
+    api.use('aldeed:collection2@4.0.1');
+    api.use('reywood:publish-composite@1.8.9');
 
     api.use('ecmascript');
     api.use('tracker');
     api.use('mongo');
     api.use('random');
     api.use('accounts-password');
-    api.use('matb33:collection-hooks@1.1.2');
-    api.use('alanning:roles@3.5.1');
+    api.use('matb33:collection-hooks@1.3.1');
+    api.use('alanning:roles@4.0.0-alpha.1');
 
-    api.use(['meteortesting:mocha']);
+    api.use(['meteortesting:mocha@3.0.3-beta300.0']);
 
     api.mainModule('testing/main.server.js', 'server');
     api.addFiles('testing/publishComposite/boot.js', 'server');

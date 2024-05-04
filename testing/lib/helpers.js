@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { waitForHandleToBeReady, callWithPromise } from './sync_utils';
+import {Collections} from "../boot";
 
 export default (suffix) => {
     const create = (...args) => {
@@ -51,6 +52,8 @@ export default (suffix) => {
     };
 
     const subscribe = (...args) => {
+        console.log("555555")
+        console.log(Meteor.subscribe.toString())
         return Meteor.subscribe(`publication.${suffix}`, ...args);
     };
 

@@ -32,8 +32,8 @@ const opts = {
     Namespace: { namespace: 'some_namespace' },
 };
 const config = {
-    RaceConditionProne: { 
-        suffix: 'race-condition-prone', 
+    RaceConditionProne: {
+        suffix: 'race-condition-prone',
         disableSyntheticTests: true,
     },
     Standard: { suffix: 'standard', channel: 'test_redis_collection' },
@@ -60,7 +60,7 @@ if (Meteor.isServer) {
             remove: () => false,
         });
 
-        Meteor.publish(`publication.${config[key].suffix}`, function(
+        Meteor.publish(`publication.${config[key].suffix}`, async function(
             filters,
             options
         ) {
@@ -68,34 +68,37 @@ if (Meteor.isServer) {
         });
 
         Meteor.methods({
-            [`create.${config[key].suffix}`](item, options = {}) {
+            async [`create.${config[key].suffix}`](item, options = {}) {
                 if (_.isArray(item)) {
-                    return _.map(item, i =>
-                        Collection.insert(i, Object.assign(options, opts[key]))
-                    );
+                    const result = [];
+                    for (const i of item) {
+                        result.push(await Collection.insertAsync(i, Object.assign(options, opts[key])))
+                    }
+
+                    return result;
                 }
 
-                return Collection.insert(item, Object.assign(options, opts[key]));
+                return Collection.insertAsync(item, Object.assign(options, opts[key]));
             },
             [`fetch.${config[key].suffix}`](selector = {}, options = {}) {
-                return Collection.find(selector, options).fetch();
+                return Collection.find(selector, options).fetchAsync();
             },
             [`update.${config[key].suffix}`](selectors, modifier, options) {
-                return Collection.update(
+                return Collection.updateAsync(
                     selectors,
                     modifier,
                     Object.assign({}, opts[key], options)
                 );
             },
             [`upsert.${config[key].suffix}`](selectors, modifier, options) {
-                return Collection.upsert(
+                return Collection.upsertAsync(
                     selectors,
                     modifier,
                     Object.assign({}, opts[key], options)
                 );
             },
             [`remove.${config[key].suffix}`](selectors, options = {}) {
-                return Collection.remove(
+                return Collection.removeAsync(
                     selectors,
                     Object.assign(options, opts[key])
                 );
