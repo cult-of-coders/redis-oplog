@@ -4,7 +4,8 @@
 
 First, thank you for considering contributing to redis-oplog! It's people like you that make the open source community such a great community! 😊
 
-We welcome any type of contribution, not only code. You can help with 
+We welcome any type of contribution, not only code. You can help with
+
 - **QA**: file bug reports, the more details you can give the better (e.g. screenshots with the console open)
 - **Marketing**: writing blog posts, howto's, printing stickers, ...
 - **Community**: presenting the project at meetups, organizing a dedicated meetup for the local community, ...
@@ -13,7 +14,7 @@ We welcome any type of contribution, not only code. You can help with
 
 ## Your First Contribution
 
-Working on your first Pull Request? You can learn how from this *free* series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
+Working on your first Pull Request? You can learn how from this _free_ series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 ## Submitting code
 
@@ -26,7 +27,8 @@ It is also always helpful to have some context for your pull request. What was t
 
 ## Running Tests
 
-### Setup 
+### Setup
+
 ```
 meteor create --release 1.12.2 --bare test
 cd test
@@ -34,6 +36,7 @@ meteor npm i --save puppeteer@1.18.1 simpl-schema chai
 ```
 
 ### Start Tests
+
 ```
 METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../
 ```
@@ -55,13 +58,11 @@ You can also reach us at hello@redis-oplog.opencollective.com.
 Thank you to all the people who have already contributed to redis-oplog!
 <a href="graphs/contributors"><img src="https://opencollective.com/redis-oplog/contributors.svg?width=890" /></a>
 
-
 ### Backers
 
 Thank you to all our backers! [[Become a backer](https://opencollective.com/redis-oplog#backer)]
 
 <a href="https://opencollective.com/redis-oplog#backers" target="_blank"><img src="https://opencollective.com/redis-oplog/backers.svg?width=890"></a>
-
 
 ### Sponsors
 
