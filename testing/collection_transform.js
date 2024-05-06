@@ -8,9 +8,10 @@ const fooCollection = new Mongo.Collection('foo', {
 });
 
 describe('Collection Transform', function () {
-    it('Should work with transform functions', function () {
-        fooCollection.insert({});
-        const foo = fooCollection.findOne();
+    it('Should work with transform functions', async function (done) {
+        await fooCollection.insertAsync({});
+        const foo = await fooCollection.findOneAsync();
         assert.isTrue(foo instanceof Foo);
+        done();
     })
 });

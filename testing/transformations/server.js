@@ -20,25 +20,25 @@ Meteor.publish('transformations_items_custom', function() {
 });
 
 Meteor.methods({
-    transformations_boot() {
-        Items.remove({});
-        Items.insert({ context: 'client', title: 'hello1' });
+    async transformations_boot() {
+        await Items.removeAsync({});
+        await Items.insertAsync({ context: 'client', title: 'hello1' });
     },
 });
 
 describe('Transformations - Server Test', function() {
-    it('Should transform properly', function(done) {
+    it('Should transform properly', async function(done) {
         const context = Random.id();
-        const handle = Items.find({
+        const handle = await Items.find({
             context,
         }).observeChanges({
-            added(docId, doc) {
+            async added(docId, doc) {
                 assert.isTrue(doc.defaultServerTransform);
-                handle.stop();
+                await handle.stop();
                 done();
             },
         });
 
-        Items.insert({ context, title: 'hello2' });
+        await Items.insertAsync({ context, title: 'hello2' });
     });
 });

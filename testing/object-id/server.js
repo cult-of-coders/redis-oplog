@@ -6,18 +6,18 @@ Meteor.publish('smart_ids', function(filters = {}) {
 });
 
 Meteor.methods({
-    smart_ids_reset(doc) {
-        SmartIds.remove({});
-        const id1 = SmartIds.insert({
+    async smart_ids_reset(doc) {
+        await SmartIds.removeAsync({});
+        const id1 = await SmartIds.insertAsync({
             text: 'John Doe'
         });
-        const id2 = SmartIds.insert({
+        const id2 = await SmartIds.insertAsync({
             text: 'John Shmoe'
         });
 
         return [id1, id2];
     },
-    smart_ids_insert(doc) {
-        SmartIds.insert(doc);
+    async smart_ids_insert(doc) {
+        await SmartIds.insertAsync(doc);
     }
 });

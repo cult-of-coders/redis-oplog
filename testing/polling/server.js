@@ -10,16 +10,16 @@ Meteor.publish('campaign_search', function(search, pollingIntervalMs = 100) {
 });
 
 Meteor.methods({
-    campaign_search_reset(doc) {
-        Campaigns.remove({});
-        Campaigns.insert({
+    async campaign_search_reset(doc) {
+        await Campaigns.removeAsync({});
+        await Campaigns.insertAsync({
             text: 'John Doe'
         });
-        Campaigns.insert({
+        await Campaigns.insertAsync({
             text: 'John Shmoe'
         });
     },
-    campaign_search_insert(doc) {
-        Campaigns.insert(doc);
+    async campaign_search_insert(doc) {
+        await Campaigns.insertAsync(doc);
     }
 });
