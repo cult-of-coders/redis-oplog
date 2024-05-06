@@ -1,0 +1,26 @@
+{
+  "name": "redis-oplog",
+  "version": "1.0.0",
+  "description": "Replacement for Meteor's MongoDB oplog implementation",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cult-of-coders/redis-oplog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cult-of-coders/redis-oplog/issues"
+  },
+  "homepage": "https://github.com/cult-of-coders/redis-oplog#readme",
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}
