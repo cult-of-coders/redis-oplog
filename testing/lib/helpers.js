@@ -52,8 +52,6 @@ export default (suffix) => {
     };
 
     const subscribe = (...args) => {
-        console.log("555555")
-        console.log(Meteor.subscribe.toString())
         return Meteor.subscribe(`publication.${suffix}`, ...args);
     };
 

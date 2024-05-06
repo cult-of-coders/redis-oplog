@@ -49,12 +49,18 @@ export { Collections, opts, config };
 if (Meteor.isServer) {
     _.each(Collections, (Collection, key) => {
         Collection.allow({
+            insertAsync: () => true,
+            updateAsync: () => true,
+            removeAsync: () => true,
             insert: () => true,
             update: () => true,
             remove: () => true,
         });
 
         Collection.deny({
+            insertAsync: () => false,
+            updateAsync: () => false,
+            removeAsync: () => false,
             insert: () => false,
             update: () => false,
             remove: () => false,

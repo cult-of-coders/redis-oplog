@@ -8,6 +8,9 @@ if (Meteor.isServer) {
 }
 
 Items.allow({
+    insertAsync: () => true,
+    updateAsync: () => true,
+    removeAsync: () => true,
     insert: () => true,
     update: () => true,
     remove: () => true,
