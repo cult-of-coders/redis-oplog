@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        meteor: ["3.0-rc.0"]
+        meteor: ["3.0"]
         redis-version: [4, 5, 6, 7]
 
     steps:
