@@ -54,10 +54,12 @@ describe('It should work with collection:hooks', function () {
         })
 
         it('Should use direct methods when available: ' + JSON.stringify(options), function () {
-            let withDirect = true;
+            let withDirect = false;
+
+            const id = Collection.insert({ someData: true });
 
             Collection.before.find(function () {
-                withDirect = false;
+                withDirect = true;
             });
 
             const handle = Collection.find({
@@ -69,6 +71,7 @@ describe('It should work with collection:hooks', function () {
             assert.isTrue(withDirect, 'Used direct');
 
             handle.stop();
+            Collection.remove(id);
         })
     })
 });
