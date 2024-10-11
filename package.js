@@ -1,6 +1,6 @@
 Package.describe({
   name: "cultofcoders:redis-oplog",
-  version: "3.0-rc.0",
+  version: "3.0.0-rc.2",
   // Brief, one-line summary of the package.
   summary: "Replacement for Meteor's MongoDB oplog implementation",
   // URL to the Git repository containing the source code for this package.
