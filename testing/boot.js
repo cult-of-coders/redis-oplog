@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
-import { RedisOplog, SyntheticMutator } from 'meteor/cultofcoders:redis-oplog';
+import { RedisOplog, SyntheticMutator } from '../redis-oplog';
 
 if (Meteor.isServer) {
     RedisOplog.init({
@@ -44,7 +44,7 @@ const config = {
     },
 };
 
-export { Collections, opts, config };
+export { Collections, config, opts };
 
 if (Meteor.isServer) {
     _.each(Collections, (Collection, key) => {
