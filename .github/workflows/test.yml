@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        meteor: ["3.0-rc.0"]
+        meteor: ["3.0.4", "3.1"]
         redis-version: [4, 5, 6, 7]
 
     steps:
@@ -29,4 +29,4 @@ jobs:
           meteor npm i --save puppeteer@1.18.1 simpl-schema@3.4.6 chai@4.3.6
       - name: Test
         working-directory: ./test
-        run: METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha ../
+        run: METEOR_PACKAGE_DIRS="../" TEST_BROWSER_DRIVER=puppeteer meteor test-packages --raw-logs --once --driver-package meteortesting:mocha --release ${{ matrix.meteor }} ../
