@@ -1,6 +1,6 @@
 import { assert } from 'chai';
+import { Vent } from 'meteor/cultofcoders:redis-oplog';
 import { Random } from 'meteor/random';
-import { Vent } from '../../redis-oplog';
 
 describe('Vent', function () {
     it('Should receive the event accordingly', function (done) {

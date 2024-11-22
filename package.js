@@ -37,6 +37,8 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
+  api.use("cultofcoders:redis-oplog");
+
   // extensions
   api.use("aldeed:collection2@4.0.4");
   api.use("reywood:publish-composite@1.8.12");
