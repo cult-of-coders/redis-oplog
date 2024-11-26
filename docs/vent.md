@@ -146,3 +146,19 @@ Initially the server will send an .added event with an `_id: 'id'`, then the eve
 
 We don't create any LocalCollection per subscription, as you expect, because it hooks into all the messages incomming from DDP,
 does a quick check to see if it's a `vent` and calls the attached listener.
+
+### Vent-only support
+
+If you *only* want to use Vent from redis-oplog (and don't want
+`Mongo.Collection` operations to automatically send Redis messages),
+set the following in your `settings.json`:
+
+```json
+{
+  ...
+  "redisOplog": {
+    ...
+    extendMongoCollection: false
+  }
+}
+```
