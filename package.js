@@ -49,12 +49,13 @@ Package.onTest(function (api) {
   api.use("mongo");
   api.use("random");
   api.use("accounts-password");
-  api.use("matb33:collection-hooks@1.3.1");
+  
   api.use("alanning:roles@4.0.0");
   api.use("ddp-server");
   api.use("ejson");
-
   api.use("meteortesting:mocha");
+  api.use("matb33:collection-hooks@2.0.0-rc.4");
+  api.use("alanning:roles@4.0.0");
 
   api.mainModule("testing/main.server.js", "server");
   api.addFiles("testing/publishComposite/boot.js", "server");
