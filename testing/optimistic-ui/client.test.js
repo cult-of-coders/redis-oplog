@@ -1,9 +1,9 @@
-import { Meteor } from 'meteor/meteor';
 import { assert } from 'chai';
-import { Items } from './collections';
-import { waitForHandleToBeReady, callWithPromise } from '../lib/sync_utils';
+import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
+import { callWithPromise, waitForHandleToBeReady } from '../lib/sync_utils';
 import './boot';
+import { Items } from './collections';
 
 describe('Optimistic UI', () => {
     it('Should not cause a flicker with method calls', function (done) {
@@ -63,9 +63,12 @@ describe('Optimistic UI', () => {
             let alreadyIn = 0;
             const observer = cursor.observeChanges({
                 changed(docId, doc) {
+                    console.log('changed', alreadyIn, doc);
+
                     alreadyIn++;
                     if (alreadyIn > 1) {
                         done('A flicker was caused.');
+                        return;
                     }
 
                     assert.lengthOf(doc.liked, 2);
