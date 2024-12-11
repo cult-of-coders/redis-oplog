@@ -12,7 +12,7 @@ jobs:
         redis-version: [4, 5, 6, 7]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Start Redis
         uses: supercharge/redis-github-action@1.5.0
@@ -20,7 +20,7 @@ jobs:
           redis-version: ${{ matrix.redis-version }}
 
       - name: Setup Meteor
-        uses: meteorengineer/setup-meteor@v1
+        uses: meteorengineer/setup-meteor@v2
         with:
           meteor-release: ${{ matrix.meteor }}
       - name: Setup tests

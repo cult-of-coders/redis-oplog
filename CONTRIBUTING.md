@@ -32,7 +32,7 @@ It is also always helpful to have some context for your pull request. What was t
 ```
 meteor create --release 1.12.2 --bare test
 cd test
-meteor npm i --save puppeteer@1.18.1 simpl-schema chai
+meteor npm i --save puppeteer@1.18.1 simpl-schema chai@4
 ```
 
 ### Start Tests
