@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Items } from './collections';
 
-Meteor.publish('custom_publications', function () {
+Meteor.publish('custom_publications', async function () {
     const cursor = Items.find();
-    cursor.forEach(doc => {
+    await cursor.forEachAsync(doc => {
         this.added(Items._name, doc._id, doc);
     });
 
@@ -11,11 +11,11 @@ Meteor.publish('custom_publications', function () {
 });
 
 Meteor.methods({
-    'custom_publications_boot'() {
-        Items.remove({});
+    async 'custom_publications_boot'() {
+        await Items.removeAsync({});
 
-        Items.insert({name: 'Item 1'});
-        Items.insert({name: 'Item 2'});
-        Items.insert({name: 'Item 3'});
+        await Items.insertAsync({name: 'Item 1'});
+        await Items.insertAsync({name: 'Item 2'});
+        await Items.insertAsync({name: 'Item 3'});
     }
 });

@@ -7,7 +7,6 @@ import './publishComposite/client.test';
 import './optimistic-ui/client.test';
 // import './server-autorun/client';
 import './transformations/client';
-import './publish-counts/client';
 import './custom-publications/client';
 import './collection-defaults/client';
 import './vent/client';

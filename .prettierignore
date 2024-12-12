@@ -1,0 +1,8 @@
+.idea/
+.github/
+test/
+docs/
+testing/
+node_modules/
+package-lock.json
+test/
