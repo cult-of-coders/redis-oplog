@@ -6,6 +6,10 @@
 
 ## Pushing to Meteor Atmosphere 
 
+```bash
+meteor publish --release 2.13 
+```
+
 ## RedisOplog
 
 A full re-implementation of the Meteor's MongoDB oplog tailing. This time, reactivity is controlled by the app, opening a new world
