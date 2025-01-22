@@ -1,6 +1,6 @@
 Package.describe({
     name: 'networksforchange:redis-oplog',
-    version: '2.2.2',
+    version: '2.2.3',
     // Brief, one-line summary of the package.
     summary: "Replacement for Meteor's MongoDB oplog implementation",
     // URL to the Git repository containing the source code for this package.
