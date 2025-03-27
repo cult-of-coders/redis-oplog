@@ -1,5 +1,14 @@
 ## CHANGELOG
 
+### 3.0.1
+
+- Improve and fix link in documentation by [@Float07](https://github.com/Float07)
+- Fix issue with Mongo.Collection.__getCollectionByName not resolving 'users' when used in Meteor 3.1 [PR 419](https://github.com/cult-of-coders/redis-oplog/pull/419) by [@dmolin](https://github.com/dmolin)
+
+### 3.0.0
+
+- Compatibility with Meteor 3
+
 ### 2.3.0
 
 - perf: reduce GC pressure by avoiding EJSON.clone [PR 14](https://github.com/Meteor-Community-Packages/redis-oplog/pull/14) by [@alisnic](https://github.com/alisnic)
