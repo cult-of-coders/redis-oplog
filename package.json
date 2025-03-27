@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/cult-of-coders/redis-oplog#readme",
   "devDependencies": {
-    "prettier": "^3.4.2"
+    "prettier": "^3.5.3"
   }
 }

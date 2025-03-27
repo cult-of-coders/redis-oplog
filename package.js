@@ -18,7 +18,7 @@ Npm.depends({
 
 
 Package.onUse(function (api) {
-  api.versionsFrom(["3.0.1", "3.1"]);
+  api.versionsFrom(["3.0.1", "3.1", "3.2"]);
   api.use([
     "underscore",
     "ecmascript",
@@ -41,8 +41,8 @@ Package.onTest(function (api) {
   api.use("cultofcoders:redis-oplog");
 
   // extensions
-  api.use("aldeed:collection2@4.0.4");
-  api.use("reywood:publish-composite@1.8.12");
+  api.use("aldeed:collection2@4.1.1");
+  api.use("reywood:publish-composite@1.9.0");
 
   api.use("underscore");
   api.use("ecmascript");
@@ -51,12 +51,11 @@ Package.onTest(function (api) {
   api.use("random");
   api.use("accounts-password");
 
-  api.use("alanning:roles@4.0.0");
+  api.use("roles");
   api.use("ddp-server");
   api.use("ejson");
   api.use("meteortesting:mocha");
-  api.use("matb33:collection-hooks@2.0.0-rc.4");
-  api.use("alanning:roles@4.0.0");
+  api.use("matb33:collection-hooks@2.0.0");
 
   api.mainModule("testing/main.server.js", "server");
   api.addFiles("testing/publishComposite/boot.js", "server");
