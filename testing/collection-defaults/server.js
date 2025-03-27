@@ -20,12 +20,12 @@ Items.configureRedisOplog({
 
 Meteor.methods({
     'collection_defaults.items.insert'(...args) {
-        return Items.insert(...args);
+        return Items.insertAsync(...args);
     },
     'collection_defaults.items.update'(...args) {
-        return Items.update(...args);
+        return Items.updateAsync(...args);
     },
     'collection_defaults.items.remove'(...args) {
-        return Items.remove(...args);
+        return Items.removeAsync(...args);
     },
 });

@@ -53,7 +53,7 @@ Configure it via Meteor settings:
 ```
 
 To see what you can configure under `"redis": {}` take a look here:
-https://www.npmjs.com/package/redis#options-object-properties
+https://github.com/redis/node-redis/blob/HEAD/docs/client-configuration.md
 
 ```bash
 meteor run --settings settings.json
@@ -88,7 +88,7 @@ RedisOplog.stats()
 
 ### Events for Meteor (+ Redis Oplog, Grapher and GraphQL/Apollo)
 
-*   Meteor Night 2018 Slide: [Arguments for Meteor](https://drive.google.com/file/d/1Tx9vO-XezO3DI2uAYalXPvhJ-Avqc4-q/view) - Theodor Diaconu, CEO of Cult of Coders: “Redis Oplog, Grapher, and Apollo Live.
+- Meteor Night 2018 Slide: [Arguments for Meteor](https://drive.google.com/file/d/1Tx9vO-XezO3DI2uAYalXPvhJ-Avqc4-q/view) - Theodor Diaconu, CEO of Cult of Coders: “Redis Oplog, Grapher, and Apollo Live.
 
 ### [Optimistic UI](docs/optimistic_ui.md)
 
@@ -145,4 +145,3 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 <a href="https://opencollective.com/redis-oplog/sponsor/7/website" target="_blank"><img src="https://opencollective.com/redis-oplog/sponsor/7/avatar.svg"></a>
 <a href="https://opencollective.com/redis-oplog/sponsor/8/website" target="_blank"><img src="https://opencollective.com/redis-oplog/sponsor/8/avatar.svg"></a>
 <a href="https://opencollective.com/redis-oplog/sponsor/9/website" target="_blank"><img src="https://opencollective.com/redis-oplog/sponsor/9/avatar.svg"></a>
-

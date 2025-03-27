@@ -1,9 +1,8 @@
-import { assert } from 'chai';
-import { _ } from 'meteor/underscore';
-import { Random } from 'meteor/random';
+import {assert} from 'chai';
+import {_} from 'meteor/underscore';
 
-describe('It should work with collection:hooks', function () {
-
+// TODO: collection-hooks is not migrated yet, there's a PR going on: https://github.com/Meteor-Community-Packages/meteor-collection-hooks/pull/309
+describe.skip('It should work with collection:hooks', function () {
     const opts = [
         {},
         { channel: 'xxx' },
@@ -14,9 +13,10 @@ describe('It should work with collection:hooks', function () {
 
     opts.forEach(options => {
         const Collection = new Mongo.Collection('test_redis_collection_hooks_' + idx++);
-        Collection.remove({});
 
-        it('Should detect all types of changes: ' + JSON.stringify(options), function () {
+        it('Should detect all types of changes: ' + JSON.stringify(options), async function (done) {
+            await Collection.removeAsync({});
+
             let updates = {
                 'before.insert': false,
                 'after.insert': false,
@@ -45,13 +45,15 @@ describe('It should work with collection:hooks', function () {
                 updates['after.remove'] = true;
             });
 
-            const id = Collection.insert({ someData: true });
-            Collection.update(id, { someData: false });
-            Collection.remove(id);
+            const id = await Collection.insertAsync({ someData: true });
+            await Collection.updateAsync(id, { someData: false });
+            await Collection.removeAsync(id);
 
             _.each(updates, (value, key) => {
                 assert.isTrue(value, key);
             })
+
+            done();
         })
     })
 });

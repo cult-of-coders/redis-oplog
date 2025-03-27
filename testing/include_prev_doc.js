@@ -13,7 +13,7 @@ PrevDocCollection.configureRedisOplog({
 });
 
 describe('PrevDocCollection Serverside', function () {
-    it('Should receive an insert event with prev doc', function (done) {
+    it('Should receive an insert event with prev doc', async function (done) {
         Config.pubSubManager.subscribe('test_redis_prev_doc', function (payload) {
             // make sure events have prev document values
             if (payload.e === 'u') {
@@ -28,12 +28,12 @@ describe('PrevDocCollection Serverside', function () {
         const random = Random.id()
 
         // trigger insert update and removed redis events
-        PrevDocCollection.insert({ _id: `${random}`, value: 'oldValue' });
-        PrevDocCollection.update({ _id: `${random}` }, { $set: { value: 'newValue' } });
-        PrevDocCollection.remove({ _id: `${random}` });
+        await PrevDocCollection.insertAsync({ _id: `${random}`, value: 'oldValue' });
+        await PrevDocCollection.updateAsync({ _id: `${random}` }, { $set: { value: 'newValue' } });
+        await PrevDocCollection.removeAsync({ _id: `${random}` });
     });
 
-    it('Should receive an insert event without prev doc', function (done) {
+    it('Should receive an insert event without prev doc', async function (done) {
         Config.pubSubManager.subscribe('test_redis_no_prev_doc', function (payload) {
             // make sure events do not have any prev document values
             // because NoPrevDocCollection does not have shouldIncludePrevDocument set
@@ -48,9 +48,9 @@ describe('PrevDocCollection Serverside', function () {
         });
 
         // trigger insert update and removed redis events
-        NoPrevDocCollection.insert({ _id: 'no_prev_doc_1', value: 'oldValue' });
-        NoPrevDocCollection.update({ _id: 'no_prev_doc_1' }, { $set: { value: 'newValue' } });
-        NoPrevDocCollection.remove({ _id: 'no_prev_doc_1' });
+        await NoPrevDocCollection.insertAsync({ _id: 'no_prev_doc_1', value: 'oldValue' });
+        await NoPrevDocCollection.updateAsync({ _id: 'no_prev_doc_1' }, { $set: { value: 'newValue' } });
+        await NoPrevDocCollection.removeAsync({ _id: 'no_prev_doc_1' });
     });
 });
 
