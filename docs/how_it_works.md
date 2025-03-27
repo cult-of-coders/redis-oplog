@@ -10,7 +10,7 @@ We override the mutators from the Collection: `insert`, `update`, `upsert` and `
 sent to the database.
 
 Let's take an example:
-```
+```js
 const Items = new Mongo.Collection('items')
 Items.insert({text: 'Hello'})
 ```
@@ -19,7 +19,7 @@ After the insert is done into the database, we will publish to redis channel "it
 that we did an insert, and the *_id* of the document we inserted.
 
 For an update, things get a bit interesting in the back:
-```
+```js
 Items.update(itemId, {
     $set: { text: 'Hello World!' }
 })
@@ -31,7 +31,7 @@ The reason we do this will be explored later in this document. (Direct Processin
 We send to redis the update event along with the document *_id* and the fields that have been changed.
 
 If you choose to update multiple elements based on a selector:
-```
+```js
 Items.update({archived: false}, {
     $set: {archived: true}
 }, {multi: true})
@@ -48,7 +48,7 @@ Removing something is almost the same concept as updates, except ofcourse the ev
 
 When you create a publication in Meteor you return a cursor or an array of cursors. For example:
 
-```
+```js
 Meteor.publish('my_items', function () {
     return Items.find({userId: this.userId});
 })
@@ -66,7 +66,7 @@ will share the same "watcher".
 
 There is another special use-case for listening to changes, and it is related to cursor that are filtered by _ids. We call this "Direct Processing"
 
-```
+```js
 Meteor.publish('items', function () {
     return Items.find({_id: {$in: ids}});
     // this has the same behavior when you have a selector like {_id: 'XXX'}
@@ -85,7 +85,7 @@ This is one of the most efficient ways to catch changes and process them. The co
 
 We extend the mutators `insert`, `update` and `remove` to allow an extra argument that configures the mutation.
 
-```
+```js
 // no changes will be published to any redis channels
 Collection.insert(document, {pushToRedis: false})
 Collection.update(selector, document, {pushToRedis: false})
