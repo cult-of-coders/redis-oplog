@@ -1,7 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Random } from 'meteor/random';
 import { Meteor } from 'meteor/meteor'
-import { Roles } from 'meteor/alanning:roles'
+import { Roles } from 'meteor/roles'
 
 // import { UserPresence } from 'meteor/socialize:user-presence';
 
