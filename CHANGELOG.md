@@ -4,7 +4,7 @@
 
 - Improve and fix link in documentation by [@Float07](https://github.com/Float07)
 - Fix issue with Mongo.Collection.__getCollectionByName not resolving 'users' when used in Meteor 3.1 [PR 419](https://github.com/cult-of-coders/redis-oplog/pull/419) by [@dmolin](https://github.com/dmolin)
-- Update testing dependencies, removed tests for Meteor 3.0.1 due to new official `roles` package.
+- Update testing dependencies, removed tests for Meteor 3.0.4 due to new official `roles` package.
 
 ### 3.0.0
 
