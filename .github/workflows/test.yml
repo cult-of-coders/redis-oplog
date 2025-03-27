@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        meteor: ["3.0.3", "3.0.4", "3.1"]
+        meteor: ["3.0.4", "3.1.2", "3.2"]
         redis-version: [4, 5, 6, 7]
 
     steps:
